@@ -17,5 +17,19 @@
   },
   "Footer": {
     "copyright": "© 2025 Agence de Régulation des Télécommunications. Tous droits réservés."
+  },
+  "Dashboard": {
+    "appName": "Portail Admin",
+    "home": "Accueil",
+    "settings": "Paramètres",
+    "logout": "Déconnexion",
+    "welcomeTitle": "Bienvenue sur votre Tableau de Bord",
+    "welcomeDescription": "Voici ce qui se passe avec vos projets aujourd'hui.",
+    "totalRevenue": "Revenu Total",
+    "subscriptions": "Abonnements",
+    "sales": "Ventes",
+    "activeNow": "Actifs Maintenant",
+    "fromLastMonth": "par rapport au mois dernier",
+    "sinceLast": "depuis la dernière heure"
   }
 }

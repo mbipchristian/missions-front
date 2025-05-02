@@ -17,5 +17,19 @@
   },
   "Footer": {
     "copyright": "© 2025 Telecommunications Regulatory Board . All rights reserved."
+  },
+  "Dashboard": {
+    "appName": "Admin Portal",
+    "home": "Home",
+    "settings": "Settings",
+    "logout": "Log out",
+    "welcomeTitle": "Welcome to your Dashboard",
+    "welcomeDescription": "Here's what's happening with your projects today.",
+    "totalRevenue": "Total Revenue",
+    "subscriptions": "Subscriptions",
+    "sales": "Sales",
+    "activeNow": "Active Now",
+    "fromLastMonth": "from last month",
+    "sinceLast": "since last hour"
   }
 }

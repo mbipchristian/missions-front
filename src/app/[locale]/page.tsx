@@ -11,7 +11,6 @@ import { useRouter } from 'next/navigation';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Link from 'next/link';
 import { AlertCircle } from 'lucide-react';
-import LocalSwitcher from '@/components/local-switcher';
 export default function Home() {
   const router = useRouter()
   const [email, setEmail] = useState('');
@@ -19,14 +18,14 @@ export default function Home() {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError("")
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/login", {
+      const response = await fetch("http://localhost:8080/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -36,20 +35,30 @@ export default function Home() {
       })
 
       const data = await response.json()
+      console.log("Status:", response.status,"Response data:", data);
+
+
       if (!response.ok) {
-        throw new Error(data.message || data.error || "Login failed")
+        throw new Error(data.message || `Erreur ${response.status}`);
       }
-
-      // Store the token if your backend returns one
+        // Authentification réussie
       if (data.token) {
-        localStorage.setItem("authToken", data.token)
-        console.log("Token stocké:", data.token)
+        localStorage.setItem("authToken", data.token);
+        // Get the current locale from the URL
+        const locale = window.location.pathname.split("/")[1]
+        // Redirect to dashboard
+        setTimeout(() => {
+          router.push(`/${locale}/dashboard`)
+          router.refresh()
+        }, 1000)
+      } else {
+        throw new Error("Aucun token dans la réponse");
       }
-
-      // Redirect to dashboard or home page after successful login
-      router.push("/dashboard")
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred during login")
+    }
+    finally {
+      setLoading(false);
     }
   }
 
@@ -69,17 +78,17 @@ export default function Home() {
           )}
           <form onSubmit={handleSubmit} className="space-y-4">
 
-            <div className="space-y-2">
-              <Label htmlFor="email">{t('field1')}</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+          <div className="space-y-2">
+  <Label htmlFor="username">{t('field1')}</Label>
+  <Input
+    id="email"
+    type="email"
+    placeholder="votre@email.com"
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+    required
+  />
+</div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">{t('field2')}</Label>

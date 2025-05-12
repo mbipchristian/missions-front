@@ -35,7 +35,7 @@ export function DashboardSidebar() {
       <SidebarHeader className="flex h-14 items-center border-b px-6">
         <Link href={`/${locale}/dashboard`} className="flex items-center gap-2 font-semibold">
           <Shield className="h-6 w-6" />
-          <span>Gestion des Missions</span>
+          <span>Nom de mon appli</span>
         </Link>
         <SidebarTrigger className="ml-auto md:hidden" />
       </SidebarHeader>
@@ -48,7 +48,7 @@ export function DashboardSidebar() {
             >
               <button onClick={() => navigateTo("/dashboard")}>
                 <Home className="mr-2 h-4 w-4" />
-                <span>Tableau de bord</span>
+                <span>AGENCE DE REGULATION DES TELECOMMUNICATIONS</span>
               </button>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -59,7 +59,7 @@ export function DashboardSidebar() {
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton>
                   <Briefcase className="mr-2 h-4 w-4" />
-                  <span>Missions</span>
+                  <span>MISSIONS</span>
                   <ChevronDown className={`ml-auto h-4 w-4 transition-transform ${openMissions ? "rotate-180" : ""}`} />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
@@ -73,7 +73,7 @@ export function DashboardSidebar() {
                       isActive={pathname.endsWith("/dashboard/missions")}
                     >
                       <button onClick={() => navigateTo("/dashboard/missions")}>
-                        <span>Liste des missions</span>
+                        <span>Enrégistrer un mandat de mission</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -83,7 +83,7 @@ export function DashboardSidebar() {
                       isActive={pathname.endsWith("/dashboard/ordres-mission")}
                     >
                       <button onClick={() => navigateTo("/dashboard/ordres-mission")}>
-                        <span>Ordres de mission</span>
+                        <span>Mes mandats de missions</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -93,7 +93,7 @@ export function DashboardSidebar() {
                       isActive={pathname.endsWith("/dashboard/decharges")}
                     >
                       <button onClick={() => navigateTo("/dashboard/decharges")}>
-                        <span>Décharges</span>
+                        <span>Journal des mandats de missions</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -103,7 +103,7 @@ export function DashboardSidebar() {
                       isActive={pathname.endsWith("/dashboard/rapports")}
                     >
                       <button onClick={() => navigateTo("/dashboard/rapports")}>
-                        <span>Rapports</span>
+                        <span>Journal des rapports de missions</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -112,13 +112,101 @@ export function DashboardSidebar() {
             </CollapsibleContent>
           </Collapsible>
 
-          {/* Administration */}
+          {/* Ordres de missions */}
+          <Collapsible open={openMissions} onOpenChange={setOpenMissions}>
+            <SidebarMenuItem>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton>
+                  <Briefcase className="mr-2 h-4 w-4" />
+                  <span>ORDRES DE MISSIONS</span>
+                  <ChevronDown className={`ml-auto h-4 w-4 transition-transform ${openMissions ? "rotate-180" : ""}`} />
+                </SidebarMenuButton>
+              </CollapsibleTrigger>
+            </SidebarMenuItem>
+            <CollapsibleContent>
+              <div className="pl-6 pt-1">
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                  <SidebarMenuButton 
+                      asChild 
+                      isActive={pathname.endsWith("/dashboard/missions")}
+                    >
+                      <button onClick={() => navigateTo("/dashboard/missions")}>
+                        <span>Enrégistrer un ordre de mission</span>
+                      </button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                  <SidebarMenuButton 
+                      asChild 
+                      isActive={pathname.endsWith("/dashboard/ordres-mission")}
+                    >
+                      <button onClick={() => navigateTo("/dashboard/ordres-mission")}>
+                        <span>Mes ordres de missions</span>
+                      </button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                  <SidebarMenuButton 
+                      asChild 
+                      isActive={pathname.endsWith("/dashboard/decharges")}
+                    >
+                      <button onClick={() => navigateTo("/dashboard/decharges")}>
+                        <span>Journal des ordres de missions</span>
+                      </button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+
+          {/* RESSOURCES */}
+          <Collapsible open={openMissions} onOpenChange={setOpenMissions}>
+            <SidebarMenuItem>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton>
+                  <Briefcase className="mr-2 h-4 w-4" />
+                  <span>RESSOURCES</span>
+                  <ChevronDown className={`ml-auto h-4 w-4 transition-transform ${openMissions ? "rotate-180" : ""}`} />
+                </SidebarMenuButton>
+              </CollapsibleTrigger>
+            </SidebarMenuItem>
+            <CollapsibleContent>
+              <div className="pl-6 pt-1">
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                  <SidebarMenuButton 
+                      asChild 
+                      isActive={pathname.endsWith("/dashboard/missions")}
+                    >
+                      <button onClick={() => navigateTo("/dashboard/missions")}>
+                        <span>Ajouter une ressource</span>
+                      </button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                  <SidebarMenuButton 
+                      asChild 
+                      isActive={pathname.endsWith("/dashboard/ordres-mission")}
+                    >
+                      <button onClick={() => navigateTo("/dashboard/ordres-mission")}>
+                        <span>Journal des ressources</span>
+                      </button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+
+          {/* Configurations */}
           <Collapsible open={openAdmin} onOpenChange={setOpenAdmin}>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton>
                   <Shield className="mr-2 h-4 w-4" />
-                  <span>Administration</span>
+                  <span>CONFIGURATIONS</span>
                   <ChevronDown className={`ml-auto h-4 w-4 transition-transform ${openAdmin ? "rotate-180" : ""}`} />
                 </SidebarMenuButton>
               </CollapsibleTrigger>
@@ -129,10 +217,10 @@ export function DashboardSidebar() {
                   <SidebarMenuItem>
                   <SidebarMenuButton 
                       asChild 
-                      isActive={pathname.endsWith("/dashboard/utilisateurs")}
+                      isActive={pathname.endsWith("/dashboard/configurations/register")}
                     >
-                      <button onClick={() => navigateTo("/dashboard/utilisateurs")}>
-                        <span>Utilisateurs</span>
+                      <button onClick={() => navigateTo("/dashboard/configurations/register")}>
+                        <span>Créer un compte utilisateur</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -142,7 +230,7 @@ export function DashboardSidebar() {
                       isActive={pathname.endsWith("/dashboard/profiles")}
                     >
                       <button onClick={() => navigateTo("/dashboard/profiles")}>
-                        <span>Profiles</span>
+                        <span>Liste des utilisateurs</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -152,7 +240,7 @@ export function DashboardSidebar() {
                       isActive={pathname.endsWith("/dashboard/grades")}
                     >
                       <button onClick={() => navigateTo("/dashboard/grades")}>
-                        <span>Grades</span>
+                        <span>Profils et Menus</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -162,7 +250,7 @@ export function DashboardSidebar() {
                       isActive={pathname.endsWith("/dashboard/menus")}
                     >
                       <button onClick={() => navigateTo("/dashboard/menus")}>
-                        <span>Menus</span>
+                        <span>Grades et Indemnités</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

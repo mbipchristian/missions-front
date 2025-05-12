@@ -20,31 +20,31 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 const grades = [
   {
     id: "G-001",
-    nom: "Colonel",
+    nom: "Agent d'Exécution",
     indemniteInterieure: "250 €",
     indemniteExterieure: "350 €",
   },
   {
     id: "G-002",
-    nom: "Commandant",
+    nom: "Agent de Maîtrise",
     indemniteInterieure: "200 €",
     indemniteExterieure: "300 €",
   },
   {
     id: "G-003",
-    nom: "Capitaine",
+    nom: "Cadre",
     indemniteInterieure: "180 €",
     indemniteExterieure: "280 €",
   },
   {
     id: "G-004",
-    nom: "Lieutenant",
+    nom: "Chef de Bureau",
     indemniteInterieure: "160 €",
     indemniteExterieure: "260 €",
   },
   {
     id: "G-005",
-    nom: "Major",
+    nom: "Chef de Service",
     indemniteInterieure: "150 €",
     indemniteExterieure: "250 €",
   },

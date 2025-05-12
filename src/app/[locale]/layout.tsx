@@ -5,7 +5,7 @@ import Header from '@/components/header';
 import Footer from '@/components/footer';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
-
+import { Toaster } from '@/components/ui/toaster';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -32,7 +32,10 @@ export default async function RootLayout({
       <NextIntlClientProvider locale={locale} messages={messages}>
         <div className='flex flex-col min-h-screen max-w-4xl mx-auto'>
           <Header />
-          <div className='flex-grow mt-0'>{children}</div>
+          <div className='flex-grow mt-0'>
+            {children}
+          <Toaster />
+          </div>
           <Footer />
         </div>
       </NextIntlClientProvider>

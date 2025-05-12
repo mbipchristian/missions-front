@@ -1,4 +1,4 @@
-import { ProfilesList } from "@/components/admin-profiles";
+import { ProfilesList } from "@/components/config/admin-profiles";
 
 export default function ProfilesPage() {
   return (

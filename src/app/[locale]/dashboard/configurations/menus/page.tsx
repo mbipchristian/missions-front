@@ -1,4 +1,4 @@
-import { MenusList } from '@/components/admin-menus'
+import { MenusList } from '@/components/config/admin-menus'
 
 export default function MenusPage() {
   return (

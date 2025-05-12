@@ -39,10 +39,17 @@ export default function Home() {
 
 
       if (!response.ok) {
-        throw new Error(data.message || `Erreur ${response.status}`);
+        // Si le statut est 401, on affiche le message d'erreur d'authentification
+        if (response.status === 401) {
+          // Récupérer le message d'erreur du backend si disponible
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.description || "The username or password is incorrect");
+        }
+        throw new Error(`Erreur ${response.status}`);
       }
         // Authentification réussie
       if (data.token) {
+        
         localStorage.setItem("authToken", data.token);
         // Get the current locale from the URL
         const locale = window.location.pathname.split("/")[1]

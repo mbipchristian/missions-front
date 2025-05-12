@@ -1,4 +1,4 @@
-import { GradesList } from "@/components/admin-grades";
+import { GradesList } from "@/components/config/admin-grades";
 
 export default function GradesPage() {
   return (

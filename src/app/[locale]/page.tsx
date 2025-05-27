@@ -30,6 +30,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
+        
         body: JSON.stringify({ email, password }),
         credentials: "include",
       })
@@ -116,7 +117,6 @@ export default function Home() {
             </Button>
           </form>
         </CardContent>
-
       </Card>
     </div>
   )

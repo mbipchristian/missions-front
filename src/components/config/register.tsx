@@ -1,341 +1,373 @@
 "use client"
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Eye, EyeOff, Loader2 } from "lucide-react"
-
+import { useState, useEffect } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent } from "@/components/ui/card"
-//import { createUser } from "@/app/actions"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Eye, EyeOff, UserPlus } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
-// Données pour les grades
-const grades = [
-  { id: "AE", label: "Grade A - Direction" },
-  { id: "AM", label: "Grade B - Cadre supérieur" },
-  { id: "CA", label: "Grade C - Cadre" },
-  { id: "CB", label: "Grade D - Agent de maîtrise" },
-  { id: "CS", label: "Grade E - Agent d'exécution" },
-  { id: "SD", label: "Grade A - Direction" },
-  { id: "D", label: "Grade B - Cadre supérieur" },
-  { id: "I", label: "Grade C - Cadre" },
-  { id: "CT", label: "Grade D - Agent de maîtrise" },
-  { id: "DGA", label: "Grade E - Agent d'exécution" },
-  { id: "DG", label: "Grade E - Agent d'exécution" },
-]
+// Types based on the Java DTOs
+interface RegisterUserDto {
+  matricule: string
+  email: string
+  password: string
+  username: string
+  roleId: number
+  gradeId: number
+  quotaAnnuel: number
+}
 
-// Données pour les roles
-const roles = [
-  { id: "AGENT_ART", label: "Agent ART" },
-  { id: "AGENT_RH", label: "Agent RH" },
-  { id: "DP", label: "DP" },
-  { id: "DRH", label: "DRH" },
-  { id: "ADMIN", label: "Administrateur" },
-]
+interface RoleResponseDto {
+  id: number
+  name: string
+  description: string
+}
 
-// Schéma de validation
-const formSchema = z
-  .object({
-    username: z
-      .string(),
-    email: z.string().email("Veuillez entrer une adresse email valide"),
-    password: z
-      .string(),
-    //   .min(8, "Le mot de passe doit contenir au moins 8 caractères")
-    //   .regex(/[A-Z]/, "Le mot de passe doit contenir au moins une lettre majuscule")
-    //   .regex(/[a-z]/, "Le mot de passe doit contenir au moins une lettre minuscule")
-    //   .regex(/[0-9]/, "Le mot de passe doit contenir au moins un chiffre")
-    //   .regex(/[^A-Za-z0-9]/, "Le mot de passe doit contenir au moins un caractère spécial"),
-    confirmPassword: z.string(),
-    grade: z.string().min(1, "Veuillez sélectionner un grade"),
-    role: z.string().min(1, "Veuillez sélectionner un role"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Les mots de passe ne correspondent pas",
-    path: ["confirmPassword"],
-  })
-
-type FormValues = z.infer<typeof formSchema>
+interface GradeResponseDto {
+  id: number
+  name: string
+  description: string
+}
 
 export default function UserRegistrationForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [roles, setRoles] = useState<RoleResponseDto[]>([])
+  const [grades, setGrades] = useState<GradeResponseDto[]>([])
+  const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const { toast } = useToast()
-
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      grade: "",
-      role: "",
-    },
+  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false)
+  const [formData, setFormData] = useState<RegisterUserDto>({
+    matricule: "",
+    email: "",
+    password: "",
+    username: "",
+    roleId: 0,
+    gradeId: 0,
+    quotaAnnuel: 0,
   })
 
-// Méthode de récupération du token
+  const { toast } = useToast()
 
-  function getToken() {
+  // Fetch roles and grades on component mount
+  useEffect(() => {
+    fetchRoles()
+    fetchGrades()
+  }, [])
+
+  // Fetch all roles
+  const fetchRoles = async () => {
     try {
-      const token = localStorage.getItem('authToken');
-      
-      if (!token) {
-        console.error('Aucun token trouvé');
-        return null;
+      const response = await fetch("http://localhost:8080/auth/roles/all")
+      if (!response.ok) {
+        throw new Error("Failed to fetch roles")
       }
-  
-      // Validation supplémentaire du format
-      if (token.split('.').length !== 3) {
-        console.error('Token invalide', token);
-        return null;
-      }
-  
-      return token;
+      const data = await response.json()
+      setRoles(data)
     } catch (error) {
-      console.error('Erreur lors de la récupération du token', error);
-      return null;
+      console.error("Error fetching roles:", error)
+      toast({
+        title: "Error",
+        description: "Failed to load roles. Please try again.",
+        variant: "destructive",
+      })
     }
   }
 
-  async function onSubmit(data: FormValues) {
+  // Fetch all grades
+  const fetchGrades = async () => {
     try {
-      setIsSubmitting(true)
-      const token = getToken();
-      const response = await fetch('http://localhost:8080/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          username: data.username,
-          email: data.email,
-          password: data.password,
-          grade: data.grade,
-          role: data.role        })
-      });
-      
-      const result = await response.json();
-
-      if (response.ok) {
-        // Si la création du compte est réussie
-        toast({
-          title: "Compte créé avec succès",
-          description: "Le compte utilisateur a été créé avec succès.",
-          variant: "default"
-        })
-        form.reset()
-      } else {
-        throw new Error(result.message || "Une erreur est survenue")
+      const response = await fetch("http://localhost:8080/auth/grades/all")
+      if (!response.ok) {
+        throw new Error("Failed to fetch grades")
       }
+      const data = await response.json()
+      setGrades(data)
     } catch (error) {
-      console.error("Erreur lors de la création du compte:", error)
+      console.error("Error fetching grades:", error)
       toast({
-        title: "Erreur",
-        description:
-          error instanceof Error ? error.message : "Une erreur est survenue lors de la création du compte utilisateur.",
+        title: "Error",
+        description: "Failed to load grades. Please try again.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  // Validate form data
+  const validateForm = (): boolean => {
+    if (!formData.matricule.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Matricule is required",
+        variant: "destructive",
+      })
+      return false
+    }
+
+    if (!formData.email.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Email is required",
+        variant: "destructive",
+      })
+      return false
+    }
+
+    if (!formData.email.includes("@")) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      })
+      return false
+    }
+
+    if (!formData.password.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Password is required",
+        variant: "destructive",
+      })
+      return false
+    }
+
+    if (formData.password.length < 6) {
+      toast({
+        title: "Validation Error",
+        description: "Password must be at least 6 characters long",
+        variant: "destructive",
+      })
+      return false
+    }
+
+    if (!formData.username.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Username is required",
+        variant: "destructive",
+      })
+      return false
+    }
+
+    if (formData.roleId === 0) {
+      toast({
+        title: "Validation Error",
+        description: "Please select a role",
+        variant: "destructive",
+      })
+      return false
+    }
+
+    if (formData.gradeId === 0) {
+      toast({
+        title: "Validation Error",
+        description: "Please select a grade",
+        variant: "destructive",
+      })
+      return false
+    }
+
+    return true
+  }
+
+  // Handle user registration
+  const handleRegister = async () => {
+    if (!validateForm()) {
+      return
+    }
+
+    setLoading(true)
+    try {
+      const response = await fetch("http://localhost:8080/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData?.error || "Failed to register user")
+      }
+
+      toast({
+        title: "Success",
+        description: "User registered successfully",
+      })
+
+      setIsSuccessDialogOpen(true)
+    } catch (error) {
+      console.error("Error registering user:", error)
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to register user",
         variant: "destructive",
       })
     } finally {
-      setIsSubmitting(false)
+      setLoading(false)
     }
   }
 
+  // Reset form
+  const resetForm = () => {
+    setFormData({
+      matricule: "",
+      email: "",
+      password: "",
+      username: "",
+      roleId: 0,
+      gradeId: 0,
+      quotaAnnuel: 0,
+    })
+    setIsSuccessDialogOpen(false)
+  }
+
   return (
-    <Card className="max-w-2xl mx-auto">
-      <CardContent className="pt-6">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nom d'utilisateur</FormLabel>
-                  <FormControl>
-                    <Input placeholder="johndoe" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Le nom d'utilisateur doit contenir uniquement des lettres, chiffres et underscores.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+    <div className="container mx-auto py-6">
+      <div className="max-w-2xl mx-auto">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <UserPlus className="h-6 w-6" />
+              User Registration
+            </CardTitle>
+            <CardDescription>Create a new user account with role and grade assignment</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="matricule">Matricule *</Label>
+                  <Input
+                    id="matricule"
+                    placeholder="Enter matricule"
+                    value={formData.matricule}
+                    onChange={(e) => setFormData({ ...formData, matricule: e.target.value })}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="username">Username *</Label>
+                  <Input
+                    id="username"
+                    placeholder="Enter username"
+                    value={formData.username}
+                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                  />
+                </div>
+              </div>
 
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Adresse email</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="john.doe@example.com" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    L'adresse email sera utilisée pour la connexion et les notifications.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter email address"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                />
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Mot de passe</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder="••••••••"
-                          {...field}
-                          className="pr-10"
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="absolute right-0 top-0 h-full px-3 py-2"
-                          onClick={() => setShowPassword(!showPassword)}
-                          tabIndex={-1}
-                        >
-                          {showPassword ? (
-                            <EyeOff className="h-4 w-4 text-muted-foreground" />
-                          ) : (
-                            <Eye className="h-4 w-4 text-muted-foreground" />
-                          )}
-                          <span className="sr-only">{showPassword ? "Masquer" : "Afficher"} le mot de passe</span>
-                        </Button>
-                      </div>
-                    </FormControl>
-                    <FormDescription>
-                      Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et
-                      un caractère spécial.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid gap-2">
+                <Label htmlFor="password">Password *</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter password (min. 6 characters)"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className="pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
+                  </Button>
+                </div>
+              </div>
 
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirmer le mot de passe</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Input
-                          type={showConfirmPassword ? "text" : "password"}
-                          placeholder="••••••••"
-                          {...field}
-                          className="pr-10"
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="absolute right-0 top-0 h-full px-3 py-2"
-                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          tabIndex={-1}
-                        >
-                          {showConfirmPassword ? (
-                            <EyeOff className="h-4 w-4 text-muted-foreground" />
-                          ) : (
-                            <Eye className="h-4 w-4 text-muted-foreground" />
-                          )}
-                          <span className="sr-only">
-                            {showConfirmPassword ? "Masquer" : "Afficher"} le mot de passe
-                          </span>
-                        </Button>
-                      </div>
-                    </FormControl>
-                    <FormDescription>Veuillez saisir à nouveau votre mot de passe pour confirmation.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="role">Role *</Label>
+                  <Select
+                    value={formData.roleId.toString()}
+                    onValueChange={(value) => setFormData({ ...formData, roleId: Number.parseInt(value) })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {roles.map((role) => (
+                        <SelectItem key={role.id} value={role.id.toString()}>
+                          {role.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="grade"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Grade</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sélectionner un grade" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {grades.map((grade) => (
-                          <SelectItem key={grade.id} value={grade.id}>
-                            {grade.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <div className="grid gap-2">
+                  <Label htmlFor="grade">Grade *</Label>
+                  <Select
+                    value={formData.gradeId.toString()}
+                    onValueChange={(value) => setFormData({ ...formData, gradeId: Number.parseInt(value) })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a grade" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {grades.map((grade) => (
+                        <SelectItem key={grade.id} value={grade.id.toString()}>
+                          {grade.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-              <FormField
-                control={form.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Role</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Sélectionner un role" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {roles.map((role) => (
-                          <SelectItem key={role.id} value={role.id}>
-                            {role.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>Le role détermine les droits d'accès de l'utilisateur.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+              <div className="text-sm text-muted-foreground">* Required fields</div>
 
-            <div className="flex justify-end">
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Création en cours...
-                  </>
-                ) : (
-                  "Créer le compte"
-                )}
+              <Button onClick={handleRegister} disabled={loading} className="w-full">
+                {loading ? "Registering..." : "Register User"}
               </Button>
             </div>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Success Dialog */}
+      <Dialog open={isSuccessDialogOpen} onOpenChange={setIsSuccessDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Registration Successful</DialogTitle>
+            <DialogDescription>
+              The user has been registered successfully. You can now register another user or close this dialog.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2">
+            <Button variant="outline" onClick={resetForm}>
+              Register Another User
+            </Button>
+            <Button onClick={() => setIsSuccessDialogOpen(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   )
 }

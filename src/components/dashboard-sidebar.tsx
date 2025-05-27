@@ -70,9 +70,9 @@ export function DashboardSidebar() {
                   <SidebarMenuItem>
                   <SidebarMenuButton 
                       asChild 
-                      isActive={pathname.endsWith("/dashboard/missions")}
+                      isActive={pathname.endsWith("/dashboard/mandats")}
                     >
-                      <button onClick={() => navigateTo("/dashboard/missions")}>
+                      <button onClick={() => navigateTo("/dashboard/mandats")}>
                         <span>Enrégistrer un mandat de mission</span>
                       </button>
                     </SidebarMenuButton>
@@ -80,9 +80,9 @@ export function DashboardSidebar() {
                   <SidebarMenuItem>
                   <SidebarMenuButton 
                       asChild 
-                      isActive={pathname.endsWith("/dashboard/ordres-mission")}
+                      isActive={pathname.endsWith("/dashboard/")}
                     >
-                      <button onClick={() => navigateTo("/dashboard/ordres-mission")}>
+                      <button onClick={() => navigateTo("/dashboard/")}>
                         <span>Mes mandats de missions</span>
                       </button>
                     </SidebarMenuButton>
@@ -90,9 +90,9 @@ export function DashboardSidebar() {
                   <SidebarMenuItem>
                   <SidebarMenuButton 
                       asChild 
-                      isActive={pathname.endsWith("/dashboard/decharges")}
+                      isActive={pathname.endsWith("/dashboard/mandats/journal-mandats")}
                     >
-                      <button onClick={() => navigateTo("/dashboard/decharges")}>
+                      <button onClick={() => navigateTo("/dashboard/mandats/journal-mandats")}>
                         <span>Journal des mandats de missions</span>
                       </button>
                     </SidebarMenuButton>
@@ -129,33 +129,15 @@ export function DashboardSidebar() {
                   <SidebarMenuItem>
                   <SidebarMenuButton 
                       asChild 
-                      isActive={pathname.endsWith("/dashboard/missions")}
+                      isActive={pathname.endsWith("/dashboard/ordres-mission")}
                     >
-                      <button onClick={() => navigateTo("/dashboard/missions")}>
+                      <button onClick={() => navigateTo("/dashboard/ordres-mission")}>
                         <span>Enrégistrer un ordre de mission</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                  <SidebarMenuItem>
-                  <SidebarMenuButton 
-                      asChild 
-                      isActive={pathname.endsWith("/dashboard/ordres-mission")}
-                    >
-                      <button onClick={() => navigateTo("/dashboard/ordres-mission")}>
-                        <span>Mes ordres de missions</span>
-                      </button>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                  <SidebarMenuButton 
-                      asChild 
-                      isActive={pathname.endsWith("/dashboard/decharges")}
-                    >
-                      <button onClick={() => navigateTo("/dashboard/decharges")}>
-                        <span>Journal des ordres de missions</span>
-                      </button>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  
+                  
                 </SidebarMenu>
               </div>
             </CollapsibleContent>
@@ -178,23 +160,14 @@ export function DashboardSidebar() {
                   <SidebarMenuItem>
                   <SidebarMenuButton 
                       asChild 
-                      isActive={pathname.endsWith("/dashboard/missions")}
+                      isActive={pathname.endsWith("/dashboard/ressources")}
                     >
-                      <button onClick={() => navigateTo("/dashboard/missions")}>
-                        <span>Ajouter une ressource</span>
+                      <button onClick={() => navigateTo("/dashboard/ressources")}>
+                        <span>Gérer les ressources</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                  <SidebarMenuItem>
-                  <SidebarMenuButton 
-                      asChild 
-                      isActive={pathname.endsWith("/dashboard/ordres-mission")}
-                    >
-                      <button onClick={() => navigateTo("/dashboard/ordres-mission")}>
-                        <span>Journal des ressources</span>
-                      </button>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                
                 </SidebarMenu>
               </div>
             </CollapsibleContent>
@@ -227,30 +200,50 @@ export function DashboardSidebar() {
                   <SidebarMenuItem>
                   <SidebarMenuButton 
                       asChild 
-                      isActive={pathname.endsWith("/dashboard/profiles")}
+                      isActive={pathname.endsWith("/dashboard/configurations/profiles")}
                     >
-                      <button onClick={() => navigateTo("/dashboard/profiles")}>
-                        <span>Liste des utilisateurs</span>
+                      <button onClick={() => navigateTo("/dashboard/configurations/profiles")}>
+                        <span>Profiles</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                   <SidebarMenuButton 
                       asChild 
-                      isActive={pathname.endsWith("/dashboard/grades")}
+                      isActive={pathname.endsWith("/dashboard/configurations/grades")}
                     >
-                      <button onClick={() => navigateTo("/dashboard/grades")}>
-                        <span>Profils et Menus</span>
+                      <button onClick={() => navigateTo("/dashboard/configurations/grades")}>
+                        <span>Grades</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                   <SidebarMenuButton 
                       asChild 
-                      isActive={pathname.endsWith("/dashboard/menus")}
+                      isActive={pathname.endsWith("/dashboard/configurations/menus")}
                     >
-                      <button onClick={() => navigateTo("/dashboard/menus")}>
-                        <span>Grades et Indemnités</span>
+                      <button onClick={() => navigateTo("/dashboard/configurations/menus")}>
+                        <span>Menus</span>
+                      </button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                  <SidebarMenuButton 
+                      asChild 
+                      isActive={pathname.endsWith("/dashboard/configurations/users")}
+                    >
+                      <button onClick={() => navigateTo("/dashboard/configurations/users")}>
+                        <span>Gérer les utilisateurs</span>
+                      </button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                  <SidebarMenuButton 
+                      asChild 
+                      isActive={pathname.endsWith("/dashboard/configurations/villes")}
+                    >
+                      <button onClick={() => navigateTo("/dashboard/configurations/villes")}>
+                        <span>Villes</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

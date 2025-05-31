@@ -26,21 +26,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { Search, Plus, MoreVertical, Edit, Trash, RefreshCw, PlusCircle, MinusCircle, Edit2 } from "lucide-react"
+import { Search, Plus, MoreVertical, Edit, Trash, RefreshCw } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 // Types based on the Java DTOs
 interface RessourceDto {
   name: string
-  code: string
-  quantite: number
 }
 
 interface RessourceResponseDto {
   id: number
   name: string
-  code: string
-  quantite: number
   createdAt: string
   updatedAt: string
 }
@@ -53,13 +49,8 @@ export default function Ressources() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const [isQuantityDialogOpen, setIsQuantityDialogOpen] = useState(false)
-  const [quantityAction, setQuantityAction] = useState<"update" | "add" | "remove">("update")
-  const [quantityValue, setQuantityValue] = useState<number>(0)
   const [formData, setFormData] = useState<RessourceDto>({
     name: "",
-    code: "",
-    quantite: 0,
   })
 
   const { toast } = useToast()
@@ -152,7 +143,7 @@ export default function Ressources() {
       })
 
       setIsCreateDialogOpen(false)
-      setFormData({ name: "", code: "", quantite: 0 })
+      setFormData({ name: "" })
       fetchRessources()
     } catch (error) {
       console.error("Error creating resource:", error)
@@ -189,7 +180,7 @@ export default function Ressources() {
 
       setIsEditDialogOpen(false)
       setSelectedRessource(null)
-      setFormData({ name: "", code: "", quantite: 0 })
+      setFormData({ name: "" })
       fetchRessources()
     } catch (error) {
       console.error("Error updating resource:", error)
@@ -233,65 +224,11 @@ export default function Ressources() {
     }
   }
 
-  // Handle quantity operations
-  const handleQuantityOperation = async () => {
-    if (!selectedRessource) return
-
-    let endpoint = ""
-    const method = "PATCH"
-
-    switch (quantityAction) {
-      case "update":
-        endpoint = `http://localhost:8080/auth/ressources/${selectedRessource.id}/quantite`
-        break
-      case "add":
-        endpoint = `http://localhost:8080/auth/ressources/${selectedRessource.id}/ajouter`
-        break
-      case "remove":
-        endpoint = `http://localhost:8080/auth/ressources/${selectedRessource.id}/retirer`
-        break
-    }
-
-    try {
-      const response = await fetch(endpoint, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ quantite: quantityValue }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData?.error || `Failed to ${quantityAction} quantity`)
-      }
-
-      toast({
-        title: "Success",
-        description: "Quantity updated successfully",
-      })
-
-      setIsQuantityDialogOpen(false)
-      setSelectedRessource(null)
-      setQuantityValue(0)
-      fetchRessources()
-    } catch (error) {
-      console.error(`Error ${quantityAction}ing quantity:`, error)
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : `Failed to ${quantityAction} quantity`,
-        variant: "destructive",
-      })
-    }
-  }
-
   // Open edit dialog and populate form
   const openEditDialog = (ressource: RessourceResponseDto) => {
     setSelectedRessource(ressource)
     setFormData({
       name: ressource.name,
-      code: ressource.code,
-      quantite: ressource.quantite,
     })
     setIsEditDialogOpen(true)
   }
@@ -300,14 +237,6 @@ export default function Ressources() {
   const openDeleteDialog = (ressource: RessourceResponseDto) => {
     setSelectedRessource(ressource)
     setIsDeleteDialogOpen(true)
-  }
-
-  // Open quantity dialog
-  const openQuantityDialog = (ressource: RessourceResponseDto, action: "update" | "add" | "remove") => {
-    setSelectedRessource(ressource)
-    setQuantityAction(action)
-    setQuantityValue(action === "update" ? ressource.quantite : 0)
-    setIsQuantityDialogOpen(true)
   }
 
   // Format date for display
@@ -372,8 +301,6 @@ export default function Ressources() {
                 <TableRow>
                   <TableHead>ID</TableHead>
                   <TableHead>Name</TableHead>
-                  <TableHead>Code</TableHead>
-                  <TableHead>Quantity</TableHead>
                   <TableHead>Created At</TableHead>
                   <TableHead>Updated At</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -384,8 +311,6 @@ export default function Ressources() {
                   <TableRow key={ressource.id}>
                     <TableCell>{ressource.id}</TableCell>
                     <TableCell className="font-medium">{ressource.name}</TableCell>
-                    <TableCell>{ressource.code}</TableCell>
-                    <TableCell>{ressource.quantite}</TableCell>
                     <TableCell>{formatDate(ressource.createdAt)}</TableCell>
                     <TableCell>{formatDate(ressource.updatedAt)}</TableCell>
                     <TableCell className="text-right">
@@ -399,15 +324,6 @@ export default function Ressources() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => openEditDialog(ressource)}>
                             <Edit className="mr-2 h-4 w-4" /> Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => openQuantityDialog(ressource, "update")}>
-                            <Edit2 className="mr-2 h-4 w-4" /> Update Quantity
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => openQuantityDialog(ressource, "add")}>
-                            <PlusCircle className="mr-2 h-4 w-4" /> Add Quantity
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => openQuantityDialog(ressource, "remove")}>
-                            <MinusCircle className="mr-2 h-4 w-4" /> Remove Quantity
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => openDeleteDialog(ressource)}>
                             <Trash className="mr-2 h-4 w-4" /> Delete
@@ -440,31 +356,7 @@ export default function Ressources() {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="code" className="text-right">
-                Code
-              </Label>
-              <Input
-                id="code"
-                value={formData.code}
-                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                className="col-span-3"
-              />
-            </div>
-            
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="quantite" className="text-right">
-                Quantity
-              </Label>
-              <Input
-                id="quantite"
-                type="number"
-                min="0"
-                value={formData.quantite}
-                onChange={(e) => setFormData({ ...formData, quantite: Number.parseInt(e.target.value) || 0 })}
-                className="col-span-3"
+                placeholder="Enter resource name"
               />
             </div>
           </div>
@@ -494,31 +386,7 @@ export default function Ressources() {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="col-span-3"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-code" className="text-right">
-                Code
-              </Label>
-              <Input
-                id="edit-code"
-                value={formData.code}
-                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                className="col-span-3"
-              />
-            </div>
-            
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-quantite" className="text-right">
-                Quantity
-              </Label>
-              <Input
-                id="edit-quantite"
-                type="number"
-                min="0"
-                value={formData.quantite}
-                onChange={(e) => setFormData({ ...formData, quantite: Number.parseInt(e.target.value) || 0 })}
-                className="col-span-3"
+                placeholder="Enter resource name"
               />
             </div>
           </div>
@@ -527,59 +395,6 @@ export default function Ressources() {
               Cancel
             </Button>
             <Button onClick={handleUpdateRessource}>Update</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Quantity Dialog */}
-      <Dialog open={isQuantityDialogOpen} onOpenChange={setIsQuantityDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {quantityAction === "update"
-                ? "Update Quantity"
-                : quantityAction === "add"
-                  ? "Add Quantity"
-                  : "Remove Quantity"}
-            </DialogTitle>
-            <DialogDescription>
-              {quantityAction === "update"
-                ? "Set a new quantity value"
-                : quantityAction === "add"
-                  ? "Add to the current quantity"
-                  : "Remove from the current quantity"}
-              {selectedRessource && ` for ${selectedRessource.name}`}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            {quantityAction !== "update" && (
-              <div className="text-sm text-muted-foreground">Current quantity: {selectedRessource?.quantite || 0}</div>
-            )}
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="quantity-value" className="text-right">
-                {quantityAction === "update"
-                  ? "New Quantity"
-                  : quantityAction === "add"
-                    ? "Add Amount"
-                    : "Remove Amount"}
-              </Label>
-              <Input
-                id="quantity-value"
-                type="number"
-                min={quantityAction === "update" ? "0" : "1"}
-                value={quantityValue}
-                onChange={(e) => setQuantityValue(Number.parseInt(e.target.value) || 0)}
-                className="col-span-3"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsQuantityDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleQuantityOperation}>
-              {quantityAction === "update" ? "Update" : quantityAction === "add" ? "Add" : "Remove"}
-            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

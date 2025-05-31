@@ -80,30 +80,21 @@ export function DashboardSidebar() {
                   <SidebarMenuItem>
                   <SidebarMenuButton 
                       asChild 
-                      isActive={pathname.endsWith("/dashboard/")}
+                      isActive={pathname.endsWith("/dashboard/etapes")}
                     >
-                      <button onClick={() => navigateTo("/dashboard/")}>
-                        <span>Mes mandats de missions</span>
+                      <button onClick={() => navigateTo("/dashboard/etapes")}>
+                        <span>Etapes de missions</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+        
                   <SidebarMenuItem>
                   <SidebarMenuButton 
                       asChild 
-                      isActive={pathname.endsWith("/dashboard/mandats/journal-mandats")}
+                      isActive={pathname.endsWith("/dashboard/pieces-jointes")}
                     >
-                      <button onClick={() => navigateTo("/dashboard/mandats/journal-mandats")}>
-                        <span>Journal des mandats de missions</span>
-                      </button>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                  <SidebarMenuButton 
-                      asChild 
-                      isActive={pathname.endsWith("/dashboard/rapports")}
-                    >
-                      <button onClick={() => navigateTo("/dashboard/rapports")}>
-                        <span>Journal des rapports de missions</span>
+                      <button onClick={() => navigateTo("/dashboard/pieces-jointes")}>
+                        <span>Pièces Jointes</span>
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

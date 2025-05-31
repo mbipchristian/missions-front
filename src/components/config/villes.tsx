@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
   Dialog,
@@ -27,6 +28,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Badge } from "@/components/ui/badge"
 import { Search, Plus, MoreVertical, Edit, Trash, RefreshCw } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
@@ -34,12 +36,14 @@ import { useToast } from "@/hooks/use-toast"
 interface VilleDto {
   name: string
   code: string
+  interieur: boolean
 }
 
 interface VilleResponseDto {
   id: number
   name: string
   code: string
+  interieur: boolean
   createdAt: string
   updatedAt: string
 }
@@ -53,7 +57,7 @@ export default function VillesPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const [formData, setFormData] = useState<VilleDto>({ name: "", code: "" })
+  const [formData, setFormData] = useState<VilleDto>({ name: "", code: "", interieur: false })
 
   const { toast } = useToast()
   const router = useRouter()
@@ -151,7 +155,7 @@ export default function VillesPage() {
       })
 
       setIsCreateDialogOpen(false)
-      setFormData({ name: "", code: "" })
+      setFormData({ name: "", code: "", interieur: false })
       fetchVilles()
     } catch (error) {
       console.error("Error creating city:", error)
@@ -188,7 +192,7 @@ export default function VillesPage() {
 
       setIsEditDialogOpen(false)
       setSelectedVille(null)
-      setFormData({ name: "", code: "" })
+      setFormData({ name: "", code: "", interieur: false })
       fetchVilles()
     } catch (error) {
       console.error("Error updating city:", error)
@@ -238,6 +242,7 @@ export default function VillesPage() {
     setFormData({
       name: ville.name,
       code: ville.code,
+      interieur: ville.interieur,
     })
     setIsEditDialogOpen(true)
   }
@@ -339,6 +344,7 @@ export default function VillesPage() {
                   <TableHead>ID</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Code</TableHead>
+                  <TableHead>Location</TableHead>
                   <TableHead>Created At</TableHead>
                   <TableHead>Updated At</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -350,6 +356,11 @@ export default function VillesPage() {
                     <TableCell>{ville.id}</TableCell>
                     <TableCell className="font-medium">{ville.name}</TableCell>
                     <TableCell>{ville.code}</TableCell>
+                    <TableCell>
+                      <Badge variant={ville.interieur ? "default" : "secondary"}>
+                        {ville.interieur ? "Interior" : "Exterior"}
+                      </Badge>
+                    </TableCell>
                     <TableCell>{formatDate(ville.createdAt)}</TableCell>
                     <TableCell>{formatDate(ville.updatedAt)}</TableCell>
                     <TableCell className="text-right">
@@ -408,6 +419,21 @@ export default function VillesPage() {
                 className="col-span-3"
               />
             </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="interieur" className="text-right">
+                Interior Location
+              </Label>
+              <div className="col-span-3 flex items-center space-x-2">
+                <Switch
+                  id="interieur"
+                  checked={formData.interieur}
+                  onCheckedChange={(checked) => setFormData({ ...formData, interieur: checked })}
+                />
+                <Label htmlFor="interieur" className="text-sm text-muted-foreground">
+                  {formData.interieur ? "Interior city" : "Exterior city"}
+                </Label>
+              </div>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
@@ -447,6 +473,21 @@ export default function VillesPage() {
                 onChange={(e) => setFormData({ ...formData, code: e.target.value })}
                 className="col-span-3"
               />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="edit-interieur" className="text-right">
+                Interior Location
+              </Label>
+              <div className="col-span-3 flex items-center space-x-2">
+                <Switch
+                  id="edit-interieur"
+                  checked={formData.interieur}
+                  onCheckedChange={(checked) => setFormData({ ...formData, interieur: checked })}
+                />
+                <Label htmlFor="edit-interieur" className="text-sm text-muted-foreground">
+                  {formData.interieur ? "Interior city" : "Exterior city"}
+                </Label>
+              </div>
             </div>
           </div>
           <DialogFooter>

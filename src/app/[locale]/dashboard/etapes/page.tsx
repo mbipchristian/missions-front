@@ -1,9 +1,11 @@
-import Etapes from "@/components/etapes/etapes"
+"use client"
 
-export default function EtapesPage() {
+import { EtapesManagement } from "@/components/etapes/etapes"
+
+export default function Page() {
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <Etapes />
+    <div>
+      <EtapesManagement mandatId="some-mandat-id" onBack={() => {}} />
     </div>
   )
 }

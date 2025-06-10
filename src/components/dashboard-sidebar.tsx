@@ -208,16 +208,7 @@ export function DashboardSidebar() {
                       </button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                  <SidebarMenuItem>
-                  <SidebarMenuButton 
-                      asChild 
-                      isActive={pathname.endsWith("/dashboard/configurations/menus")}
-                    >
-                      <button onClick={() => navigateTo("/dashboard/configurations/menus")}>
-                        <span>Menus</span>
-                      </button>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  
                   <SidebarMenuItem>
                   <SidebarMenuButton 
                       asChild 

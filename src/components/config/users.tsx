@@ -44,15 +44,16 @@ interface UserResponseDto {
     name: string
     description: string
   }
-  grade: {
+  fonction: {
     id: number
-    name: string
-    description: string
-    level: number
+    nom: string
+    rangId: number
+    rangNom: string
+    rangCode: string
   }
   quotaAnnuel: number
-  created_at: string
-  updated_at: string
+  createdAt: string
+  updatedAt: string
 }
 
 interface RoleResponseDto {
@@ -381,7 +382,7 @@ export default function UsersPage() {
                   <TableHead>Email</TableHead>
                   <TableHead>Matricule</TableHead>
                   <TableHead>Rôle</TableHead>
-                  <TableHead>Grade</TableHead>
+                  <TableHead>Fonction</TableHead>
                   <TableHead>Quota Annuel</TableHead>
                   <TableHead>Créé le</TableHead>
                   <TableHead>Mis à jour le</TableHead>
@@ -389,7 +390,7 @@ export default function UsersPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.map((user: UserResponseDto) => (
+                {users.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
@@ -417,17 +418,20 @@ export default function UsersPage() {
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col">
-                        <span className="font-medium">{user.grade.name}</span>
-                        <span className="text-sm text-muted-foreground">Niveau {user.grade.level}</span>
+                        <span className="font-medium">{user.fonction.nom}</span>
+                        <span className="text-sm text-muted-foreground">
+                          {user.fonction.rangNom} ({user.fonction.rangCode})
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col">
                         <span className="font-medium">{user.quotaAnnuel} jours</span>
+                        <span className="text-sm text-muted-foreground">utilisés cette année</span>
                       </div>
                     </TableCell>
-                    <TableCell>{formatDate(user.created_at)}</TableCell>
-                    <TableCell>{formatDate(user.updated_at)}</TableCell>
+                    <TableCell>{formatDate(user.createdAt)}</TableCell>
+                    <TableCell>{formatDate(user.updatedAt)}</TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -499,11 +503,11 @@ export default function UsersPage() {
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-sm font-medium text-muted-foreground">Grade</h4>
+                  <h4 className="text-sm font-medium text-muted-foreground">Fonction</h4>
                   <div className="mt-1">
-                    <p className="font-medium">{selectedUser.grade.name}</p>
+                    <p className="font-medium">{selectedUser.fonction.nom}</p>
                     <p className="text-sm text-muted-foreground">
-                      Niveau {selectedUser.grade.level} - {selectedUser.grade.description}
+                      Rang: {selectedUser.fonction.rangNom} ({selectedUser.fonction.rangCode})
                     </p>
                   </div>
                 </div>
@@ -520,11 +524,11 @@ export default function UsersPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <h4 className="text-sm font-medium text-muted-foreground">Créé le</h4>
-                  <p className="text-sm">{formatDate(selectedUser.created_at)}</p>
+                  <p className="text-sm">{formatDate(selectedUser.createdAt)}</p>
                 </div>
                 <div>
                   <h4 className="text-sm font-medium text-muted-foreground">Dernière mise à jour</h4>
-                  <p className="text-sm">{formatDate(selectedUser.updated_at)}</p>
+                  <p className="text-sm">{formatDate(selectedUser.updatedAt)}</p>
                 </div>
               </div>
             </div>

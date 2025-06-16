@@ -24,6 +24,7 @@ export default function Home() {
     setLoading(true)
     setError("")
 
+    
     try {
       const response = await fetch("http://localhost:8080/auth/login", {
         method: "POST",

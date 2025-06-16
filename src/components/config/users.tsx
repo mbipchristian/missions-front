@@ -307,7 +307,7 @@ export default function UsersPage() {
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>Rechercher des Utilisateurs</CardTitle>
-          <CardDescription>Recherchez des utilisateurs par email ou nom d'utilisateur</CardDescription>
+          <CardDescription>Recherchez des utilisateurs par email ou nom d&apos;utilisateur</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs
@@ -317,7 +317,7 @@ export default function UsersPage() {
           >
             <TabsList className="mb-4">
               <TabsTrigger value="email">Recherche par Email</TabsTrigger>
-              <TabsTrigger value="username">Recherche par Nom d'utilisateur</TabsTrigger>
+              <TabsTrigger value="username">Recherche par Nom d&apos;utilisateur</TabsTrigger>
             </TabsList>
             <TabsContent value="email">
               <div className="flex gap-2">
@@ -465,8 +465,8 @@ export default function UsersPage() {
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Détails de l'Utilisateur</DialogTitle>
-            <DialogDescription>Informations complètes sur l'utilisateur.</DialogDescription>
+            <DialogTitle>Détails de l&apos;Utilisateur</DialogTitle>
+            <DialogDescription>Informations complètes sur l&apos;utilisateur.</DialogDescription>
           </DialogHeader>
           {selectedUser && (
             <div className="grid gap-6 py-4">
@@ -517,7 +517,7 @@ export default function UsersPage() {
                 <h4 className="text-sm font-medium text-muted-foreground">Quota Annuel</h4>
                 <div className="mt-1">
                   <p className="font-medium">{selectedUser.quotaAnnuel} jours utilisés</p>
-                  <p className="text-sm text-muted-foreground">sur l'année {new Date().getFullYear()}</p>
+                  <p className="text-sm text-muted-foreground">sur l&apos;année {new Date().getFullYear()}</p>
                 </div>
               </div>
 
@@ -543,7 +543,7 @@ export default function UsersPage() {
       <Dialog open={isRoleDialogOpen} onOpenChange={setIsRoleDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Changer le Rôle de l'Utilisateur</DialogTitle>
+            <DialogTitle>Changer le Rôle de l&apos;Utilisateur</DialogTitle>
             <DialogDescription>Sélectionnez un nouveau rôle pour {selectedUser?.username}.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -591,7 +591,7 @@ export default function UsersPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
             <AlertDialogDescription>
-              Cette action ne peut pas être annulée. Cela supprimera définitivement l'utilisateur
+              Cette action ne peut pas être annulée. Cela supprimera définitivement l&apos;utilisateur
               {selectedUser && ` "${selectedUser.username}"`} et toutes ses données associées.
             </AlertDialogDescription>
           </AlertDialogHeader>

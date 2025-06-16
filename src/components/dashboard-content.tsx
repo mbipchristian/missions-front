@@ -216,7 +216,7 @@ export function DashboardContent() {
           {/* Contenu principal avec onglets basés sur le rôle */}
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
-              <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
+              <TabsTrigger value="overview">Vue d&apos;ensemble</TabsTrigger>
 
               {/* Onglet RH pour les rôles concernés */}
               {hasPermission(["AGENT_RESSOURCES_HUMAINES", "DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
@@ -241,7 +241,7 @@ export function DashboardContent() {
                 <Card>
                   <CardHeader>
                     <CardTitle>Jours de mission</CardTitle>
-                    <CardDescription>Suivi des jours de mission pour l'année {currentYear}</CardDescription>
+                    <CardDescription>Suivi des jours de mission pour l&apos;année {currentYear}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="h-80">
@@ -367,7 +367,7 @@ export function DashboardContent() {
                   <Card>
                     <CardHeader>
                       <CardTitle>Ressources par type</CardTitle>
-                      <CardDescription>Répartition de l'inventaire</CardDescription>
+                      <CardDescription>Répartition de l&apos;inventaire</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="h-64">

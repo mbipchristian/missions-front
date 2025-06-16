@@ -225,7 +225,7 @@ export function PiecesJointesManagement({ mandatId, onBack }: { mandatId: string
                   <TableHead>Type</TableHead>
                   <TableHead>Taille</TableHead>
                   <TableHead>Ajouté par</TableHead>
-                  <TableHead>Date d'ajout</TableHead>
+                  <TableHead>Date d&apos;ajout</TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>

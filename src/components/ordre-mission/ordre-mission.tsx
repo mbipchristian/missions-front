@@ -185,14 +185,22 @@ export default function OrdresMissionPage() {
 
     setLoading(true)
     try {
-      const response = await fetch(`http://localhost:8080/auth/ordres-mission/user/${userId}`)
+      const response = await fetch(`http://localhost:8080/auth/ordres-mission/users/${userId}`)
       if (!response.ok) {
-        throw new Error("Failed to fetch ordres mission by user")
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
       const data = await response.json()
-      setOrdresMission(data)
+      
+      // Ensure data is an array
+      if (Array.isArray(data)) {
+        setOrdresMission(data)
+      } else {
+        console.error("API response is not an array:", data)
+        setOrdresMission([])
+      }
     } catch (error) {
       console.error("Error fetching ordres mission by user:", error)
+      setOrdresMission([]) // Ensure it's always an array
       toast({
         title: "Erreur",
         description: "Impossible de charger les ordres de mission pour cet utilisateur.",
@@ -202,7 +210,6 @@ export default function OrdresMissionPage() {
       setLoading(false)
     }
   }
-
   // Fetch ordres mission by mandat
   const fetchOrdresMissionByMandat = async (mandatId: string) => {
     if (!mandatId) {
@@ -233,7 +240,7 @@ export default function OrdresMissionPage() {
   // Fetch mandats
   const fetchMandats = async () => {
     try {
-      const response = await fetch("http://localhost:8080/auth/mandats")
+      const response = await fetch("http://localhost:8080/auth/mandats/all")
       if (!response.ok) {
         throw new Error("Failed to fetch mandats")
       }
@@ -252,7 +259,7 @@ export default function OrdresMissionPage() {
   // Fetch users
   const fetchUsers = async () => {
     try {
-      const response = await fetch("http://localhost:8080/auth/users")
+      const response = await fetch("http://localhost:8080/auth/users/all")
       if (!response.ok) {
         throw new Error("Failed to fetch users")
       }
@@ -881,7 +888,7 @@ export default function OrdresMissionPage() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="tauxAvance">Taux d'Avance (%)</Label>
+                  <Label htmlFor="tauxAvance">Taux d&apos;Avance (%)</Label>
                   <Input
                     id="tauxAvance"
                     type="number"
@@ -942,8 +949,8 @@ export default function OrdresMissionPage() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[800px]">
           <DialogHeader>
-            <DialogTitle>Modifier l'Ordre de Mission</DialogTitle>
-            <DialogDescription>Modifiez les détails de l'ordre de mission.</DialogDescription>
+            <DialogTitle>Modifier l&apos;Ordre de Mission</DialogTitle>
+            <DialogDescription>Modifiez les détails de l&apos;ordre de mission.</DialogDescription>
           </DialogHeader>
           <ScrollArea className="max-h-[70vh]">
             <div className="grid gap-6 py-4 px-1">
@@ -1102,7 +1109,7 @@ export default function OrdresMissionPage() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="edit-tauxAvance">Taux d'Avance (%)</Label>
+                  <Label htmlFor="edit-tauxAvance">Taux d&apos;Avance (%)</Label>
                   <Input
                     id="edit-tauxAvance"
                     type="number"
@@ -1163,8 +1170,8 @@ export default function OrdresMissionPage() {
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
         <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>Détails de l'Ordre de Mission</DialogTitle>
-            <DialogDescription>Informations complètes sur l'ordre de mission.</DialogDescription>
+            <DialogTitle>Détails de l&apos;Ordre de Mission</DialogTitle>
+            <DialogDescription>Informations complètes sur l&apos;ordre de mission.</DialogDescription>
           </DialogHeader>
           <ScrollArea className="max-h-[70vh]">
             {selectedOrdreMission && (
@@ -1226,7 +1233,7 @@ export default function OrdresMissionPage() {
                       </p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium">Taux d'Avance</h4>
+                      <h4 className="text-sm font-medium">Taux d&apos;Avance</h4>
                       <p className="text-lg font-semibold">{selectedOrdreMission.tauxAvance}%</p>
                     </div>
                     <div>
@@ -1283,7 +1290,7 @@ export default function OrdresMissionPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
             <AlertDialogDescription>
-              Cette action ne peut pas être annulée. Cela supprimera définitivement l'ordre de mission
+              Cette action ne peut pas être annulée. Cela supprimera définitivement l&apos;ordre de mission
               {selectedOrdreMission && ` "${selectedOrdreMission.reference}"`} et toutes ses données associées.
             </AlertDialogDescription>
           </AlertDialogHeader>

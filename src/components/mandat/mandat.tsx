@@ -1339,13 +1339,13 @@ function CreateMandatForm({ onBack, onSuccess }: { onBack: () => void; onSuccess
       console.log("Sending payload:", payload) // For debugging
 
       const response = await fetch("http://localhost:8080/auth/mandats/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      })
-
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
+  },
+  body: JSON.stringify(payload),
+})
       if (!response.ok) {
         let errorMessage = "Échec de création du mandat"
         try {

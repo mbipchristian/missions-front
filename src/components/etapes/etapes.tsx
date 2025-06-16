@@ -419,7 +419,7 @@ export function EtapesManagement({ mandatId, onBack }: { mandatId: string; onBac
         ) : selectedMandat ? (
           <Card className="max-w-4xl mx-auto">
             <CardHeader>
-              <CardTitle>Détails de l'Étape</CardTitle>
+              <CardTitle>Détails de l&apos;Étape</CardTitle>
               <CardDescription>
                 {currentView === "create"
                   ? "Remplissez les informations pour créer une nouvelle étape."
@@ -437,7 +437,7 @@ export function EtapesManagement({ mandatId, onBack }: { mandatId: string; onBac
             <CardContent className="space-y-6">
               {/* Nom de l'étape */}
               <div className="grid gap-2">
-                <Label htmlFor="nom">Nom de l'étape *</Label>
+                <Label htmlFor="nom">Nom de l&apos;étape *</Label>
                 <Input
                   id="nom"
                   value={formData.nom}
@@ -847,7 +847,7 @@ export function EtapesManagement({ mandatId, onBack }: { mandatId: string; onBac
           <AlertDialogHeader>
             <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
             <AlertDialogDescription>
-              Cette action ne peut pas être annulée. Cela supprimera définitivement l'étape
+              Cette action ne peut pas être annulée. Cela supprimera définitivement l&apos;étape
               {selectedEtape && ` "${selectedEtape.nom}"`} et toutes ses données associées.
             </AlertDialogDescription>
           </AlertDialogHeader>

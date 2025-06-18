@@ -103,31 +103,71 @@ export function DashboardSidebar() {
                 <div className="pl-6 pt-1">
                   <SidebarMenu>
                     {/* Création de mandat - Agent RH uniquement */}
-                    {hasPermission(["AGENT_RESSOURCES_HUMAINES"]) && (
+                    {hasPermission(["AGENT_RESSOURCES_HUMAINES", "ADMIN"]) && (
                       <SidebarMenuItem>
-                        <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/mandats/create")}>
-                          <button onClick={() => navigateTo("/dashboard/mandats/create")}>
-                            <span>Créer un mandat</span>
+                        <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/mandats/enregistrer-mandat")}>
+                          <button onClick={() => navigateTo("/dashboard/mandats/enregistrer-mandat")}>
+                            <span>Enrégistrer un mandat</span>
                           </button>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     )}
 
                     <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/mandats")}>
-                        <button onClick={() => navigateTo("/dashboard/mandats")}>
-                          <span>Journal des mandats</span>
+                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/mandats/en-attente-confirmation")}>
+                        <button onClick={() => navigateTo("/dashboard/mandats/en-attente-confirmation")}>
+                          <span>En attente de confirmation</span>
                         </button>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
 
                     <SidebarMenuItem>
+                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/mandats/en-attente-execution")}>
+                        <button onClick={() => navigateTo("/dashboard/mandats/en-attente-execution")}>
+                          <span>En attente d'exécution</span>
+                        </button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/mandats/en-cours")}>
+                        <button onClick={() => navigateTo("/dashboard/mandats/en-cours")}>
+                          <span>En cours</span>
+                        </button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/mandats/acheve")}>
+                        <button onClick={() => navigateTo("/dashboard/mandats/acheve")}>
+                          <span>Acheve</span>
+                        </button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/mandats/mes-mandats")}>
+                        <button onClick={() => navigateTo("/dashboard/mandats/mes-mandats")}>
+                          <span>Mes mandats</span>
+                        </button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/mandats/tous")}>
+                        <button onClick={() => navigateTo("/dashboard/mandats/tous")}>
+                          <span>Tous les mandats</span>
+                        </button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    {/* <SidebarMenuItem>
                       <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/etapes")}>
                         <button onClick={() => navigateTo("/dashboard/etapes")}>
                           <span>Étapes de missions</span>
                         </button>
                       </SidebarMenuButton>
-                    </SidebarMenuItem>
+                    </SidebarMenuItem> */}
                   </SidebarMenu>
                 </div>
               </CollapsibleContent>
@@ -150,15 +190,55 @@ export function DashboardSidebar() {
                 <div className="pl-6 pt-1">
                   <SidebarMenu>
                     <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/ordres-mission")}>
-                        <button onClick={() => navigateTo("/dashboard/ordres-mission")}>
-                          <span>Gérer les ordres</span>
+                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/ordres-mission/en-attente-justificatif")}>
+                        <button onClick={() => navigateTo("/dashboard/ordres-mission/en-attente-justificatif")}>
+                          <span>En attente de piece jointe</span>
+                        </button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/ordres-mission/en-attente-confirmation")}>
+                        <button onClick={() => navigateTo("/dashboard/ordres-mission/en-attente-confirmation")}>
+                          <span>En attente de confirmation</span>
+                        </button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/ordres-mission/en-attente-execution")}>
+                        <button onClick={() => navigateTo("/dashboard/ordres-mission/en-attente-execution")}>
+                          <span>En attente d'execution</span>
+                        </button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/ordres-mission/en-cours")}>
+                        <button onClick={() => navigateTo("/dashboard/ordres-mission/en-cours")}>
+                          <span>En cours</span>
+                        </button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/ordres-mission/acheve")}>
+                        <button onClick={() => navigateTo("/dashboard/ordres-mission/acheve")}>
+                          <span>Acheve</span>
+                        </button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/ordres-mission/mes-ordres-mission")}>
+                        <button onClick={() => navigateTo("/dashboard/ordres-mission/mes-ordres-mission")}>
+                          <span>Mes ordres de missions</span>
                         </button>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
 
                     {/* Gestion des pièces jointes - Agent RH uniquement */}
-                    {hasPermission(["AGENT_RESSOURCES_HUMAINES"]) && (
+                    {/* {hasPermission(["AGENT_RESSOURCES_HUMAINES"]) && (
                       <SidebarMenuItem>
                         <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/pieces-jointes")}>
                           <button onClick={() => navigateTo("/dashboard/pieces-jointes")}>
@@ -169,7 +249,8 @@ export function DashboardSidebar() {
                           </button>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
-                    )}
+                    )} */}
+                    
                   </SidebarMenu>
                 </div>
               </CollapsibleContent>

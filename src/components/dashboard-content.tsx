@@ -128,19 +128,7 @@ export function DashboardContent() {
           {/* Statistiques principales */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Statistiques communes à tous les rôles */}
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">Missions Totales</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalMissions}</div>
-                <div className="flex items-center mt-1">
-                  <Badge variant="outline" className="bg-green-100 text-green-800">
-                    {stats.activeMissions} actives
-                  </Badge>
-                </div>
-              </CardContent>
-            </Card>
+        
 
             <Card>
               <CardHeader className="pb-2">
@@ -153,35 +141,9 @@ export function DashboardContent() {
               </CardContent>
             </Card>
 
-            {/* Statistiques spécifiques aux rôles RH */}
-            {hasPermission(["AGENT_RESSOURCES_HUMAINES", "DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Utilisateurs</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats.userCount}</div>
-                  <p className="text-xs text-muted-foreground mt-1">Personnel géré</p>
-                </CardContent>
-              </Card>
-            )}
+            
 
-            {/* Statistiques spécifiques aux rôles ART et Patrimoine */}
-            {hasPermission(["AGENT_ART", "DIRECTEUR_PATRIMOINE", "ADMIN"]) && (
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Ressources</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{stats.resourceCount}</div>
-                  <div className="flex items-center mt-1">
-                    <Badge variant="outline" className="bg-red-100 text-red-800">
-                      {stats.lowStockResources} en stock faible
-                    </Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+            
 
             {/* Statistiques pour les directeurs */}
             {hasPermission(["DIRECTEUR_RESSOURCES_HUMAINES", "DIRECTEUR_PATRIMOINE", "ADMIN"]) && (
@@ -196,21 +158,7 @@ export function DashboardContent() {
               </Card>
             )}
 
-            {/* Budget pour les directeurs */}
-            {hasPermission(["DIRECTEUR_RESSOURCES_HUMAINES", "DIRECTEUR_PATRIMOINE", "ADMIN"]) && (
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Budget</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{Math.round((stats.budgetUsed / stats.budget) * 100)}%</div>
-                  <Progress className="mt-2" value={(stats.budgetUsed / stats.budget) * 100} />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {stats.budgetUsed.toLocaleString()} € / {stats.budget.toLocaleString()} €
-                  </p>
-                </CardContent>
-              </Card>
-            )}
+            
           </div>
 
           {/* Contenu principal avec onglets basés sur le rôle */}

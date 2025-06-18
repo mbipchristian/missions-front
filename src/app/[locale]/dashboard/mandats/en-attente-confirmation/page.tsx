@@ -1,0 +1,115 @@
+"use client"
+
+import { useEffect, useState, useMemo } from "react"
+import { MandatTable } from "@/components/mandat/mandat-table"
+import { MandatActions } from "@/components/mandat/mandat-actions"
+import { Filters, type FilterState } from "@/components/ui/filters"
+import { LoadingSpinner } from "@/components/ui/loading-spinner"
+import { ErrorMessage } from "@/components/ui/error-message"
+import { apiService } from "@/lib/api"
+import type { Mandat } from "@/types"
+
+export default function MandatsEnAttenteConfirmationPage() {
+  const [mandats, setMandats] = useState<Mandat[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [filters, setFilters] = useState<FilterState>({
+    search: "",
+    dateDebut: undefined,
+    dateFin: undefined,
+    createdBy: "",
+  })
+
+  const filteredMandats = useMemo(() => {
+    return mandats.filter((mandat) => {
+      // Filtre de recherche
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase()
+        if (
+          !mandat.reference.toLowerCase().includes(searchLower) &&
+          !mandat.objectif.toLowerCase().includes(searchLower)
+        ) {
+          return false
+        }
+      }
+
+      // Filtre par date de début
+      if (filters.dateDebut) {
+        const mandatDate = new Date(mandat.dateDebut)
+        if (mandatDate < filters.dateDebut) {
+          return false
+        }
+      }
+
+      // Filtre par date de fin
+      if (filters.dateFin) {
+        const mandatDate = new Date(mandat.dateFin)
+        if (mandatDate > filters.dateFin) {
+          return false
+        }
+      }
+
+      // Filtre par créateur
+      if (filters.createdBy) {
+        const createdByLower = filters.createdBy.toLowerCase()
+        if (!mandat.createdBy.toLowerCase().includes(createdByLower)) {
+          return false
+        }
+      }
+
+      return true
+    })
+  }, [mandats, filters])
+
+  const fetchMandats = async () => {
+    try {
+      setLoading(true)
+      const data = await apiService.getMandatsEnAttenteConfirmation()
+      setMandats(data)
+    } catch (err) {
+      setError("Erreur lors du chargement des mandats en attente de confirmation")
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchMandats()
+  }, [])
+
+  const clearFilters = () => {
+    setFilters({
+      search: "",
+      dateDebut: undefined,
+      dateFin: undefined,
+      createdBy: "",
+    })
+  }
+
+  if (loading) return <LoadingSpinner />
+  if (error) return <ErrorMessage message={error} />
+
+  return (
+    <div>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">Mandats en attente de confirmation</h1>
+        <p className="text-muted-foreground">Liste des mandats qui nécessitent une confirmation avant exécution</p>
+      </div>
+
+      <Filters filters={filters} onFiltersChange={setFilters} onClearFilters={clearFilters} />
+
+      <MandatTable
+        mandats={filteredMandats}
+        title="Mandats en attente de confirmation"
+        renderActions={(mandat) => (
+          <MandatActions
+            mandat={mandat}
+            actions={["confirm", "details", "downloadPdf"]}
+            onActionComplete={fetchMandats}
+          />
+        )}
+      />
+    </div>
+  )
+}

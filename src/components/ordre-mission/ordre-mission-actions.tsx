@@ -4,14 +4,15 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { FileUpload } from "@/components/ui/file-upload"
-import { CheckCircle, Download, Upload, X } from "lucide-react"
+import { CheckCircle, Download, Edit, Upload, X } from "lucide-react"
 import type { OrdreMission } from "@/types"
 import { apiService } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
+import { useRouter } from 'next/navigation' // Not 'next/router'
 
 interface OrdreMissionActionsProps {
   ordreMission: OrdreMission
-  actions: ("confirm" | "reject" | "downloadPdf" | "addAttachments")[]
+  actions: ("confirm" | "reject" | "downloadPdf" | "addAttachments"| "edit")[]
   onActionComplete?: () => void
 }
 
@@ -19,6 +20,7 @@ export function OrdreMissionActions({ ordreMission, actions, onActionComplete }:
   const [loading, setLoading] = useState<string | null>(null)
   const [attachmentFiles, setAttachmentFiles] = useState<File[]>([])
   const { toast } = useToast()
+  const router = useRouter() // Use useRouter from 'next/navigation'
 
   const handleConfirm = async () => {
     try {
@@ -38,6 +40,10 @@ export function OrdreMissionActions({ ordreMission, actions, onActionComplete }:
     } finally {
       setLoading(null)
     }
+  }
+  const handleEdit = () => {
+    // Rediriger vers la page de modification
+    router.push(`/dashboard/ordres-mission/${ordreMission.id}/modifier`)
   }
 
   const handleReject = async () => {
@@ -84,31 +90,33 @@ export function OrdreMissionActions({ ordreMission, actions, onActionComplete }:
   }
 
   const handleAddAttachments = async () => {
-    if (attachmentFiles.length === 0) return
+  if (attachmentFiles.length === 0) return
 
-    try {
-      setLoading("addAttachments")
-      const formData = new FormData()
-      attachmentFiles.forEach((file, index) => {
-        formData.append(`attachment_${index}`, file)
-      })
-
-      await apiService.addOrdreMissionAttachments(ordreMission.id, formData)
-      toast({
-        title: "Succès",
-        description: "Pièces jointes ajoutées avec succès",
-      })
-      onActionComplete?.()
-    } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Erreur lors de l'ajout des pièces jointes",
-        variant: "destructive",
-      })
-    } finally {
-      setLoading(null)
+  try {
+    setLoading("addAttachments")
+    
+    // Envoyer chaque fichier individuellement
+    for (let i = 0; i < attachmentFiles.length; i++) {
+      const file = attachmentFiles[i]
+      await apiService.addOrdreMissionAttachments(ordreMission.id, file)
     }
+
+    toast({
+      title: "Succès",
+      description: "Pièces jointes ajoutées avec succès",
+    })
+    onActionComplete?.()
+  } catch (error) {
+    console.error("Erreur upload:", error)
+    toast({
+      title: "Erreur",
+      description: `Erreur lors de l'ajout des pièces jointes`,
+      variant: "destructive",
+    })
+  } finally {
+    setLoading(null)
   }
+}
 
   const addAttachmentFile = (file: File) => {
     setAttachmentFiles((prev) => [...prev, file])
@@ -137,7 +145,14 @@ export function OrdreMissionActions({ ordreMission, actions, onActionComplete }:
       {actions.includes("downloadPdf") && (
         <Button variant="outline" size="sm" onClick={handleDownloadPdf} disabled={loading === "download"}>
           <Download className="h-4 w-4 mr-1" />
-          {loading === "download" ? "Téléchargement..." : "PDF"}
+          {loading === "download" ? "Téléchargement..." : "Imprimer"}
+        </Button>
+      )}
+
+      {actions.includes("edit") && (
+        <Button variant="outline" size="sm" onClick={handleEdit}>
+          <Edit className="h-4 w-4 mr-1" />
+          Modifier
         </Button>
       )}
 

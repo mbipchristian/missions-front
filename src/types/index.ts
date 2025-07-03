@@ -49,12 +49,14 @@ export interface Mandat {
   dateFin: string
   duree: number
   statut: MandatStatut
-  created_at: string
-  updated_at: string
+  createdAt: string
+  updatedAt: string
   users: User[]
   villes: Ville[]
   ressources: Ressource[]
   createdBy: string
+  confirmePar: number | null
+  confirmele: string | null
   usersCount: number
   villesCount: number
   ressourcesCount: number
@@ -76,4 +78,6 @@ export interface OrdreMission {
   statut: OrdreMissionStatut
   created_at: string
   updated_at: string
+  confirmele: string | null
 }
+

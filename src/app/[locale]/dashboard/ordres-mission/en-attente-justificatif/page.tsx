@@ -94,7 +94,7 @@ export default function OrdresMissionEnAttenteJustificatifPage() {
         renderActions={(ordre : OrdreMission) => (
           <OrdreMissionActions
             ordreMission={ordre}
-            actions={["addAttachments"]}
+            actions={["addAttachments", "downloadPdf", "edit"]}
             onActionComplete={fetchOrdresMission}
           />
         )}

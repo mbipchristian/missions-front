@@ -16,6 +16,9 @@ import {
   Settings,
   CheckSquare,
   Clock,
+  Sparkles,
+  Target,
+  Zap,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
@@ -39,7 +42,6 @@ export function DashboardSidebar() {
   const [openOrdres, setOpenOrdres] = useState(false)
   const [openRessources, setOpenRessources] = useState(false)
   const [openAdmin, setOpenAdmin] = useState(false)
-  const [openApprobations, setOpenApprobations] = useState(false)
   const router = useRouter()
   const locale = useLocale()
   const { user, logout, hasPermission } = useAuth()
@@ -55,382 +57,294 @@ export function DashboardSidebar() {
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Chargement...</p>
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-50 to-blue-100">
+        <div className="text-center p-8 bg-white rounded-2xl shadow-xl border border-blue-200">
+          <div className="relative">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto"></div>
+            <div className="absolute inset-0 rounded-full bg-blue-100 opacity-20 animate-pulse"></div>
+          </div>
+          <p className="mt-6 text-blue-800 font-medium">Chargement de votre espace...</p>
+          <div className="flex justify-center space-x-1 mt-2">
+            <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></div>
+            <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+            <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <Sidebar>
-      <SidebarHeader className="flex h-14 items-center border-b px-6">
+    <Sidebar className="border-r-0 shadow-xl bg-gradient-to-b from-white via-blue-50/30 to-blue-100/20 bg-blue-500 w-100">
+     <SidebarHeader className="flex h-14 items-center border-b px-6">
         <Link href={`/${locale}/dashboard`} className="flex items-center gap-2 font-semibold">
           <Shield className="h-6 w-6" />
           <span>ART Dashboard</span>
         </Link>
         <SidebarTrigger className="ml-auto md:hidden" />
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarMenu>
-          {/* Dashboard principal */}
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard")}>
-              <button onClick={() => navigateTo("/dashboard")}>
-                <Home className="mr-2 h-4 w-4" />
-                <span>TABLEAU DE BORD</span>
-              </button>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+      <SidebarContent className="bg-gradient-to-b from-white to-gray-50/50">
+        <SidebarMenu className="p-2">
+          
 
-          {/* MISSIONS - Visible pour Agent RH et Directeur RH */}
+          {/* MISSIONS - Design amélioré */}
           {hasPermission(["AGENT_RESSOURCES_HUMAINES", "DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
-            <Collapsible open={openMissions} onOpenChange={setOpenMissions}>
+            <div className="mt-4">
+              
+              <Collapsible open={openMissions} onOpenChange={setOpenMissions}>
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 transition-all duration-300 hover:shadow-md hover:scale-[1.02] border border-blue-200">
+                      <div className="flex items-center py-3 px-4 w-full">
+                        <div className="relative">
+                          <Briefcase className="mr-3 h-5 w-5 text-blue-700" />
+                          <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-600 rounded-full animate-pulse"></div>
+                        </div>
+                        <span className="font-bold text-blue-900 tracking-wide">MANDATS</span>
+                        <ChevronDown
+                          className={`ml-auto h-4 w-4 text-blue-700 transition-transform duration-300 ${openMissions ? "rotate-180" : ""}`}
+                        />
+                      </div>
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                </SidebarMenuItem>
+                <CollapsibleContent className="transition-all duration-300">
+                  <div className="pl-4 pt-2 space-y-1">
+                    <SidebarMenu>
+                      {/* Création de mandat */}
+                      {hasPermission(["AGENT_RESSOURCES_HUMAINES", "ADMIN"]) && (
+                        <SidebarMenuItem>
+                          <SidebarMenuButton 
+                            asChild 
+                            className={`
+                              rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-green-500
+                              ${pathname.endsWith("/dashboard/mandats/enregistrer-mandat") 
+                                ? "bg-gradient-to-r from-green-100 to-green-200 border-l-green-500 text-green-900" 
+                                : "hover:bg-gradient-to-r hover:from-green-50 hover:to-yellow-50"
+                              }
+                            `}
+                          >
+                            <button onClick={() => navigateTo("/dashboard/mandats/enregistrer-mandat")} className="w-full">
+                              <div className="flex items-center py-2 px-4">
+                                <Target className="mr-2 h-4 w-4 text-green-600" />
+                                <span className="text-sm font-medium">Enregistrer un mandat</span>
+                              </div>
+                            </button>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      )}
+
+                      {[
+                        { path: "en-attente-confirmation", label: "En attente de confirmation", color: "yellow", count: "3" },
+                        { path: "en-attente-execution", label: "En attente d'exécution", color: "yellow", count: "5" },
+                        { path: "en-cours", label: "En cours", color: "yellow", count: "8" },
+                        { path: "acheve", label: "Achevé", color: "yellow", count: "12" },
+                        { path: "mes-mandats", label: "Mes mandats", color: "yellow", count: "4" },
+                        { path: "tous", label: "Tous les mandats", color: "yellow", count: "32" },
+                      ].map((item) => (
+                        <SidebarMenuItem key={item.path}>
+                          <SidebarMenuButton 
+                            asChild 
+                            className={`
+                              rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-${item.color}-500
+                              ${pathname.endsWith(`/dashboard/mandats/${item.path}`) 
+                                ? `bg-gradient-to-r from-${item.color}-100 to-${item.color}-200 border-l-${item.color}-500 text-${item.color}-900` 
+                                : `hover:bg-gradient-to-r hover:from-${item.color}-50 hover:to-blue-50`
+                              }
+                            `}
+                          >
+                            <button onClick={() => navigateTo(`/dashboard/mandats/${item.path}`)} className="w-full">
+                              <div className="flex items-center justify-between py-2 px-4">
+                                <span className="text-sm font-medium">{item.label}</span>
+                                <Badge className={`bg-${item.color}-100 text-${item.color}-800 text-xs px-2 py-1 animate-pulse`}>
+                                  {item.count}
+                                </Badge>
+                              </div>
+                            </button>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
+                    </SidebarMenu>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
+          )}
+
+          {/* ORDRES DE MISSIONS */}
+          {hasPermission(["AGENT_RESSOURCES_HUMAINES", "DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
+            <div className="mt-4">
+              <Collapsible open={openOrdres} onOpenChange={setOpenOrdres}>
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 transition-all duration-300 hover:shadow-md hover:scale-[1.02] border border-green-200">
+                      <div className="flex items-center py-3 px-4 w-full">
+                        <div className="relative">
+                          <FileText className="mr-3 h-5 w-5 text-green-700" />
+                          <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        </div>
+                        <span className="font-bold text-green-900 tracking-wide">ORDRES DE MISSIONS</span>
+                        <ChevronDown className={`ml-auto h-4 w-4 text-green-700 transition-transform duration-300 ${openOrdres ? "rotate-180" : ""}`} />
+                      </div>
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                </SidebarMenuItem>
+                <CollapsibleContent className="transition-all duration-300">
+                  <div className="pl-4 pt-2 space-y-1">
+                    <SidebarMenu>
+                      {[
+                        { path: "en-attente-justificatif", label: "En attente de pièce jointe", color: "yellow", count: "" },
+                        { path: "en-attente-confirmation", label: "En attente de confirmation", color: "yellow", count: "" },
+                        { path: "en-attente-execution", label: "En attente d'exécution", color: "yellow", count: "" },
+                        { path: "en-cours", label: "En cours", color: "yellow", count: "" },
+                        { path: "acheve", label: "Achevé", color: "yellow", count: "" },
+                        { path: "mes-ordres-mission", label: "Mes ordres de missions", color: "yellow", count: "" },
+                      ].map((item) => (
+                        <SidebarMenuItem key={item.path}>
+                          <SidebarMenuButton 
+                            asChild 
+                            className={`
+                              rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-${item.color}-500
+                              ${pathname.endsWith(`/dashboard/ordres-mission/${item.path}`) 
+                                ? `bg-gradient-to-r from-${item.color}-100 to-${item.color}-200 border-l-${item.color}-500 text-${item.color}-900` 
+                                : `hover:bg-gradient-to-r hover:from-${item.color}-50 hover:to-green-50`
+                              }
+                            `}
+                          >
+                            <button onClick={() => navigateTo(`/dashboard/ordres-mission/${item.path}`)} className="w-full">
+                              <div className="flex items-center justify-between py-2 px-4">
+                                <span className="text-sm font-medium">{item.label}</span>
+                                <Badge className={`bg-${item.color}-100 text-${item.color}-800 text-xs px-2 py-1 animate-pulse`}>
+                                  {item.count}
+                                </Badge>
+                              </div>
+                            </button>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
+                    </SidebarMenu>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
+          )}
+
+          {/* CONFIGURATIONS */}
+          <div className="mt-4">
+            <Collapsible open={openAdmin} onOpenChange={setOpenAdmin}>
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton>
-                    <Briefcase className="mr-2 h-4 w-4" />
-                    <span>MANDATS</span>
-                    <ChevronDown
-                      className={`ml-auto h-4 w-4 transition-transform ${openMissions ? "rotate-180" : ""}`}
-                    />
+                  <SidebarMenuButton className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-yellow-50 to-yellow-100 hover:from-yellow-100 hover:to-yellow-200 transition-all duration-300 hover:shadow-md hover:scale-[1.02] border border-yellow-200">
+                    <div className="flex items-center py-3 px-4 w-full">
+                      <div className="relative">
+                        <Settings className="mr-3 h-5 w-5 text-yellow-700" />
+                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                      </div>
+                      <span className="font-bold text-yellow-900 tracking-wide">CONFIGURATIONS</span>
+                      <ChevronDown className={`ml-auto h-4 w-4 text-yellow-700 transition-transform duration-300 ${openAdmin ? "rotate-180" : ""}`} />
+                    </div>
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
               </SidebarMenuItem>
-              <CollapsibleContent>
-                <div className="pl-6 pt-1">
+              <CollapsibleContent className="transition-all duration-300">
+                <div className="pl-4 pt-2 space-y-1">
                   <SidebarMenu>
-                    {/* Création de mandat - Agent RH uniquement */}
-                    {hasPermission(["AGENT_RESSOURCES_HUMAINES", "ADMIN"]) && (
-                      <SidebarMenuItem>
-                        <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/mandats/enregistrer-mandat")}>
-                          <button onClick={() => navigateTo("/dashboard/mandats/enregistrer-mandat")}>
-                            <span>Enrégistrer un mandat</span>
-                          </button>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
+                    {hasPermission(["AGENT_RESSOURCES_HUMAINES", "DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
+                      <>
+                        <SidebarMenuItem>
+                          <SidebarMenuButton 
+                            asChild 
+                            className={`
+                              rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-blue-500
+                              ${pathname.endsWith("/dashboard/configurations/register") 
+                                ? "bg-gradient-to-r from-blue-100 to-blue-200 border-l-blue-500 text-blue-900" 
+                                : "hover:bg-gradient-to-r hover:from-blue-50 hover:to-yellow-50"
+                              }
+                            `}
+                          >
+                            <button onClick={() => navigateTo("/dashboard/configurations/register")} className="w-full">
+                              <div className="flex items-center py-2 px-4">
+                                <User className="mr-2 h-4 w-4 text-blue-600" />
+                                <span className="text-sm font-medium">Créer un compte utilisateur</span>
+                              </div>
+                            </button>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+
+                        <SidebarMenuItem>
+                          <SidebarMenuButton 
+                            asChild 
+                            className={`
+                              rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-green-500
+                              ${pathname.endsWith("/dashboard/configurations/users") 
+                                ? "bg-gradient-to-r from-green-100 to-green-200 border-l-green-500 text-green-900" 
+                                : "hover:bg-gradient-to-r hover:from-green-50 hover:to-yellow-50"
+                              }
+                            `}
+                          >
+                            <button onClick={() => navigateTo("/dashboard/configurations/users")} className="w-full">
+                              <div className="flex items-center py-2 px-4">
+                                <Settings className="mr-2 h-4 w-4 text-green-600" />
+                                <span className="text-sm font-medium">Gérer les utilisateurs</span>
+                              </div>
+                            </button>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      </>
                     )}
 
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/mandats/en-attente-confirmation")}>
-                        <button onClick={() => navigateTo("/dashboard/mandats/en-attente-confirmation")}>
-                          <span>En attente de confirmation</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
+                    {hasPermission(["DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
+                      <>
+                        <SidebarMenuItem>
+                          <SidebarMenuButton 
+                            asChild 
+                            className={`
+                              rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-purple-500
+                              ${pathname.endsWith("/dashboard/configurations/fonctions") 
+                                ? "bg-gradient-to-r from-purple-100 to-purple-200 border-l-purple-500 text-purple-900" 
+                                : "hover:bg-gradient-to-r hover:from-purple-50 hover:to-yellow-50"
+                              }
+                            `}
+                          >
+                            <button onClick={() => navigateTo("/dashboard/configurations/fonctions")} className="w-full">
+                              <div className="flex items-center py-2 px-4">
+                                <Briefcase className="mr-2 h-4 w-4 text-purple-600" />
+                                <span className="text-sm font-medium">Fonctions</span>
+                              </div>
+                            </button>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
 
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/mandats/en-attente-execution")}>
-                        <button onClick={() => navigateTo("/dashboard/mandats/en-attente-execution")}>
-                          <span>En attente d'exécution</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/mandats/en-cours")}>
-                        <button onClick={() => navigateTo("/dashboard/mandats/en-cours")}>
-                          <span>En cours</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/mandats/acheve")}>
-                        <button onClick={() => navigateTo("/dashboard/mandats/acheve")}>
-                          <span>Acheve</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/mandats/mes-mandats")}>
-                        <button onClick={() => navigateTo("/dashboard/mandats/mes-mandats")}>
-                          <span>Mes mandats</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/mandats/tous")}>
-                        <button onClick={() => navigateTo("/dashboard/mandats/tous")}>
-                          <span>Tous les mandats</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-
-                    {/* <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/etapes")}>
-                        <button onClick={() => navigateTo("/dashboard/etapes")}>
-                          <span>Étapes de missions</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem> */}
+                        <SidebarMenuItem>
+                          <SidebarMenuButton 
+                            asChild 
+                            className={`
+                              rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-indigo-500
+                              ${pathname.endsWith("/dashboard/configurations/rangs") 
+                                ? "bg-gradient-to-r from-indigo-100 to-indigo-200 border-l-indigo-500 text-indigo-900" 
+                                : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-yellow-50"
+                              }
+                            `}
+                          >
+                            <button onClick={() => navigateTo("/dashboard/configurations/rangs")} className="w-full">
+                              <div className="flex items-center py-2 px-4">
+                                <Shield className="mr-2 h-4 w-4 text-indigo-600" />
+                                <span className="text-sm font-medium">Rangs</span>
+                              </div>
+                            </button>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      </>
+                    )}
                   </SidebarMenu>
                 </div>
               </CollapsibleContent>
             </Collapsible>
-          )}
-
-          {/* ORDRES DE MISSIONS - Visible pour Agent RH et Directeur RH */}
-          {hasPermission(["AGENT_RESSOURCES_HUMAINES", "DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
-            <Collapsible open={openOrdres} onOpenChange={setOpenOrdres}>
-              <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton>
-                    <FileText className="mr-2 h-4 w-4" />
-                    <span>ORDRES DE MISSIONS</span>
-                    <ChevronDown className={`ml-auto h-4 w-4 transition-transform ${openOrdres ? "rotate-180" : ""}`} />
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
-              </SidebarMenuItem>
-              <CollapsibleContent>
-                <div className="pl-6 pt-1">
-                  <SidebarMenu>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/ordres-mission/en-attente-justificatif")}>
-                        <button onClick={() => navigateTo("/dashboard/ordres-mission/en-attente-justificatif")}>
-                          <span>En attente de piece jointe</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/ordres-mission/en-attente-confirmation")}>
-                        <button onClick={() => navigateTo("/dashboard/ordres-mission/en-attente-confirmation")}>
-                          <span>En attente de confirmation</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/ordres-mission/en-attente-execution")}>
-                        <button onClick={() => navigateTo("/dashboard/ordres-mission/en-attente-execution")}>
-                          <span>En attente d'execution</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/ordres-mission/en-cours")}>
-                        <button onClick={() => navigateTo("/dashboard/ordres-mission/en-cours")}>
-                          <span>En cours</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/ordres-mission/acheve")}>
-                        <button onClick={() => navigateTo("/dashboard/ordres-mission/acheve")}>
-                          <span>Acheve</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/ordres-mission/mes-ordres-mission")}>
-                        <button onClick={() => navigateTo("/dashboard/ordres-mission/mes-ordres-mission")}>
-                          <span>Mes ordres de missions</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-
-                    {/* Gestion des pièces jointes - Agent RH uniquement */}
-                    {/* {hasPermission(["AGENT_RESSOURCES_HUMAINES"]) && (
-                      <SidebarMenuItem>
-                        <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/pieces-jointes")}>
-                          <button onClick={() => navigateTo("/dashboard/pieces-jointes")}>
-                            <span>Pièces jointes</span>
-                            <Badge variant="secondary" className="ml-auto">
-                              12
-                            </Badge>
-                          </button>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    )} */}
-                    
-                  </SidebarMenu>
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
-          )}
-
-          {/* APPROBATIONS - Visible uniquement pour Directeur RH */}
-          {hasPermission(["DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
-            <Collapsible open={openApprobations} onOpenChange={setOpenApprobations}>
-              <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton>
-                    <CheckSquare className="mr-2 h-4 w-4" />
-                    <span>APPROBATIONS</span>
-                    <Badge variant="destructive" className="ml-auto">
-                      5
-                    </Badge>
-                    <ChevronDown
-                      className={`ml-2 h-4 w-4 transition-transform ${openApprobations ? "rotate-180" : ""}`}
-                    />
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
-              </SidebarMenuItem>
-              <CollapsibleContent>
-                <div className="pl-6 pt-1">
-                  <SidebarMenu>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/approbations/mandats")}>
-                        <button onClick={() => navigateTo("/dashboard/approbations/mandats")}>
-                          <span>Mandats en attente</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/approbations/ordres")}>
-                        <button onClick={() => navigateTo("/dashboard/approbations/ordres")}>
-                          <span>Ordres en attente</span>
-                          <Badge variant="outline" className="ml-auto bg-blue-100 text-blue-800">
-                            7
-                          </Badge>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  </SidebarMenu>
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
-          )}
-
-          {/* MES MISSIONS - Visible pour tous les utilisateurs */}
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/mes-missions")}>
-              <button onClick={() => navigateTo("/dashboard/mes-missions")}>
-                <Clock className="mr-2 h-4 w-4" />
-                <span>MES MISSIONS</span>
-              </button>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-
-          {/* RESSOURCES - Visible pour AGENT_ART et ADMIN */}
-          {hasPermission(["AGENT_ART", "ADMIN"]) && (
-            <Collapsible open={openRessources} onOpenChange={setOpenRessources}>
-              <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton>
-                    <Package className="mr-2 h-4 w-4" />
-                    <span>RESSOURCES</span>
-                    <ChevronDown
-                      className={`ml-auto h-4 w-4 transition-transform ${openRessources ? "rotate-180" : ""}`}
-                    />
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
-              </SidebarMenuItem>
-              <CollapsibleContent>
-                <div className="pl-6 pt-1">
-                  <SidebarMenu>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/ressources")}>
-                        <button onClick={() => navigateTo("/dashboard/ressources")}>
-                          <span>Gérer les ressources</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/configurations/villes")}>
-                        <button onClick={() => navigateTo("/dashboard/configurations/villes")}>
-                          <span>Gérer les villes</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  </SidebarMenu>
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
-          )}
-
-          {/* CONFIGURATIONS - Visible selon les rôles */}
-          <Collapsible open={openAdmin} onOpenChange={setOpenAdmin}>
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>CONFIGURATIONS</span>
-                  <ChevronDown className={`ml-auto h-4 w-4 transition-transform ${openAdmin ? "rotate-180" : ""}`} />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-            </SidebarMenuItem>
-            <CollapsibleContent>
-              <div className="pl-6 pt-1">
-                <SidebarMenu>
-                  {/* Création de comptes - RH et Admin uniquement */}
-                  {hasPermission(["AGENT_RESSOURCES_HUMAINES", "DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/configurations/register")}>
-                        <button onClick={() => navigateTo("/dashboard/configurations/register")}>
-                          <span>Créer un compte utilisateur</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )}
-
-                  {/* Gestion des utilisateurs - RH et Admin uniquement */}
-                  {hasPermission(["AGENT_RESSOURCES_HUMAINES", "DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/configurations/users")}>
-                        <button onClick={() => navigateTo("/dashboard/configurations/users")}>
-                          <span>Gérer les utilisateurs</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )}
-
-                  {/* Fonctions - Directeur RH et Admin uniquement */}
-                  {hasPermission(["DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/configurations/fonctions")}>
-                        <button onClick={() => navigateTo("/dashboard/configurations/fonctions")}>
-                          <span>Fonctions</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )}
-
-                  {/* Rangs - Directeur RH et Admin uniquement */}
-                  {hasPermission(["DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
-                    <SidebarMenuItem>
-                      <SidebarMenuButton asChild isActive={pathname.endsWith("/dashboard/configurations/rangs")}>
-                        <button onClick={() => navigateTo("/dashboard/configurations/rangs")}>
-                          <span>Rangs</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )}
-                </SidebarMenu>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
+          </div>
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter className="border-t p-4">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-              <User className="h-5 w-5 text-gray-600" />
-            </div>
-            <div className="text-sm">
-              <p className="font-medium">{user.name}</p>
-              <p className="text-xs text-muted-foreground">{user.fonction?.nom || "Fonction non définie"}</p>
-            </div>
-          </div>
-          <Badge variant="outline" className="w-fit">
-            {getRoleDisplayName(user.role.name)}
-          </Badge>
-          <Button variant="outline" size="sm" className="w-full" onClick={handleLogout}>
-            <LogOut className="mr-2 h-4 w-4" />
-            Déconnexion
-          </Button>
-        </div>
-      </SidebarFooter>
+
+      
     </Sidebar>
   )
 }

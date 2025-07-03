@@ -34,10 +34,7 @@ export default function MandatsEnCoursPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Mandats en cours</h1>
-        <p className="text-muted-foreground">Liste des mandats actuellement en cours d'exécution</p>
-      </div>
+      
 
       <MandatTable mandats={mandats} title="Mandats en cours" />
     </div>

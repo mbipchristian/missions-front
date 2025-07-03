@@ -9,7 +9,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Eye, Users, MapPin, Package, X, Calendar, Clock, Target } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Eye, Users, MapPin, Package, X, Calendar, Clock, Target, MoreHorizontal, Edit, Trash2 } from "lucide-react"
 import { type Mandat, MandatStatut } from "@/types"
 
 interface MandatTableProps {
@@ -36,24 +37,24 @@ const getStatusBadgeVariant = (statut: MandatStatut) => {
 const getStatusColor = (statut: MandatStatut) => {
   switch (statut) {
     case MandatStatut.EN_ATTENTE_CONFIRMATION:
-      return "bg-yellow-100 text-yellow-800 border-yellow-300"
+      return "bg-yellow-50 text-yellow-700 border-yellow-200"
     case MandatStatut.EN_ATTENTE_EXECUTION:
-      return "bg-blue-100 text-blue-800 border-blue-300"
+      return "bg-blue-50 text-blue-700 border-blue-200"
     case MandatStatut.EN_COURS:
-      return "bg-green-100 text-green-800 border-green-300"
+      return "bg-green-50 text-green-700 border-green-200"
     case MandatStatut.ACHEVE:
-      return "bg-gray-100 text-gray-800 border-gray-300"
+      return "bg-gray-50 text-gray-700 border-gray-200"
     default:
-      return "bg-gray-100 text-gray-800 border-gray-300"
+      return "bg-gray-50 text-gray-700 border-gray-200"
   }
 }
 
 const getStatusLabel = (statut: MandatStatut) => {
   switch (statut) {
     case MandatStatut.EN_ATTENTE_CONFIRMATION:
-      return "En attente de confirmation"
+      return "En attente"
     case MandatStatut.EN_ATTENTE_EXECUTION:
-      return "En attente d'exécution"
+      return "À exécuter"
     case MandatStatut.EN_COURS:
       return "En cours"
     case MandatStatut.ACHEVE:
@@ -67,48 +68,31 @@ export function MandatTable({ mandats, title, renderActions }: MandatTableProps)
   const [selectedMandat, setSelectedMandat] = useState<Mandat | null>(null)
 
   return (
-    <div className="space-y-6">
-  {/* Header avec gradient BLUE */}
-  <div className="bg-gradient-to-r from-blue-300 via-blue-400 to-blue-500 p-6 rounded-xl shadow-lg">
-    <div className="flex items-center justify-between text-black">
-      <div className="space-y-2">
-        <h2 className="text-2xl font-bold flex items-center gap-3">
-          <Target className="h-8 w-8" />
-          {title}
-        </h2>
-        <p className="text-black-100">Gestion et suivi des mandats</p>
-      </div>
-      <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/30">
-        <span className="text-lg font-semibold">{mandats.length}</span>
-        <span className="text-sm ml-1">mandat{mandats.length > 1 ? 's' : ''}</span>
-      </div>
-    </div>
-  </div>
-
-      {/* Tableau principal */}
-      <Card className="overflow-hidden shadow-xl border-0 bg-gradient-to-br from-white to-gray-50">
+    <div className="space-y-4">
+      {/* Tableau principal compact */}
+      <Card className="overflow-hidden shadow-sm border bg-white">
         <CardContent className="p-0">
           {mandats.length === 0 ? (
-            <div className="text-center py-16 text-gray-500">
-              <Target className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-              <p className="text-lg font-medium">Aucun mandat trouvé</p>
+            <div className="text-center py-12 text-gray-500">
+              <Target className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+              <p className="text-base font-medium">Aucun mandat trouvé</p>
               <p className="text-sm">Les mandats apparaîtront ici une fois créés</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-150 border-b-2 border-blue-200">
-                    <TableHead className="font-bold text-blue-900 py-4">Référence</TableHead>
-                    <TableHead className="font-bold text-blue-900">Objectif</TableHead>
-                    <TableHead className="font-bold text-blue-900">Statut</TableHead>
-                    <TableHead className="font-bold text-blue-900">Date début</TableHead>
-                    <TableHead className="font-bold text-blue-900">Date fin</TableHead>
-                    <TableHead className="font-bold text-blue-900">Durée</TableHead>
-                    <TableHead className="font-bold text-blue-900">Enregistré le</TableHead>
-                    <TableHead className="font-bold text-blue-900">Confirmé le</TableHead>
-                    <TableHead className="font-bold text-blue-900">Assignations</TableHead>
-                    <TableHead className="font-bold text-blue-900">Actions</TableHead>
+                  <TableRow className="bg-gray-50 hover:bg-gray-50 border-b">
+                    <TableHead className="font-medium text-gray-700 py-2 px-3 text-xs">Réf.</TableHead>
+                    <TableHead className="font-medium text-gray-700 py-2 px-3 text-xs">Objectif</TableHead>
+                    <TableHead className="font-medium text-gray-700 py-2 px-3 text-xs">Statut</TableHead>
+                    <TableHead className="font-medium text-gray-700 py-2 px-3 text-xs">Début</TableHead>
+                    <TableHead className="font-medium text-gray-700 py-2 px-3 text-xs">Fin</TableHead>
+                    <TableHead className="font-medium text-gray-700 py-2 px-3 text-xs">Durée</TableHead>
+                    <TableHead className="font-medium text-gray-700 py-2 px-3 text-xs">Créé</TableHead>
+                    <TableHead className="font-medium text-gray-700 py-2 px-3 text-xs">Confirmé</TableHead>
+                    <TableHead className="font-medium text-gray-700 py-2 px-3 text-xs">Assignations</TableHead>
+                    <TableHead className="font-medium text-gray-700 py-2 px-3 text-xs w-12"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -116,84 +100,87 @@ export function MandatTable({ mandats, title, renderActions }: MandatTableProps)
                     <TableRow 
                       key={mandat.id} 
                       className={`
-                        transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-green-50 
-                        hover:shadow-md hover:scale-[1.01] cursor-pointer border-l-4 border-l-transparent
-                        hover:border-l-blue-500 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}
+                        transition-colors hover:bg-gray-50 border-b
+                        ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'}
                       `}
                     >
-                      <TableCell className="font-semibold text-blue-900 py-4">
-                        <div className="flex items-center space-x-2">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                          {mandat.reference}
-                        </div>
+                      <TableCell className="font-medium text-blue-600 py-2 px-3 text-xs">
+                        {mandat.reference}
                       </TableCell>
-                      <TableCell className="max-w-xs">
-                        <div className="truncate font-medium text-gray-800" title={mandat.objectif}>
+                      <TableCell className="max-w-32 py-2 px-3">
+                        <div className="truncate text-xs font-medium text-gray-800" title={mandat.objectif}>
                           {mandat.objectif}
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="py-2 px-3">
                         <Badge 
-                          className={`${getStatusColor(mandat.statut)} font-medium shadow-sm transition-all duration-200 hover:shadow-md`}
+                          className={`${getStatusColor(mandat.statut)} text-xs px-2 py-0.5 font-medium`}
                         >
                           {getStatusLabel(mandat.statut)}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-gray-700">
-                        <div className="flex items-center space-x-1">
-                          <Calendar className="h-4 w-4 text-green-600" />
-                          <span>{format(new Date(mandat.dateDebut), "dd/MM/yyyy", { locale: fr })}</span>
-                        </div>
+                      <TableCell className="text-gray-600 py-2 px-3 text-xs">
+                        {format(new Date(mandat.dateDebut), "dd/MM/yy", { locale: fr })}
                       </TableCell>
-                      <TableCell className="text-gray-700">
-                        <div className="flex items-center space-x-1">
-                          <Calendar className="h-4 w-4 text-red-600" />
-                          <span>{format(new Date(mandat.dateFin), "dd/MM/yyyy", { locale: fr })}</span>
-                        </div>
+                      <TableCell className="text-gray-600 py-2 px-3 text-xs">
+                        {format(new Date(mandat.dateFin), "dd/MM/yy", { locale: fr })}
                       </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-1">
-                          <Clock className="h-4 w-4 text-yellow-600" />
-                          <span className="font-medium text-yellow-800">{mandat.duree} jour(s)</span>
-                        </div>
+                      <TableCell className="py-2 px-3">
+                        <span className="text-xs font-medium text-gray-700">{mandat.duree}j</span>
                       </TableCell>
-                      <TableCell className="text-gray-600 text-sm">
-                        {format(new Date(mandat.createdAt), "dd/MM/yyyy", { locale: fr })}
+                      <TableCell className="text-gray-500 py-2 px-3 text-xs">
+                        {format(new Date(mandat.createdAt), "dd/MM/yy", { locale: fr })}
                       </TableCell>
-                      <TableCell className="text-gray-600 text-sm">
+                      <TableCell className="text-gray-500 py-2 px-3 text-xs">
                         {mandat.confirmele
-                          ? format(new Date(mandat.confirmele), "dd/MM/yyyy", { locale: fr })
-                          : <span className="text-yellow-600 font-medium">Non confirmé</span>}
+                          ? format(new Date(mandat.confirmele), "dd/MM/yy", { locale: fr })
+                          : <span className="text-yellow-600">Non</span>}
                       </TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-3">
-                          <div className="flex items-center space-x-1 bg-blue-100 px-2 py-1 rounded-full">
-                            <Users className="h-4 w-4 text-blue-600" />
-                            <span className="text-blue-800 font-medium text-xs">{mandat.usersCount}</span>
+                      <TableCell className="py-2 px-3">
+                        <div className="flex items-center space-x-1">
+                          <div className="flex items-center space-x-1 bg-blue-50 px-1.5 py-0.5 rounded text-xs">
+                            <Users className="h-3 w-3 text-blue-600" />
+                            <span className="text-blue-700 font-medium">{mandat.usersCount}</span>
                           </div>
-                          <div className="flex items-center space-x-1 bg-green-100 px-2 py-1 rounded-full">
-                            <MapPin className="h-4 w-4 text-green-600" />
-                            <span className="text-green-800 font-medium text-xs">{mandat.villesCount}</span>
+                          <div className="flex items-center space-x-1 bg-green-50 px-1.5 py-0.5 rounded text-xs">
+                            <MapPin className="h-3 w-3 text-green-600" />
+                            <span className="text-green-700 font-medium">{mandat.villesCount}</span>
                           </div>
-                          <div className="flex items-center space-x-1 bg-yellow-100 px-2 py-1 rounded-full">
-                            <Package className="h-4 w-4 text-yellow-600" />
-                            <span className="text-yellow-800 font-medium text-xs">{mandat.ressourcesCount}</span>
+                          <div className="flex items-center space-x-1 bg-yellow-50 px-1.5 py-0.5 rounded text-xs">
+                            <Package className="h-3 w-3 text-yellow-600" />
+                            <span className="text-yellow-700 font-medium">{mandat.ressourcesCount}</span>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="py-2 px-3">
                         {renderActions ? (
                           renderActions(mandat)
                         ) : (
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => setSelectedMandat(mandat)}
-                            className="bg-blue-600 text-white border-blue-600 hover:bg-blue-700 hover:border-blue-700 shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105"
-                          >
-                            <Eye className="h-4 w-4 mr-2" />
-                            Voir
-                          </Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="h-6 w-6 p-0 hover:bg-gray-100"
+                              >
+                                <MoreHorizontal className="h-4 w-4 text-gray-500" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-32">
+                              <DropdownMenuItem onClick={() => setSelectedMandat(mandat)}>
+                                <Eye className="h-4 w-4 mr-2" />
+                                Voir
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Edit className="h-4 w-4 mr-2" />
+                                Modifier
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="text-red-600">
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Supprimer
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         )}
                       </TableCell>
                     </TableRow>
@@ -205,19 +192,18 @@ export function MandatTable({ mandats, title, renderActions }: MandatTableProps)
         </CardContent>
       </Card>
 
-      {/* Modal de détails amélioré */}
+      {/* Modal de détails */}
       {selectedMandat && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
-          <Card className="max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl border-0 animate-in slide-in-from-bottom-4 duration-300">
-            {/* Header du modal avec gradient */}
-            <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-6">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <Card className="max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-xl">
+            <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <CardTitle className="text-2xl font-bold flex items-center gap-3">
-                    <Target className="h-8 w-8" />
+                  <CardTitle className="text-xl font-bold flex items-center gap-2">
+                    <Target className="h-6 w-6" />
                     Mandat {selectedMandat.reference}
                   </CardTitle>
-                  <Badge className={`${getStatusColor(selectedMandat.statut)} text-sm`}>
+                  <Badge className={`${getStatusColor(selectedMandat.statut)} text-xs`}>
                     {getStatusLabel(selectedMandat.statut)}
                   </Badge>
                 </div>
@@ -225,69 +211,69 @@ export function MandatTable({ mandats, title, renderActions }: MandatTableProps)
                   variant="ghost"
                   size="sm"
                   onClick={() => setSelectedMandat(null)}
-                  className="text-white hover:bg-white/20 hover:text-white transition-colors"
+                  className="text-white hover:bg-white/20 h-8 w-8 p-0"
                 >
-                  <X className="h-6 w-6" />
+                  <X className="h-5 w-5" />
                 </Button>
               </div>
             </CardHeader>
 
-            <CardContent className="p-6 overflow-y-auto max-h-[calc(90vh-120px)] bg-gradient-to-br from-white to-gray-50">
-              <div className="space-y-6">
+            <CardContent className="p-4 overflow-y-auto max-h-[calc(90vh-100px)]">
+              <div className="space-y-4">
                 {/* Objectif */}
-                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-                  <h4 className="font-bold text-blue-900 flex items-center gap-2 mb-2">
-                    <Target className="h-5 w-5" />
+                <div className="bg-gray-50 p-3 rounded border">
+                  <h4 className="font-medium text-gray-800 flex items-center gap-2 mb-2 text-sm">
+                    <Target className="h-4 w-4" />
                     Objectif
                   </h4>
-                  <p className="text-gray-700 leading-relaxed">{selectedMandat.objectif}</p>
+                  <p className="text-gray-700 text-sm leading-relaxed">{selectedMandat.objectif}</p>
                 </div>
 
                 {/* Informations temporelles */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-green-50 p-4 rounded-lg border border-green-200 shadow-sm">
-                    <h4 className="font-bold text-green-900 flex items-center gap-2 mb-2">
-                      <Calendar className="h-5 w-5" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="bg-green-50 p-3 rounded border border-green-200">
+                    <h4 className="font-medium text-green-800 flex items-center gap-2 mb-1 text-sm">
+                      <Calendar className="h-4 w-4" />
                       Date de début
                     </h4>
-                    <p className="text-green-800 font-medium">
+                    <p className="text-green-700 font-medium text-sm">
                       {format(new Date(selectedMandat.dateDebut), "dd/MM/yyyy", { locale: fr })}
                     </p>
                   </div>
-                  <div className="bg-red-50 p-4 rounded-lg border border-red-200 shadow-sm">
-                    <h4 className="font-bold text-red-900 flex items-center gap-2 mb-2">
-                      <Calendar className="h-5 w-5" />
+                  <div className="bg-red-50 p-3 rounded border border-red-200">
+                    <h4 className="font-medium text-red-800 flex items-center gap-2 mb-1 text-sm">
+                      <Calendar className="h-4 w-4" />
                       Date de fin
                     </h4>
-                    <p className="text-red-800 font-medium">
+                    <p className="text-red-700 font-medium text-sm">
                       {format(new Date(selectedMandat.dateFin), "dd/MM/yyyy", { locale: fr })}
                     </p>
                   </div>
-                  <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 shadow-sm">
-                    <h4 className="font-bold text-yellow-900 flex items-center gap-2 mb-2">
-                      <Clock className="h-5 w-5" />
+                  <div className="bg-yellow-50 p-3 rounded border border-yellow-200">
+                    <h4 className="font-medium text-yellow-800 flex items-center gap-2 mb-1 text-sm">
+                      <Clock className="h-4 w-4" />
                       Durée
                     </h4>
-                    <p className="text-yellow-800 font-medium">{selectedMandat.duree} jour(s)</p>
+                    <p className="text-yellow-700 font-medium text-sm">{selectedMandat.duree} jour(s)</p>
                   </div>
                 </div>
 
                 {/* Équipe assignée */}
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 shadow-sm">
-                  <h4 className="font-bold text-blue-900 flex items-center gap-2 mb-3">
-                    <Users className="h-5 w-5" />
+                <div className="bg-blue-50 p-3 rounded border border-blue-200">
+                  <h4 className="font-medium text-blue-800 flex items-center gap-2 mb-2 text-sm">
+                    <Users className="h-4 w-4" />
                     Équipe assignée ({selectedMandat.users.length})
                   </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {selectedMandat.users.map((user) => (
-                      <div key={user.id} className="bg-white p-3 rounded-lg shadow-sm border border-blue-200 transition-all duration-200 hover:shadow-md hover:scale-[1.02]">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                      <div key={user.id} className="bg-white p-2 rounded border border-blue-200">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium text-xs">
                             {user.username.charAt(0).toUpperCase()}
                           </div>
                           <div>
-                            <span className="font-medium text-gray-900">{user.username}</span>
-                            <span className="text-sm text-gray-500 ml-2">({user.matricule})</span>
+                            <span className="font-medium text-gray-800 text-sm">{user.username}</span>
+                            <span className="text-xs text-gray-500 ml-1">({user.matricule})</span>
                           </div>
                         </div>
                       </div>
@@ -296,14 +282,14 @@ export function MandatTable({ mandats, title, renderActions }: MandatTableProps)
                 </div>
 
                 {/* Villes */}
-                <div className="bg-green-50 p-4 rounded-lg border border-green-200 shadow-sm">
-                  <h4 className="font-bold text-green-900 flex items-center gap-2 mb-3">
-                    <MapPin className="h-5 w-5" />
+                <div className="bg-green-50 p-3 rounded border border-green-200">
+                  <h4 className="font-medium text-green-800 flex items-center gap-2 mb-2 text-sm">
+                    <MapPin className="h-4 w-4" />
                     Villes concernées ({selectedMandat.villes.length})
                   </h4>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1">
                     {selectedMandat.villes.map((ville) => (
-                      <Badge key={ville.id} className="bg-green-100 text-green-800 border-green-300 hover:bg-green-200 transition-colors">
+                      <Badge key={ville.id} className="bg-green-100 text-green-800 border-green-300 text-xs">
                         {ville.name}
                       </Badge>
                     ))}
@@ -311,14 +297,14 @@ export function MandatTable({ mandats, title, renderActions }: MandatTableProps)
                 </div>
 
                 {/* Ressources */}
-                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200 shadow-sm">
-                  <h4 className="font-bold text-yellow-900 flex items-center gap-2 mb-3">
-                    <Package className="h-5 w-5" />
+                <div className="bg-yellow-50 p-3 rounded border border-yellow-200">
+                  <h4 className="font-medium text-yellow-800 flex items-center gap-2 mb-2 text-sm">
+                    <Package className="h-4 w-4" />
                     Ressources nécessaires ({selectedMandat.ressources.length})
                   </h4>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1">
                     {selectedMandat.ressources.map((ressource) => (
-                      <Badge key={ressource.id} className="bg-yellow-100 text-yellow-800 border-yellow-300 hover:bg-yellow-200 transition-colors">
+                      <Badge key={ressource.id} className="bg-yellow-100 text-yellow-800 border-yellow-300 text-xs">
                         {ressource.name}
                       </Badge>
                     ))}
@@ -326,15 +312,15 @@ export function MandatTable({ mandats, title, renderActions }: MandatTableProps)
                 </div>
 
                 {/* Actions */}
-                <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                <div className="flex justify-end space-x-2 pt-3 border-t">
                   <Button 
                     variant="outline" 
                     onClick={() => setSelectedMandat(null)}
-                    className="hover:bg-gray-100 transition-colors"
+                    size="sm"
                   >
                     Fermer
                   </Button>
-                  <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-200">
+                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
                     Modifier
                   </Button>
                 </div>

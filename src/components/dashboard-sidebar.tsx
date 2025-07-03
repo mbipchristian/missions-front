@@ -76,10 +76,10 @@ export function DashboardSidebar() {
 
   return (
     <Sidebar className="border-r-0 shadow-xl bg-gradient-to-b from-white via-blue-50/30 to-blue-100/20 bg-blue-500 w-100">
-     <SidebarHeader className="flex h-14 items-center border-b px-6">
+     <SidebarHeader className="flex h-14 items-center border-b px-6 bg-white">
         <Link href={`/${locale}/dashboard`} className="flex items-center gap-2 font-semibold">
           <Shield className="h-6 w-6" />
-          <span>ART Dashboard</span>
+          <span></span>
         </Link>
         <SidebarTrigger className="ml-auto md:hidden" />
       </SidebarHeader>
@@ -119,7 +119,7 @@ export function DashboardSidebar() {
                             className={`
                               rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-green-500
                               ${pathname.endsWith("/dashboard/mandats/enregistrer-mandat") 
-                                ? "bg-gradient-to-r from-green-100 to-green-200 border-l-green-500 text-green-900" 
+                                ? "bg-gradient-to-r from-blue-100 to-blue-200 border-l-green-500 text-blue-900" 
                                 : "hover:bg-gradient-to-r hover:from-green-50 hover:to-yellow-50"
                               }
                             `}
@@ -234,13 +234,13 @@ export function DashboardSidebar() {
             <Collapsible open={openAdmin} onOpenChange={setOpenAdmin}>
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-yellow-50 to-yellow-100 hover:from-yellow-100 hover:to-yellow-200 transition-all duration-300 hover:shadow-md hover:scale-[1.02] border border-yellow-200">
+                  <SidebarMenuButton className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 transition-all duration-300 hover:shadow-md hover:scale-[1.02] border border-green-200">
                     <div className="flex items-center py-3 px-4 w-full">
                       <div className="relative">
-                        <Settings className="mr-3 h-5 w-5 text-yellow-700" />
-                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+                        <Settings className="mr-3 h-5 w-5 text-green-700" />
+                        <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                       </div>
-                      <span className="font-bold text-yellow-900 tracking-wide">CONFIGURATIONS</span>
+                      <span className="font-bold text-green-900 tracking-wide">CONFIGURATIONS</span>
                       <ChevronDown className={`ml-auto h-4 w-4 text-yellow-700 transition-transform duration-300 ${openAdmin ? "rotate-180" : ""}`} />
                     </div>
                   </SidebarMenuButton>

@@ -92,10 +92,7 @@ export default function MandatsEnAttenteConfirmationPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Mandats en attente de confirmation</h1>
-        <p className="text-muted-foreground">Liste des mandats qui nécessitent une confirmation avant exécution</p>
-      </div>
+      
 
       <Filters filters={filters} onFiltersChange={setFilters} onClearFilters={clearFilters} />
 

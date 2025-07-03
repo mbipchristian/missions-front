@@ -109,12 +109,6 @@ export default function MesMandatsPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Mes Mandats</h1>
-        <p className="text-muted-foreground">
-          Tous les mandats où vous êtes assigné et qui ont été confirmés par la direction
-        </p>
-      </div>
 
       {/* Statistiques */}
       <div className="grid gap-4 md:grid-cols-4 mb-6">

@@ -84,12 +84,7 @@ export function MesMandatsTable({ mandats, title }: MesMandatsTableProps) {
   return (
     <div className="space-y-4">
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            {title}
-            <Badge variant="outline">{mandats.length} mandat(s)</Badge>
-          </CardTitle>
-        </CardHeader>
+        
         <CardContent>
           {mandats.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">

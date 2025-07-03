@@ -79,10 +79,7 @@ export default function OrdresMissionEnAttenteConfirmationPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Ordres de mission en attente de confirmation</h1>
-        <p className="text-muted-foreground">Liste des ordres de mission qui nécessitent une confirmation</p>
-      </div>
+
 
       <Filters filters={filters} onFiltersChange={setFilters} onClearFilters={clearFilters} />
 

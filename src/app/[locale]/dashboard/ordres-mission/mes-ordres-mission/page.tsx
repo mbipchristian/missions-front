@@ -124,12 +124,7 @@ export default function MesOrdresMissionPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Mes Ordres de Mission</h1>
-        <p className="text-muted-foreground">
-          Tous vos ordres de mission personnels générés à partir des mandats confirmés
-        </p>
-      </div>
+      
 
       {/* Statistiques */}
       <div className="grid gap-4 md:grid-cols-5 mb-6">

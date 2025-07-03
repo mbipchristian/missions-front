@@ -34,10 +34,7 @@ export default function OrdresMissionEnCoursPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Ordres de mission en cours</h1>
-        <p className="text-muted-foreground">Liste des ordres de mission actuellement en cours d'exécution</p>
-      </div>
+      
 
       <OrdreMissionTable ordresMission={ordresMission} title="Ordres de mission en cours" />
     </div>

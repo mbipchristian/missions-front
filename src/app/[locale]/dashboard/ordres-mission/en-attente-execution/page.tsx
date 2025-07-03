@@ -80,10 +80,7 @@ export default function OrdresMissionEnAttenteExecutionPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Ordres de mission en attente d'exécution</h1>
-        <p className="text-muted-foreground">Liste des ordres de mission confirmés qui attendent leur date de début</p>
-      </div>
+      
 
        <Filters filters={filters} onFiltersChange={setFilters} onClearFilters={clearFilters} />
 

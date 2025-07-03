@@ -34,10 +34,7 @@ export default function TousOrdresMissionPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Tous les ordres de mission</h1>
-        <p className="text-muted-foreground">Vue d'ensemble de tous les ordres de mission, tous statuts confondus</p>
-      </div>
+      
 
       <OrdreMissionTable ordresMission={ordresMission} title="Tous les ordres de mission" />
     </div>

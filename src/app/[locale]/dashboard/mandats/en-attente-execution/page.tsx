@@ -34,10 +34,7 @@ export default function MandatsEnAttenteExecutionPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Mandats en attente d'exécution</h1>
-        <p className="text-muted-foreground">Liste des mandats confirmés qui attendent leur date de début</p>
-      </div>
+      
 
       <MandatTable mandats={mandats} title="Mandats en attente d'exécution" />
     </div>

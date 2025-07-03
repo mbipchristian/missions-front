@@ -79,12 +79,7 @@ export default function OrdresMissionEnAttenteJustificatifPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Ordres de mission en attente de justificatif</h1>
-        <p className="text-muted-foreground">
-          Liste des ordres de mission qui nécessitent l'ajout de pièces justificatives
-        </p>
-      </div>
+      
 
       <Filters filters={filters} onFiltersChange={setFilters} onClearFilters={clearFilters} />
 

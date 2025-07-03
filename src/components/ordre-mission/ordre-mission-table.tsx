@@ -21,21 +21,21 @@ const getStatusBadgeVariant = (statut: OrdreMissionStatut | string) => {
   switch (statut) {
     case OrdreMissionStatut.EN_ATTENTE_JUSTIFICATIF:
     case "EN_ATTENTE_JUSTIFICATIF":
-      return "bg-yellow-100 text-yellow-800 border-yellow-300 hover:bg-yellow-200"
+      return "bg-yellow-50 text-yellow-700 border-yellow-200"
     case OrdreMissionStatut.EN_ATTENTE_CONFIRMATION:
     case "EN_ATTENTE_CONFIRMATION":
-      return "bg-blue-100 text-blue-800 border-blue-300 hover:bg-blue-200"
+      return "bg-blue-50 text-blue-700 border-blue-200"
     case OrdreMissionStatut.EN_ATTENTE_EXECUTION:
     case "EN_ATTENTE_EXECUTION":
-      return "bg-orange-100 text-orange-800 border-orange-300 hover:bg-orange-200"
+      return "bg-orange-50 text-orange-700 border-orange-200"
     case OrdreMissionStatut.EN_COURS:
     case "EN_COURS":
-      return "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700"
+      return "bg-blue-500 text-white"
     case OrdreMissionStatut.ACHEVE:
     case "ACHEVE":
-      return "bg-green-500 text-white hover:bg-green-600"
+      return "bg-green-500 text-white"
     default:
-      return "bg-gray-100 text-gray-800 border-gray-300 hover:bg-gray-200"
+      return "bg-gray-50 text-gray-700"
   }
 }
 
@@ -43,19 +43,19 @@ const getStatusIcon = (statut: OrdreMissionStatut | string) => {
   switch (statut) {
     case OrdreMissionStatut.EN_ATTENTE_JUSTIFICATIF:
     case "EN_ATTENTE_JUSTIFICATIF":
-      return <FileText className="h-3 w-3 mr-1" />
+      return <FileText className="h-2.5 w-2.5" />
     case OrdreMissionStatut.EN_ATTENTE_CONFIRMATION:
     case "EN_ATTENTE_CONFIRMATION":
-      return <Clock className="h-3 w-3 mr-1" />
+      return <Clock className="h-2.5 w-2.5" />
     case OrdreMissionStatut.EN_ATTENTE_EXECUTION:
     case "EN_ATTENTE_EXECUTION":
-      return <Calendar className="h-3 w-3 mr-1" />
+      return <Calendar className="h-2.5 w-2.5" />
     case OrdreMissionStatut.EN_COURS:
     case "EN_COURS":
-      return <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse" />
+      return <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
     case OrdreMissionStatut.ACHEVE:
     case "ACHEVE":
-      return <Check className="h-3 w-3 mr-1" />
+      return <Check className="h-2.5 w-2.5" />
     default:
       return null
   }
@@ -65,13 +65,13 @@ const getStatusLabel = (statut: OrdreMissionStatut | string) => {
   switch (statut) {
     case OrdreMissionStatut.EN_ATTENTE_JUSTIFICATIF:
     case "EN_ATTENTE_JUSTIFICATIF":
-      return "En attente de justificatif"
+      return "Justificatif"
     case OrdreMissionStatut.EN_ATTENTE_CONFIRMATION:
     case "EN_ATTENTE_CONFIRMATION":
-      return "En attente de confirmation"
+      return "Confirmation"
     case OrdreMissionStatut.EN_ATTENTE_EXECUTION:
     case "EN_ATTENTE_EXECUTION":
-      return "En attente d'exécution"
+      return "Exécution"
     case OrdreMissionStatut.EN_COURS:
     case "EN_COURS":
       return "En cours"
@@ -79,7 +79,7 @@ const getStatusLabel = (statut: OrdreMissionStatut | string) => {
     case "ACHEVE":
       return "Achevé"
     default:
-      return statut || "Statut inconnu"
+      return "Inconnu"
   }
 }
 
@@ -91,116 +91,106 @@ export function OrdreMissionTable({ ordresMission, title, renderActions }: Ordre
       style: "currency",
       currency: "XAF",
       minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(amount)
   }
 
+  const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text
+  }
+
   return (
-    <div className="space-y-6">
-      <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-blue-50">
-        <CardHeader className="bg-gradient-to-r from-blue-300 via-blue-400 to-blue-500 p-6 rounded-xl shadow-lg">
-          <CardTitle className="flex items-center justify-between text-xl">
-            <div className="flex items-center gap-2">
-              <FileText className="h-6 w-6" />
-              {title}
-            </div>
-            <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30 font-medium px-3 py-1">
-              {ordresMission.length} ordre{ordresMission.length > 1 ? 's' : ''}
-            </Badge>
-          </CardTitle>
-        </CardHeader>
+    <div className="space-y-3">
+      <Card className="shadow-sm border">
         <CardContent className="p-0">
           {ordresMission.length === 0 ? (
-            <div className="text-center py-16 text-gray-500">
-              <FileText className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-              <p className="text-lg font-medium">Aucun ordre de mission trouvé</p>
-              <p className="text-sm mt-2">Les ordres de mission apparaîtront ici une fois créés</p>
+            <div className="text-center py-8 text-gray-500">
+              <FileText className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+              <p className="text-sm font-medium">Aucun ordre de mission</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-gray-50 hover:bg-gray-100">
-                    <TableHead className="font-semibold text-gray-700">Référence</TableHead>
-                    <TableHead className="font-semibold text-gray-700">Objectif</TableHead>
-                    <TableHead className="font-semibold text-gray-700">Statut</TableHead>
-                    <TableHead className="font-semibold text-gray-700">Période</TableHead>
-                    <TableHead className="font-semibold text-gray-700">Durée</TableHead>
-                    <TableHead className="font-semibold text-gray-700">Créé le</TableHead>
-                    <TableHead className="font-semibold text-gray-700">Confirmé le</TableHead>
-                    <TableHead className="font-semibold text-gray-700">Montant</TableHead>
-                    <TableHead className="font-semibold text-gray-700 text-center">Actions</TableHead>
+                  <TableRow className="bg-gray-50 h-8">
+                    <TableHead className="font-semibold text-gray-700 text-xs py-2 px-2 w-20">Réf.</TableHead>
+                    <TableHead className="font-semibold text-gray-700 text-xs py-2 px-2 w-32">Objectif</TableHead>
+                    <TableHead className="font-semibold text-gray-700 text-xs py-2 px-2 w-24">Statut</TableHead>
+                    <TableHead className="font-semibold text-gray-700 text-xs py-2 px-2 w-20">Début</TableHead>
+                    <TableHead className="font-semibold text-gray-700 text-xs py-2 px-2 w-20">Fin</TableHead>
+                    <TableHead className="font-semibold text-gray-700 text-xs py-2 px-2 w-16">Durée</TableHead>
+                    <TableHead className="font-semibold text-gray-700 text-xs py-2 px-2 w-20">Créé</TableHead>
+                    <TableHead className="font-semibold text-gray-700 text-xs py-2 px-2 w-20">Confirmé</TableHead>
+                    <TableHead className="font-semibold text-gray-700 text-xs py-2 px-2 w-20">Montant</TableHead>
+                    <TableHead className="font-semibold text-gray-700 text-xs py-2 px-2 w-16 text-center">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {ordresMission.map((ordre, index) => (
                     <TableRow 
                       key={ordre.id} 
-                      className={`hover:bg-blue-50 transition-colors ${
-                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'
+                      className={`hover:bg-blue-50 transition-colors h-10 ${
+                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'
                       }`}
                     >
-                      <TableCell className="font-medium text-blue-700 bg-blue-50/50 rounded-l-lg">
+                      <TableCell className="font-medium text-blue-700 text-xs py-1 px-2">
                         {ordre.reference}
                       </TableCell>
-                      <TableCell className="max-w-xs">
-                        <div className="truncate font-medium text-gray-800" title={ordre.objectif}>
-                          {ordre.objectif}
+                      <TableCell className="text-xs py-1 px-2">
+                        <div className="truncate font-medium text-gray-800 max-w-32" title={ordre.objectif}>
+                          {truncateText(ordre.objectif, 20)}
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="py-1 px-2">
                         {ordre.statut ? (
-                          <Badge className={`${getStatusBadgeVariant(ordre.statut)} flex items-center w-fit font-medium`}>
+                          <Badge className={`${getStatusBadgeVariant(ordre.statut)} flex items-center w-fit text-xs px-1.5 py-0.5 gap-1`}>
                             {getStatusIcon(ordre.statut)}
                             {getStatusLabel(ordre.statut)}
                           </Badge>
                         ) : (
-                          <Badge className="bg-gray-100 text-gray-800 border-gray-300">
-                            Statut non défini
+                          <Badge className="bg-gray-100 text-gray-800 text-xs px-1.5 py-0.5">
+                            N/A
                           </Badge>
                         )}
                       </TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          <div className="text-sm font-medium text-gray-700">
-                            {ordre.dateDebut ? 
-                              format(new Date(ordre.dateDebut), "dd/MM/yyyy", { locale: fr }) : 
-                              "—"
-                            }
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            au {ordre.dateFin ? 
-                              format(new Date(ordre.dateFin), "dd/MM/yyyy", { locale: fr }) : 
-                              "—"
-                            }
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-300">
-                          {ordre.duree || 0} jour{(ordre.duree || 0) > 1 ? 's' : ''}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-sm text-gray-600">
-                        {ordre.created_at ? 
-                          format(new Date(ordre.created_at), "dd/MM/yyyy", { locale: fr }) : 
+                      <TableCell className="text-xs py-1 px-2 text-gray-600">
+                        {ordre.dateDebut ? 
+                          format(new Date(ordre.dateDebut), "dd/MM/yy", { locale: fr }) : 
                           "—"
                         }
                       </TableCell>
-                      <TableCell className="text-sm">
+                      <TableCell className="text-xs py-1 px-2 text-gray-600">
+                        {ordre.dateFin ? 
+                          format(new Date(ordre.dateFin), "dd/MM/yy", { locale: fr }) : 
+                          "—"
+                        }
+                      </TableCell>
+                      <TableCell className="py-1 px-2">
+                        <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-300 text-xs px-1.5 py-0.5">
+                          {ordre.duree || 0}j
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-xs py-1 px-2 text-gray-600">
+                        {ordre.created_at ? 
+                          format(new Date(ordre.created_at), "dd/MM/yy", { locale: fr }) : 
+                          "—"
+                        }
+                      </TableCell>
+                      <TableCell className="text-xs py-1 px-2">
                         {ordre.confirmele ? (
                           <span className="text-green-600 font-medium">
-                            {format(new Date(ordre.confirmele), "dd/MM/yyyy", { locale: fr })}
+                            {format(new Date(ordre.confirmele), "dd/MM/yy", { locale: fr })}
                           </span>
                         ) : (
-                          <span className="text-gray-400">Non confirmé</span>
+                          <span className="text-gray-400">—</span>
                         )}
                       </TableCell>
-                      <TableCell>
-                        <div className="font-semibold text-green-700 bg-green-50 px-2 py-1 rounded">
-                          {formatCurrency(ordre.decompteTotal || 0)}
+                      <TableCell className="py-1 px-2">
+                        <div className="font-semibold text-green-700 bg-green-50 px-1.5 py-0.5 rounded text-xs">
+                          {formatCurrency(ordre.decompteTotal || 0).replace(' XAF', '')}
                         </div>
                       </TableCell>
-                      <TableCell className="text-center">
+                      <TableCell className="text-center py-1 px-2">
                         {renderActions ? (
                           renderActions(ordre)
                         ) : (
@@ -208,10 +198,9 @@ export function OrdreMissionTable({ ordresMission, title, renderActions }: Ordre
                             variant="outline" 
                             size="sm" 
                             onClick={() => setSelectedOrdre(ordre)}
-                            className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 hover:from-blue-600 hover:to-blue-700 shadow-md"
+                            className="bg-blue-500 text-white border-0 hover:bg-blue-600 h-6 w-6 p-0"
                           >
-                            <Eye className="h-4 w-4 mr-1" />
-                            Voir
+                            <Eye className="h-3 w-3" />
                           </Button>
                         )}
                       </TableCell>
@@ -224,10 +213,10 @@ export function OrdreMissionTable({ ordresMission, title, renderActions }: Ordre
         </CardContent>
       </Card>
 
-      {/* Modal de détails amélioré */}
+      {/* Modal de détails */}
       {selectedOrdre && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-          <Card className="max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border-0 animate-in slide-in-from-bottom-4 duration-300">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <Card className="max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border-0">
             <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
               <CardTitle className="flex items-center justify-between text-xl">
                 <div className="flex items-center gap-3">

@@ -33,7 +33,7 @@ export function MandatActions({ mandat, actions, onActionComplete }: MandatActio
     } catch (error) {
       toast({
         title: "Erreur",
-        description: "Erreur lors de la confirmation du mandat",
+        description: error instanceof Error ? error.message : "Erreur lors de la confirmation du mandat",
         variant: "destructive",
       })
     } finally {

@@ -65,9 +65,17 @@ class ApiService {
   }
 
   async confirmMandat(mandatId: number) {
-    return this.request(`/auth/mandats/${mandatId}/confirmer`, {
-      method: "POST",
-    })
+    try {
+      return await this.request(`/auth/mandats/${mandatId}/confirmer`, {
+        method: "POST",
+      })
+    } catch (error: any) {
+      // Si le backend retourne un message d'erreur détaillé, le propager
+      if (error instanceof Error && error.message) {
+        throw new Error(error.message)
+      }
+      throw error
+    }
   }
 
   async downloadMandatPdf(mandatId: number) {

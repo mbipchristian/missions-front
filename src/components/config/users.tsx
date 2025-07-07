@@ -427,7 +427,6 @@ export default function UsersPage() {
                     <TableCell>
                       <div className="flex flex-col">
                         <span className="font-medium">{user.quotaAnnuel} jours</span>
-                        <span className="text-sm text-muted-foreground">utilisés cette année</span>
                       </div>
                     </TableCell>
                     <TableCell>{formatDate(user.createdAt)}</TableCell>

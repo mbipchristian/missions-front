@@ -351,12 +351,70 @@ async addMandatAttachments(mandatId: number, file: File, description?: string) {
   }
 }
 
-
-  
+  // Création d'un ordre de mission
+  async createOrdreMission(ordreMissionData: any) {
+    return this.request("/auth/ordres-mission/create", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        // Autres headers nécessaires (Authorization, etc.)
+      },
+      body: JSON.stringify(ordreMissionData),
+    })
+  }
 
   // NOUVEAU: Informations utilisateur
   async getCurrentUser() {
     return this.request<any>("/auth/me")
+  }
+
+  // Calcul des décomptes pour un ordre de mission
+  async getOrdreMissionDecomptes(mandatId: number, userId: number, tauxAvance: number) {
+    const params = new URLSearchParams({
+      mandatId: String(mandatId),
+      userId: String(userId),
+      tauxAvance: String(tauxAvance),
+    })
+    return this.request(`/auth/ordres-mission/calcul-decomptes?${params.toString()}`)
+  }
+
+  // Villes CRUD
+  async createVille(villeData: any) {
+    return this.request("/auth/villes/create", {
+      method: "POST",
+      body: JSON.stringify(villeData),
+    })
+  }
+  async updateVille(villeId: number, villeData: any) {
+    return this.request(`/auth/villes/${villeId}`, {
+      method: "PUT",
+      body: JSON.stringify(villeData),
+    })
+  }
+  async deleteVille(villeId: number) {
+    return this.request(`/auth/villes/${villeId}`, {
+      method: "DELETE" })
+  }
+  // Ressources CRUD
+  async createRessource(ressourceData: any) {
+    return this.request("/auth/ressources/create", {
+      method: "POST",
+      body: JSON.stringify(ressourceData),
+    })
+  }
+  async updateRessource(ressourceId: number, ressourceData: any) {
+    return this.request(`/auth/ressources/${ressourceId}`, {
+      method: "PUT",
+      body: JSON.stringify(ressourceData),
+    })
+  }
+  async deleteRessource(ressourceId: number) {
+    return this.request(`/auth/ressources/${ressourceId}`, {
+      method: "DELETE" })
+  }
+
+  async getOrdresMissionByMandat(mandatId: number) {
+    return this.request<any[]>(`/auth/ordres-mission/mandat/${mandatId}`)
   }
 }
 

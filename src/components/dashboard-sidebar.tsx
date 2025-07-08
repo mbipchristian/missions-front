@@ -19,6 +19,7 @@ import {
   Sparkles,
   Target,
   Zap,
+  MapPin,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
@@ -192,6 +193,28 @@ export function DashboardSidebar() {
                 <CollapsibleContent className="transition-all duration-300">
                   <div className="pl-4 pt-2 space-y-1">
                     <SidebarMenu>
+                      {/* Création d'ordre de mission */}
+                      {hasPermission(["AGENT_RESSOURCES_HUMAINES", "ADMIN"]) && (
+                        <SidebarMenuItem>
+                          <SidebarMenuButton 
+                            asChild 
+                            className={`
+                              rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-green-500
+                              ${pathname.endsWith("/dashboard/ordres-mission/create") 
+                                ? "bg-gradient-to-r from-green-100 to-green-200 border-l-green-500 text-green-900" 
+                                : "hover:bg-gradient-to-r hover:from-green-50 hover:to-yellow-50"
+                              }
+                            `}
+                          >
+                            <button onClick={() => navigateTo("/dashboard/ordres-mission/create") } className="w-full">
+                              <div className="flex items-center py-2 px-4">
+                                <Sparkles className="mr-2 h-4 w-4 text-green-600" />
+                                <span className="text-sm font-medium">Créer un ordre de mission</span>
+                              </div>
+                            </button>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      )}
                       {[
                         { path: "en-attente-justificatif", label: "En attente de pièce jointe", color: "yellow", count: "" },
                         { path: "en-attente-confirmation", label: "En attente de confirmation", color: "yellow", count: "" },
@@ -330,6 +353,48 @@ export function DashboardSidebar() {
                               <div className="flex items-center py-2 px-4">
                                 <Shield className="mr-2 h-4 w-4 text-indigo-600" />
                                 <span className="text-sm font-medium">Rangs</span>
+                              </div>
+                            </button>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      </>
+                    )}
+                    {hasPermission(["AGENT_RESSOURCES_HUMAINES", "DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
+                      <>
+                        <SidebarMenuItem>
+                          <SidebarMenuButton 
+                            asChild 
+                            className={`
+                              rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-pink-500
+                              ${pathname.endsWith("/dashboard/configurations/villes") 
+                                ? "bg-gradient-to-r from-pink-100 to-pink-200 border-l-pink-500 text-pink-900" 
+                                : "hover:bg-gradient-to-r hover:from-pink-50 hover:to-yellow-50"
+                              }
+                            `}
+                          >
+                            <button onClick={() => navigateTo("/dashboard/configurations/villes")} className="w-full">
+                              <div className="flex items-center py-2 px-4">
+                                <MapPin className="mr-2 h-4 w-4 text-pink-600" />
+                                <span className="text-sm font-medium">Gérer les villes</span>
+                              </div>
+                            </button>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                        <SidebarMenuItem>
+                          <SidebarMenuButton 
+                            asChild 
+                            className={`
+                              rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-orange-500
+                              ${pathname.endsWith("/dashboard/ressources") 
+                                ? "bg-gradient-to-r from-orange-100 to-orange-200 border-l-orange-500 text-orange-900" 
+                                : "hover:bg-gradient-to-r hover:from-orange-50 hover:to-yellow-50"
+                              }
+                            `}
+                          >
+                            <button onClick={() => navigateTo("/dashboard/ressources")} className="w-full">
+                              <div className="flex items-center py-2 px-4">
+                                <Package className="mr-2 h-4 w-4 text-orange-600" />
+                                <span className="text-sm font-medium">Gérer les ressources</span>
                               </div>
                             </button>
                           </SidebarMenuButton>

@@ -81,5 +81,30 @@ export interface OrdreMission {
   confirmele: string | null
 }
 
+export interface OrdreMissionDto {
+  reference: string;
+  objectif: string;
+  modePaiement: string;
+  devise: string;
+  tauxAvance: number;
+  dateDebut: string; // ISO string
+  dateFin: string; // ISO string
+  duree: number;
+  decompteTotal: number;
+  decompteAvance: number;
+  decompteRelicat: number;
+  mandatId: number;
+}
+
+export interface VilleDto {
+  name: string;
+  code: string;
+  interieur: boolean;
+}
+
+export interface RessourceDto {
+  name: string;
+}
+
 
 

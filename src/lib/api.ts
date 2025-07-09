@@ -353,14 +353,41 @@ async addMandatAttachments(mandatId: number, file: File, description?: string) {
 
   // Création d'un ordre de mission
   async createOrdreMission(ordreMissionData: any) {
-    return this.request("/auth/ordres-mission/create", {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-        // Autres headers nécessaires (Authorization, etc.)
-      },
-      body: JSON.stringify(ordreMissionData),
-    })
+    try {
+      return await this.request("/auth/ordres-mission/create", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          // Autres headers nécessaires (Authorization, etc.)
+        },
+        body: JSON.stringify(ordreMissionData),
+      })
+    } catch (error: any) {
+      // Extraire le message d'erreur du backend si disponible
+    if (error.message && error.message.includes("API Error:")) {
+      // Tenter de parser la réponse JSON pour obtenir le message détaillé
+      try {
+        const response = await fetch(`${API_BASE_URL}/auth/ordres-mission/create`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+          body: JSON.stringify(ordreMissionData),
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.message || error.message)
+        }
+      } catch (fetchError: any) {
+        throw new Error(fetchError.message || error.message)
+      }
+    }
+    throw error
+    }
+    
+    
   }
 
   // NOUVEAU: Informations utilisateur

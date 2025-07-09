@@ -118,7 +118,6 @@ export function DashboardSidebar() {
                           <SidebarMenuButton 
                             asChild 
                             className={`
-                              rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-green-500
                               ${pathname.endsWith("/dashboard/mandats/enregistrer-mandat") 
                                 ? "bg-gradient-to-r from-blue-100 to-blue-200 border-l-green-500 text-blue-900" 
                                 : "hover:bg-gradient-to-r hover:from-green-50 hover:to-yellow-50"
@@ -208,7 +207,7 @@ export function DashboardSidebar() {
                           >
                             <button onClick={() => navigateTo("/dashboard/ordres-mission/create") } className="w-full">
                               <div className="flex items-center py-2 px-4">
-                                <Sparkles className="mr-2 h-4 w-4 text-green-600" />
+                                <Target className="mr-2 h-4 w-4 text-green-600" />
                                 <span className="text-sm font-medium">Créer un ordre de mission</span>
                               </div>
                             </button>
@@ -278,7 +277,6 @@ export function DashboardSidebar() {
                           <SidebarMenuButton 
                             asChild 
                             className={`
-                              rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-blue-500
                               ${pathname.endsWith("/dashboard/configurations/register") 
                                 ? "bg-gradient-to-r from-blue-100 to-blue-200 border-l-blue-500 text-blue-900" 
                                 : "hover:bg-gradient-to-r hover:from-blue-50 hover:to-yellow-50"
@@ -287,7 +285,7 @@ export function DashboardSidebar() {
                           >
                             <button onClick={() => navigateTo("/dashboard/configurations/register")} className="w-full">
                               <div className="flex items-center py-2 px-4">
-                                <User className="mr-2 h-4 w-4 text-blue-600" />
+                                <User className="mr-2 h-4 w-4" />
                                 <span className="text-sm font-medium">Créer un compte utilisateur</span>
                               </div>
                             </button>
@@ -298,7 +296,6 @@ export function DashboardSidebar() {
                           <SidebarMenuButton 
                             asChild 
                             className={`
-                              rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-green-500
                               ${pathname.endsWith("/dashboard/configurations/users") 
                                 ? "bg-gradient-to-r from-green-100 to-green-200 border-l-green-500 text-green-900" 
                                 : "hover:bg-gradient-to-r hover:from-green-50 hover:to-yellow-50"
@@ -307,7 +304,7 @@ export function DashboardSidebar() {
                           >
                             <button onClick={() => navigateTo("/dashboard/configurations/users")} className="w-full">
                               <div className="flex items-center py-2 px-4">
-                                <Settings className="mr-2 h-4 w-4 text-green-600" />
+                                <Settings className="mr-2 h-4 w-4" />
                                 <span className="text-sm font-medium">Gérer les utilisateurs</span>
                               </div>
                             </button>
@@ -318,31 +315,12 @@ export function DashboardSidebar() {
 
                     {hasPermission(["DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
                       <>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton 
-                            asChild 
-                            className={`
-                              rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-purple-500
-                              ${pathname.endsWith("/dashboard/configurations/fonctions") 
-                                ? "bg-gradient-to-r from-purple-100 to-purple-200 border-l-purple-500 text-purple-900" 
-                                : "hover:bg-gradient-to-r hover:from-purple-50 hover:to-yellow-50"
-                              }
-                            `}
-                          >
-                            <button onClick={() => navigateTo("/dashboard/configurations/fonctions")} className="w-full">
-                              <div className="flex items-center py-2 px-4">
-                                <Briefcase className="mr-2 h-4 w-4 text-purple-600" />
-                                <span className="text-sm font-medium">Fonctions</span>
-                              </div>
-                            </button>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
+                        
 
                         <SidebarMenuItem>
                           <SidebarMenuButton 
                             asChild 
                             className={`
-                              rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-indigo-500
                               ${pathname.endsWith("/dashboard/configurations/rangs") 
                                 ? "bg-gradient-to-r from-indigo-100 to-indigo-200 border-l-indigo-500 text-indigo-900" 
                                 : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-yellow-50"
@@ -351,7 +329,7 @@ export function DashboardSidebar() {
                           >
                             <button onClick={() => navigateTo("/dashboard/configurations/rangs")} className="w-full">
                               <div className="flex items-center py-2 px-4">
-                                <Shield className="mr-2 h-4 w-4 text-indigo-600" />
+                                <Shield className="mr-2 h-4 w-4" />
                                 <span className="text-sm font-medium">Rangs</span>
                               </div>
                             </button>
@@ -365,7 +343,6 @@ export function DashboardSidebar() {
                           <SidebarMenuButton 
                             asChild 
                             className={`
-                              rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-pink-500
                               ${pathname.endsWith("/dashboard/configurations/villes") 
                                 ? "bg-gradient-to-r from-pink-100 to-pink-200 border-l-pink-500 text-pink-900" 
                                 : "hover:bg-gradient-to-r hover:from-pink-50 hover:to-yellow-50"
@@ -374,7 +351,7 @@ export function DashboardSidebar() {
                           >
                             <button onClick={() => navigateTo("/dashboard/configurations/villes")} className="w-full">
                               <div className="flex items-center py-2 px-4">
-                                <MapPin className="mr-2 h-4 w-4 text-pink-600" />
+                                <MapPin className="mr-2 h-4 w-4" />
                                 <span className="text-sm font-medium">Gérer les villes</span>
                               </div>
                             </button>
@@ -384,7 +361,7 @@ export function DashboardSidebar() {
                           <SidebarMenuButton 
                             asChild 
                             className={`
-                              rounded-lg transition-all duration-200 hover:shadow-sm hover:scale-[1.01] border-l-4 border-l-transparent hover:border-l-orange-500
+                              
                               ${pathname.endsWith("/dashboard/ressources") 
                                 ? "bg-gradient-to-r from-orange-100 to-orange-200 border-l-orange-500 text-orange-900" 
                                 : "hover:bg-gradient-to-r hover:from-orange-50 hover:to-yellow-50"
@@ -393,7 +370,7 @@ export function DashboardSidebar() {
                           >
                             <button onClick={() => navigateTo("/dashboard/ressources")} className="w-full">
                               <div className="flex items-center py-2 px-4">
-                                <Package className="mr-2 h-4 w-4 text-orange-600" />
+                                <Package className="mr-2 h-4 w-4" />
                                 <span className="text-sm font-medium">Gérer les ressources</span>
                               </div>
                             </button>

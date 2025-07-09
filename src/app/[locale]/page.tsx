@@ -11,6 +11,9 @@ import { useRouter } from 'next/navigation';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Link from 'next/link';
 import { AlertCircle } from 'lucide-react';
+import LocalSwitcher from '@/components/local-switcher';
+import Image from 'next/image';
+
 export default function Home() {
   const router = useRouter()
   const [email, setEmail] = useState('');
@@ -72,9 +75,16 @@ export default function Home() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8 ">
-      <Card className="w-full max-w-md ">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-0 sm:px-6 lg:px-8 flex-col">
+      <div className="w-44 flex justify-center">
+        <Image src="/logoAPPLI.png" alt="Logo ART" width={160} height={140} className="h-36 w-44 rounded-2xl object-contain" />
+      </div>
+      
+      <Card className="w-full max-w-md rounded-2xl">
         <CardHeader className="space-y-1">
+          <div className="w-full flex justify-end mb-2">
+            <LocalSwitcher />
+          </div>
           <CardTitle className="text-2xl font-bold text-center">{t('title')}</CardTitle>
           <CardDescription className="text-center">{t('description')}</CardDescription>
         </CardHeader>

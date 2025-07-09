@@ -31,7 +31,7 @@ export default function DashboardLayout({
             </main>
           </div>
           
-          <Footer />
+          {/* <Footer /> */}
         </div>
       </SidebarProvider>
     </AuthProvider>

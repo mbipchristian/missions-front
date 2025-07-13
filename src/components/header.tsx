@@ -142,12 +142,12 @@ export default function Header() {
   const PageIcon = pageInfo.icon;
 
   return (
-    <header className='fixed top-0 left-0 right-0 z-50 h-16 w-full p-2 bg-white/90 backdrop-blur-md border-b border-gray-200/50'>
+    <header className='fixed top-0 left-0 right-0 z-50 h-16 w-full p-2 bg-blue-100 backdrop-blur-md border-b border-gray-200/50'>
       <div className='flex items-center justify-between w-full relative'>
         {/* Section gauche - Logo */}
         <div className="flex items-center gap-4">
           <img 
-            src="/logoAPPLI.png" 
+            src="/ART.png" 
             alt="Logo de l'application"
             className="h-14 w-32 rounded ml-14"
           />

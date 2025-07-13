@@ -56,6 +56,67 @@ export function DashboardSidebar() {
     router.push(`/${locale}`)
   }
 
+  // Fonction pour vérifier si l'utilisateur a accès à un élément spécifique
+  const hasAccessToMandatItem = (itemPath: string) => {
+    if (hasPermission(["ADMIN"])) return true
+    if (hasPermission(["DIRECTEUR_RESSOURCES_HUMAINES"])) return true
+    if (hasPermission(["AGENT_RESSOURCES_HUMAINES"])) {
+      // Agent RH n'a pas accès à "en-attente-confirmation"
+      return itemPath !== "en-attente-confirmation"
+    }
+    if (hasPermission(["AGENT_ART"])) {
+      // Agent ART n'a accès qu'à "mes-mandats"
+      return itemPath === "mes-mandats"
+    }
+    if (hasPermission(["DIRECTEUR_PATRIMOINE"])) {
+      // Directeur Patrimoine n'a accès qu'à "mes-mandats"
+      return itemPath === "mes-mandats"
+    }
+    return false
+  }
+
+  const hasAccessToOrdreItem = (itemPath: string) => {
+    if (hasPermission(["ADMIN"])) return true
+    if (hasPermission(["DIRECTEUR_RESSOURCES_HUMAINES"])) return true
+    if (hasPermission(["AGENT_RESSOURCES_HUMAINES"])) {
+      // Agent RH n'a pas accès à "en-attente-confirmation"
+      return itemPath !== "en-attente-confirmation"
+    }
+    if (hasPermission(["AGENT_ART"])) {
+      // Agent ART n'a accès qu'à "mes-ordres-mission"
+      return itemPath === "mes-ordres-mission"
+    }
+    if (hasPermission(["DIRECTEUR_PATRIMOINE"])) {
+      // Directeur Patrimoine n'a accès qu'à "mes-ordres-mission"
+      return itemPath === "mes-ordres-mission"
+    }
+    return false
+  }
+
+  const canCreateMandat = () => {
+    return hasPermission(["ADMIN", "AGENT_RESSOURCES_HUMAINES"])
+  }
+
+  const canCreateOrdre = () => {
+    return hasPermission(["ADMIN", "AGENT_RESSOURCES_HUMAINES"])
+  }
+
+  const hasAccessToMandatsModule = () => {
+    return hasPermission(["ADMIN", "DIRECTEUR_RESSOURCES_HUMAINES", "AGENT_RESSOURCES_HUMAINES", "AGENT_ART", "DIRECTEUR_PATRIMOINE"])
+  }
+
+  const hasAccessToOrdresModule = () => {
+    return hasPermission(["ADMIN", "DIRECTEUR_RESSOURCES_HUMAINES", "AGENT_RESSOURCES_HUMAINES", "AGENT_ART", "DIRECTEUR_PATRIMOINE"])
+  }
+
+  const hasAccessToConfigModule = () => {
+    return hasPermission(["ADMIN"])
+  }
+
+  const hasAccessToRessources = () => {
+    return hasPermission(["ADMIN", "AGENT_RESSOURCES_HUMAINES", "DIRECTEUR_RESSOURCES_HUMAINES", "DIRECTEUR_PATRIMOINE"])
+  }
+
   if (!user) {
     return (
       <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-50 to-blue-100">
@@ -89,7 +150,7 @@ export function DashboardSidebar() {
           
 
           {/* MISSIONS - Design amélioré */}
-          {hasPermission(["AGENT_RESSOURCES_HUMAINES", "DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
+          {hasAccessToMandatsModule() && (
             <div className="mt-4">
               
               <Collapsible open={openMissions} onOpenChange={setOpenMissions}>
@@ -113,7 +174,7 @@ export function DashboardSidebar() {
                   <div className="pl-4 pt-2 space-y-1">
                     <SidebarMenu>
                       {/* Création de mandat */}
-                      {hasPermission(["AGENT_RESSOURCES_HUMAINES", "ADMIN"]) && (
+                      {canCreateMandat() && (
                         <SidebarMenuItem>
                           <SidebarMenuButton 
                             asChild 
@@ -135,13 +196,13 @@ export function DashboardSidebar() {
                       )}
 
                       {[
-                        { path: "en-attente-confirmation", label: "En attente de confirmation", color: "yellow", count: "3" },
-                        { path: "en-attente-execution", label: "En attente d'exécution", color: "yellow", count: "5" },
-                        { path: "en-cours", label: "En cours", color: "yellow", count: "8" },
-                        { path: "acheve", label: "Achevé", color: "yellow", count: "12" },
-                        { path: "mes-mandats", label: "Mes mandats", color: "yellow", count: "4" },
-                        { path: "tous", label: "Tous les mandats", color: "yellow", count: "32" },
-                      ].map((item) => (
+                        { path: "en-attente-confirmation", label: "En attente de confirmation", color: "yellow", count: "", icon: Clock },
+                        { path: "en-attente-execution", label: "En attente d'exécution", color: "yellow", count: "", icon: Clock },
+                        { path: "en-cours", label: "En cours", color: "yellow", count: "", icon: Zap },
+                        { path: "acheve", label: "Achevé", color: "yellow", count: "", icon: CheckSquare },
+                        { path: "mes-mandats", label: "Mes mandats", color: "yellow", count: "", icon: User },
+                        { path: "tous", label: "Tous les mandats", color: "yellow", count: "", icon: Briefcase },
+                      ].filter(item => hasAccessToMandatItem(item.path)).map((item) => (
                         <SidebarMenuItem key={item.path}>
                           <SidebarMenuButton 
                             asChild 
@@ -155,7 +216,10 @@ export function DashboardSidebar() {
                           >
                             <button onClick={() => navigateTo(`/dashboard/mandats/${item.path}`)} className="w-full">
                               <div className="flex items-center justify-between py-2 px-4">
-                                <span className="text-sm font-medium">{item.label}</span>
+                                <div className="flex items-center">
+                                  <item.icon className="mr-2 h-4 w-4 text-black" />
+                                  <span className="text-sm font-medium">{item.label}</span>
+                                </div>
                                 <Badge className={`bg-${item.color}-100 text-${item.color}-800 text-xs px-2 py-1 animate-pulse`}>
                                   {item.count}
                                 </Badge>
@@ -172,7 +236,7 @@ export function DashboardSidebar() {
           )}
 
           {/* ORDRES DE MISSIONS */}
-          {hasPermission(["AGENT_RESSOURCES_HUMAINES", "DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
+          {hasAccessToOrdresModule() && (
             <div className="mt-4">
               <Collapsible open={openOrdres} onOpenChange={setOpenOrdres}>
                 <SidebarMenuItem>
@@ -193,7 +257,7 @@ export function DashboardSidebar() {
                   <div className="pl-4 pt-2 space-y-1">
                     <SidebarMenu>
                       {/* Création d'ordre de mission */}
-                      {hasPermission(["AGENT_RESSOURCES_HUMAINES", "ADMIN"]) && (
+                      {canCreateOrdre() && (
                         <SidebarMenuItem>
                           <SidebarMenuButton 
                             asChild 
@@ -215,13 +279,13 @@ export function DashboardSidebar() {
                         </SidebarMenuItem>
                       )}
                       {[
-                        { path: "en-attente-justificatif", label: "En attente de pièce jointe", color: "yellow", count: "" },
-                        { path: "en-attente-confirmation", label: "En attente de confirmation", color: "yellow", count: "" },
-                        { path: "en-attente-execution", label: "En attente d'exécution", color: "yellow", count: "" },
-                        { path: "en-cours", label: "En cours", color: "yellow", count: "" },
-                        { path: "acheve", label: "Achevé", color: "yellow", count: "" },
-                        { path: "mes-ordres-mission", label: "Mes ordres de missions", color: "yellow", count: "" },
-                      ].map((item) => (
+                        { path: "en-attente-justificatif", label: "En attente de pièce jointe", color: "yellow", count: "", icon: FileText },
+                        { path: "en-attente-confirmation", label: "En attente de confirmation", color: "yellow", count: "", icon: Clock },
+                        { path: "en-attente-execution", label: "En attente d'exécution", color: "yellow", count: "", icon: Clock },
+                        { path: "en-cours", label: "En cours", color: "yellow", count: "", icon: Zap },
+                        { path: "acheve", label: "Achevé", color: "yellow", count: "", icon: CheckSquare },
+                        { path: "mes-ordres-mission", label: "Mes ordres de missions", color: "yellow", count: "", icon: User },
+                      ].filter(item => hasAccessToOrdreItem(item.path)).map((item) => (
                         <SidebarMenuItem key={item.path}>
                           <SidebarMenuButton 
                             asChild 
@@ -235,7 +299,10 @@ export function DashboardSidebar() {
                           >
                             <button onClick={() => navigateTo(`/dashboard/ordres-mission/${item.path}`)} className="w-full">
                               <div className="flex items-center justify-between py-2 px-4">
-                                <span className="text-sm font-medium">{item.label}</span>
+                                <div className="flex items-center">
+                                  <item.icon className="mr-2 h-4 w-4 text-black" />
+                                  <span className="text-sm font-medium">{item.label}</span>
+                                </div>
                                 <Badge className={`bg-${item.color}-100 text-${item.color}-800 text-xs px-2 py-1 animate-pulse`}>
                                   {item.count}
                                 </Badge>
@@ -251,138 +318,138 @@ export function DashboardSidebar() {
             </div>
           )}
 
-          {/* CONFIGURATIONS */}
-          <div className="mt-4">
-            <Collapsible open={openAdmin} onOpenChange={setOpenAdmin}>
+          {/* RESSOURCES - Module séparé pour Directeur Patrimoine */}
+          {hasAccessToRessources() && (
+            <div className="mt-4">
               <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 transition-all duration-300 hover:shadow-md hover:scale-[1.02] border border-green-200">
-                    <div className="flex items-center py-3 px-4 w-full">
+                <SidebarMenuButton 
+                  asChild 
+                  className={`
+                    rounded-xl bg-gradient-to-r from-green-50 to-green-50 hover:from-green-50 hover:to-green-50 transition-all duration-300 hover:shadow-md hover:scale-[1.02] border border-green-50
+                    ${pathname.endsWith("/dashboard/ressources") 
+                      ? "bg-gradient-to-r from-green-50 to-green-50 border-l-green-50 text-green-900" 
+                      : "hover:bg-gradient-to-r hover:from-green-50 hover:to-yellow-50"
+                    }
+                  `}
+                >
+                  <button onClick={() => navigateTo("/dashboard/ressources")} className="w-full">
+                    <div className="flex items-center py-3 px-4">
                       <div className="relative">
-                        <Settings className="mr-3 h-5 w-5 text-green-700" />
+                        <Package className="mr-3 h-5 w-5 text-green-700" />
                         <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                       </div>
-                      <span className="font-bold text-green-900 tracking-wide">CONFIGURATIONS</span>
-                      <ChevronDown className={`ml-auto h-4 w-4 text-yellow-700 transition-transform duration-300 ${openAdmin ? "rotate-180" : ""}`} />
+                      <span className="font-bold text-green-900 tracking-wide">RESSOURCES</span>
                     </div>
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
+                  </button>
+                </SidebarMenuButton>
               </SidebarMenuItem>
-              <CollapsibleContent className="transition-all duration-300">
-                <div className="pl-4 pt-2 space-y-1">
-                  <SidebarMenu>
-                    {hasPermission(["AGENT_RESSOURCES_HUMAINES", "DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
-                      <>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton 
-                            asChild 
-                            className={`
-                              ${pathname.endsWith("/dashboard/configurations/register") 
-                                ? "bg-gradient-to-r from-blue-100 to-blue-200 border-l-blue-500 text-blue-900" 
-                                : "hover:bg-gradient-to-r hover:from-blue-50 hover:to-yellow-50"
-                              }
-                            `}
-                          >
-                            <button onClick={() => navigateTo("/dashboard/configurations/register")} className="w-full">
-                              <div className="flex items-center py-2 px-4">
-                                <User className="mr-2 h-4 w-4" />
-                                <span className="text-sm font-medium">Créer un compte utilisateur</span>
-                              </div>
-                            </button>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
+            </div>
+          )}
 
-                        <SidebarMenuItem>
-                          <SidebarMenuButton 
-                            asChild 
-                            className={`
-                              ${pathname.endsWith("/dashboard/configurations/users") 
-                                ? "bg-gradient-to-r from-green-100 to-green-200 border-l-green-500 text-green-900" 
-                                : "hover:bg-gradient-to-r hover:from-green-50 hover:to-yellow-50"
-                              }
-                            `}
-                          >
-                            <button onClick={() => navigateTo("/dashboard/configurations/users")} className="w-full">
-                              <div className="flex items-center py-2 px-4">
-                                <Settings className="mr-2 h-4 w-4" />
-                                <span className="text-sm font-medium">Gérer les utilisateurs</span>
-                              </div>
-                            </button>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      </>
-                    )}
+          {/* CONFIGURATIONS */}
+          {hasAccessToConfigModule() && (
+            <div className="mt-4">
+              <Collapsible open={openAdmin} onOpenChange={setOpenAdmin}>
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton className="group relative overflow-hidden rounded-xl bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 transition-all duration-300 hover:shadow-md hover:scale-[1.02] border border-green-200">
+                      <div className="flex items-center py-3 px-4 w-full">
+                        <div className="relative">
+                          <Settings className="mr-3 h-5 w-5 text-green-700" />
+                          <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        </div>
+                        <span className="font-bold text-green-900 tracking-wide">CONFIGURATIONS</span>
+                        <ChevronDown className={`ml-auto h-4 w-4 text-yellow-700 transition-transform duration-300 ${openAdmin ? "rotate-180" : ""}`} />
+                      </div>
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                </SidebarMenuItem>
+                <CollapsibleContent className="transition-all duration-300">
+                  <div className="pl-4 pt-2 space-y-1">
+                    <SidebarMenu>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton 
+                          asChild 
+                          className={`
+                            ${pathname.endsWith("/dashboard/configurations/register") 
+                              ? "bg-gradient-to-r from-blue-100 to-blue-200 border-l-blue-500 text-blue-900" 
+                              : "hover:bg-gradient-to-r hover:from-blue-50 hover:to-yellow-50"
+                            }
+                          `}
+                        >
+                          <button onClick={() => navigateTo("/dashboard/configurations/register")} className="w-full">
+                            <div className="flex items-center py-2 px-4">
+                              <User className="mr-2 h-4 w-4" />
+                              <span className="text-sm font-medium">Créer un compte utilisateur</span>
+                            </div>
+                          </button>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
 
-                    {hasPermission(["DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
-                      <>
-                        
+                      <SidebarMenuItem>
+                        <SidebarMenuButton 
+                          asChild 
+                          className={`
+                            ${pathname.endsWith("/dashboard/configurations/users") 
+                              ? "bg-gradient-to-r from-green-100 to-green-200 border-l-green-500 text-green-900" 
+                              : "hover:bg-gradient-to-r hover:from-green-50 hover:to-yellow-50"
+                            }
+                          `}
+                        >
+                          <button onClick={() => navigateTo("/dashboard/configurations/users")} className="w-full">
+                            <div className="flex items-center py-2 px-4">
+                              <Settings className="mr-2 h-4 w-4" />
+                              <span className="text-sm font-medium">Gérer les utilisateurs</span>
+                            </div>
+                          </button>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
 
-                        <SidebarMenuItem>
-                          <SidebarMenuButton 
-                            asChild 
-                            className={`
-                              ${pathname.endsWith("/dashboard/configurations/rangs") 
-                                ? "bg-gradient-to-r from-indigo-100 to-indigo-200 border-l-indigo-500 text-indigo-900" 
-                                : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-yellow-50"
-                              }
-                            `}
-                          >
-                            <button onClick={() => navigateTo("/dashboard/configurations/rangs")} className="w-full">
-                              <div className="flex items-center py-2 px-4">
-                                <Shield className="mr-2 h-4 w-4" />
-                                <span className="text-sm font-medium">Rangs</span>
-                              </div>
-                            </button>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      </>
-                    )}
-                    {hasPermission(["AGENT_RESSOURCES_HUMAINES", "DIRECTEUR_RESSOURCES_HUMAINES", "ADMIN"]) && (
-                      <>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton 
-                            asChild 
-                            className={`
-                              ${pathname.endsWith("/dashboard/configurations/villes") 
-                                ? "bg-gradient-to-r from-pink-100 to-pink-200 border-l-pink-500 text-pink-900" 
-                                : "hover:bg-gradient-to-r hover:from-pink-50 hover:to-yellow-50"
-                              }
-                            `}
-                          >
-                            <button onClick={() => navigateTo("/dashboard/configurations/villes")} className="w-full">
-                              <div className="flex items-center py-2 px-4">
-                                <MapPin className="mr-2 h-4 w-4" />
-                                <span className="text-sm font-medium">Gérer les villes</span>
-                              </div>
-                            </button>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton 
-                            asChild 
-                            className={`
-                              
-                              ${pathname.endsWith("/dashboard/ressources") 
-                                ? "bg-gradient-to-r from-orange-100 to-orange-200 border-l-orange-500 text-orange-900" 
-                                : "hover:bg-gradient-to-r hover:from-orange-50 hover:to-yellow-50"
-                              }
-                            `}
-                          >
-                            <button onClick={() => navigateTo("/dashboard/ressources")} className="w-full">
-                              <div className="flex items-center py-2 px-4">
-                                <Package className="mr-2 h-4 w-4" />
-                                <span className="text-sm font-medium">Gérer les ressources</span>
-                              </div>
-                            </button>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      </>
-                    )}
-                  </SidebarMenu>
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
-          </div>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton 
+                          asChild 
+                          className={`
+                            ${pathname.endsWith("/dashboard/configurations/rangs") 
+                              ? "bg-gradient-to-r from-indigo-100 to-indigo-200 border-l-indigo-500 text-indigo-900" 
+                              : "hover:bg-gradient-to-r hover:from-indigo-50 hover:to-yellow-50"
+                            }
+                          `}
+                        >
+                          <button onClick={() => navigateTo("/dashboard/configurations/rangs")} className="w-full">
+                            <div className="flex items-center py-2 px-4">
+                              <Shield className="mr-2 h-4 w-4" />
+                              <span className="text-sm font-medium">Rangs</span>
+                            </div>
+                          </button>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+
+                      <SidebarMenuItem>
+                        <SidebarMenuButton 
+                          asChild 
+                          className={`
+                            ${pathname.endsWith("/dashboard/configurations/villes") 
+                              ? "bg-gradient-to-r from-pink-100 to-pink-200 border-l-pink-500 text-pink-900" 
+                              : "hover:bg-gradient-to-r hover:from-pink-50 hover:to-yellow-50"
+                            }
+                          `}
+                        >
+                          <button onClick={() => navigateTo("/dashboard/configurations/villes")} className="w-full">
+                            <div className="flex items-center py-2 px-4">
+                              <MapPin className="mr-2 h-4 w-4" />
+                              <span className="text-sm font-medium">Gérer les villes</span>
+                            </div>
+                          </button>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+
+                      
+                    </SidebarMenu>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
+          )}
         </SidebarMenu>
       </SidebarContent>
 

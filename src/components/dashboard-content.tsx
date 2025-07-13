@@ -177,7 +177,7 @@ export default function DashboardContent() {
 
   return (
     <>
-      <div className="h-screen grid grid-cols-2 grid-rows-2 gap-6 p-6">
+      <div className="h-screen grid grid-cols-2 grid-rows-2 gap-6 p-6" >
         {/* Quartier 1: Top utilisateurs - Plus de jours */}
         <Card
           className="cursor-pointer hover:shadow-lg transition-shadow duration-200 group bg-blue-50"

@@ -112,7 +112,7 @@ export default function MesMandatsPage() {
 
       {/* Statistiques */}
       <div className="grid gap-4 md:grid-cols-4 mb-6">
-        <Card>
+        <Card className="bg-blue-100">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
@@ -123,7 +123,7 @@ export default function MesMandatsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-green-100">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">En attente</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
@@ -134,7 +134,7 @@ export default function MesMandatsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-blue-100">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">En cours</CardTitle>
             <Play className="h-4 w-4 text-muted-foreground" />
@@ -145,7 +145,7 @@ export default function MesMandatsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-green-100">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Achevés</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />

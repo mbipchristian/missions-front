@@ -33,27 +33,21 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Search, MoreVertical, Trash, RefreshCw, User, Mail, Shield, Eye } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
-// Types based on the Java DTOs
+// Types corrigés selon le DTO Java
 interface UserResponseDto {
   id: number
   username: string
   email: string
   matricule: string
+  quotaAnnuel: number
   role: {
     id: number
     name: string
     description: string
   }
-  fonction: {
-    id: number
-    nom: string
-    rangId: number
-    rangNom: string
-    rangCode: string
-  }
-  quotaAnnuel: number
-  createdAt: string
-  updatedAt: string
+  fonction: string  // Simple string selon le DTO Java
+  created_at: string  // ou createdAt selon votre configuration Jackson
+  updated_at: string  // ou updatedAt selon votre configuration Jackson
 }
 
 interface RoleResponseDto {
@@ -417,20 +411,16 @@ export default function UsersPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <div className="flex flex-col">
-                        <span className="font-medium">{user.fonction.nom}</span>
-                        <span className="text-sm text-muted-foreground">
-                          {user.fonction.rangNom} ({user.fonction.rangCode})
-                        </span>
-                      </div>
+                      {/* Fonction est maintenant un simple string */}
+                      <span className="font-medium">{user.fonction}</span>
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col">
                         <span className="font-medium">{user.quotaAnnuel} jours</span>
                       </div>
                     </TableCell>
-                    <TableCell>{formatDate(user.createdAt)}</TableCell>
-                    <TableCell>{formatDate(user.updatedAt)}</TableCell>
+                    <TableCell>{formatDate(user.created_at)}</TableCell>
+                    <TableCell>{formatDate(user.updated_at)}</TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -504,10 +494,8 @@ export default function UsersPage() {
                 <div>
                   <h4 className="text-sm font-medium text-muted-foreground">Fonction</h4>
                   <div className="mt-1">
-                    <p className="font-medium">{selectedUser.fonction.nom}</p>
-                    <p className="text-sm text-muted-foreground">
-                      Rang: {selectedUser.fonction.rangNom} ({selectedUser.fonction.rangCode})
-                    </p>
+                    {/* Fonction est maintenant un simple string */}
+                    <p className="font-medium">{selectedUser.fonction}</p>
                   </div>
                 </div>
               </div>
@@ -523,11 +511,11 @@ export default function UsersPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <h4 className="text-sm font-medium text-muted-foreground">Créé le</h4>
-                  <p className="text-sm">{formatDate(selectedUser.createdAt)}</p>
+                  <p className="text-sm">{formatDate(selectedUser.created_at)}</p>
                 </div>
                 <div>
                   <h4 className="text-sm font-medium text-muted-foreground">Dernière mise à jour</h4>
-                  <p className="text-sm">{formatDate(selectedUser.updatedAt)}</p>
+                  <p className="text-sm">{formatDate(selectedUser.updated_at)}</p>
                 </div>
               </div>
             </div>

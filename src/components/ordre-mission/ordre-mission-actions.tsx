@@ -149,12 +149,12 @@ export function OrdreMissionActions({ ordreMission, actions, onActionComplete }:
         </Button>
       )}
 
-      {actions.includes("edit") && (
+      {/* {actions.includes("edit") && (
         <Button variant="outline" size="sm" onClick={handleEdit}>
           <Edit className="h-4 w-4 mr-1" />
           Modifier
         </Button>
-      )}
+      )} */}
 
       {actions.includes("addAttachments") && (
         <Dialog>

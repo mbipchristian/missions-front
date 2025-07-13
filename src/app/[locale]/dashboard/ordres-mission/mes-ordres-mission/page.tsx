@@ -128,7 +128,7 @@ export default function MesOrdresMissionPage() {
 
       {/* Statistiques */}
       <div className="grid gap-4 md:grid-cols-5 mb-6">
-        <Card>
+        <Card className="bg-blue-100">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total</CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
@@ -139,7 +139,7 @@ export default function MesOrdresMissionPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-green-100">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">En attente</CardTitle>
             <AlertCircle className="h-4 w-4 text-muted-foreground" />
@@ -150,7 +150,7 @@ export default function MesOrdresMissionPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-blue-100">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">En cours</CardTitle>
             <Play className="h-4 w-4 text-muted-foreground" />
@@ -161,7 +161,7 @@ export default function MesOrdresMissionPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-green-100">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Achevés</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
@@ -172,7 +172,7 @@ export default function MesOrdresMissionPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-blue-100">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Montant total</CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />

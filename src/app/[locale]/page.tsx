@@ -77,7 +77,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-0 sm:px-6 lg:px-8 flex-col">
       <div className="w-44 flex justify-center">
-        <Image src="/logoAPPLI.png" alt="Logo ART" width={160} height={140} className="h-36 w-44 rounded-2xl object-contain" />
+        <Image src="/ART.png" alt="Logo ART" width={160} height={140} className="h-36 w-44 rounded-2xl object-contain" />
       </div>
       
       <Card className="w-full max-w-md rounded-2xl">

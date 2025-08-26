@@ -102,7 +102,7 @@ export default function MandatsEnAttenteConfirmationPage() {
         renderActions={(mandat) => (
           <MandatActions
             mandat={mandat}
-            actions={["confirm", "details", "downloadPdf"]}
+            actions={["confirm", "details"]}
             onActionComplete={fetchMandats}
           />
         )}

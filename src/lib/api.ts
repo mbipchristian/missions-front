@@ -1,3 +1,5 @@
+import { DecomptesPreCreationRequest, DecomptesResponse } from "@/types"
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
 
 class ApiService {
@@ -55,6 +57,10 @@ class ApiService {
     return this.request<any[]>("/auth/mandats/acheves")
   }
 
+  async getMandatsAchevesAvecRapport() {
+    return this.request<any[]>("/auth/mandats/achevesAvecRapport")
+  }
+
   async getAllMandats() {
     return this.request<any[]>("/auth/mandats/all")
   }
@@ -78,9 +84,15 @@ class ApiService {
     }
   }
 
-  async downloadMandatPdf(mandatId: number) {
-    return this.requestBlob(`/auth/mandats/${mandatId}/pdf`)
+ async downloadPieceJointe(pieceJointeId: number): Promise<Blob> {
+  try {
+    const response = await this.requestBlob(`/auth/pieces-jointes/${pieceJointeId}/download`)
+    return response
+  } catch (error) {
+    console.error('Erreur lors du téléchargement de la pièce jointe:', error)
+    throw new Error('Échec du téléchargement du fichier')
   }
+}
 
   async addMandatReport(mandatId: number, formData: FormData) {
     const token = localStorage.getItem("authToken")
@@ -171,6 +183,10 @@ class ApiService {
     return this.request<any[]>("/auth/ordres-mission/acheves")
   }
 
+  async getOrdresMissionRejetes() {
+    return this.request<any[]>("/auth/ordres-mission/rejetes")
+  }
+
   async getAllOrdresMission() {
     return this.request<any[]>("/auth/ordres-mission/all")
   }
@@ -191,7 +207,7 @@ class ApiService {
   }
 
   async rejectOrdreMission(ordreMissionId: number) {
-    return this.request(`/auth/ordres-mission/${ordreMissionId}/rejeter`, {
+    return this.request(`/auth/ordres-mission/${ordreMissionId}/rejetter`, {
       method: "POST",
     })
   }
@@ -395,15 +411,23 @@ async addMandatAttachments(mandatId: number, file: File, description?: string) {
     return this.request<any>("/auth/me")
   }
 
-  // Calcul des décomptes pour un ordre de mission
-  async getOrdreMissionDecomptes(mandatId: number, userId: number, tauxAvance: number) {
+  async getOrdreMissionDecomptes(ordreMissionId: number, userId: number, tauxAvance: number) {
     const params = new URLSearchParams({
-      mandatId: String(mandatId),
+      ordreMissionId: String(ordreMissionId),
       userId: String(userId),
       tauxAvance: String(tauxAvance),
     })
     return this.request(`/auth/ordres-mission/calcul-decomptes?${params.toString()}`)
   }
+
+  // pour calculer les décomptes avant création
+  async calculerDecomptesPreCreation(tempOrdreMission: DecomptesPreCreationRequest): Promise<DecomptesResponse> {
+    return this.request("/auth/ordres-mission/calcul-decomptes-pre-creation", {
+      method: "POST",
+      body: JSON.stringify(tempOrdreMission),
+    })
+  }
+
 
   // Villes CRUD
   async createVille(villeData: any) {

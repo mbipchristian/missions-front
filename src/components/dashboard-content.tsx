@@ -1,12 +1,12 @@
 "use client"
-
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
-import { Users, Calendar, TrendingUp, Activity, ChevronRight } from "lucide-react"
+import { ResponsiveContainer, PieChart, Pie, Cell } from "recharts"
+import { Users, Calendar, TrendingUp, Activity, ChevronRight, Crown, User } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { apiService } from "@/lib/api"
+import { useTranslations } from "next-intl"
 
 interface User {
   id: number
@@ -36,6 +36,7 @@ interface DashboardStats {
 type ModalType = "most-days" | "least-days" | "user-quota" | "status-analysis" | null
 
 export default function DashboardContent() {
+  const t = useTranslations("DashboardContent")
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -48,7 +49,6 @@ export default function DashboardContent() {
   const fetchDashboardData = async () => {
     try {
       setLoading(true)
-
       // Récupérer les données en parallèle
       const [users, mandats, currentUser] = await Promise.all([
         apiService.getAllUsers(),
@@ -92,10 +92,10 @@ export default function DashboardContent() {
       }
 
       const statusLabels: { [key: string]: string } = {
-        EN_ATTENTE_EXECUTION: "En attente d'exécution",
-        EN_COURS: "En cours",
-        ACHEVE: "Achevées",
-        EN_ATTENTE_CONFIRMATION: "En attente de confirmation",
+        EN_ATTENTE_EXECUTION: t("statusLabels.EN_ATTENTE_EXECUTION"),
+        EN_COURS: t("statusLabels.EN_COURS"),
+        ACHEVE: t("statusLabels.ACHEVE"),
+        EN_ATTENTE_CONFIRMATION: t("statusLabels.EN_ATTENTE_CONFIRMATION"),
       }
 
       const mandatsByStatus = Object.entries(statusCounts).map(([status, count]) => ({
@@ -112,7 +112,7 @@ export default function DashboardContent() {
         mandatsByStatus,
       })
     } catch (err) {
-      setError("Erreur lors du chargement des données du dashboard")
+      setError(t("error.message"))
       console.error("Dashboard error:", err)
     } finally {
       setLoading(false)
@@ -121,11 +121,11 @@ export default function DashboardContent() {
 
   const chartConfig = {
     days: {
-      label: "Jours",
+      label: t("chartConfig.daysLabel"),
       color: "hsl(var(--chart-1))",
     },
     count: {
-      label: "Nombre",
+      label: t("chartConfig.countLabel"),
       color: "hsl(var(--chart-2))",
     },
   }
@@ -166,84 +166,84 @@ export default function DashboardContent() {
   if (!stats) return null
 
   const getQuotaStatus = () => {
-    if (stats.currentUserDays >= stats.currentUserQuota) return { text: "Quota dépassé", color: "text-red-600" }
+    if (stats.currentUserDays >= stats.currentUserQuota) return { text: t("cards.myQuota.status.exceeded"), color: "text-red-600" }
     if (stats.currentUserDays >= stats.currentUserQuota * 0.8)
-      return { text: "Proche du quota", color: "text-orange-600" }
-    return { text: "Vous pouvez encore faire des missions cette année !"}
+      return { text: t("cards.myQuota.status.near"), color: "text-orange-600" }
+    return { text: t("cards.myQuota.status.ok") }
   }
 
   const quotaStatus = getQuotaStatus()
   const totalMissions = stats.mandatsByStatus.reduce((sum, s) => sum + s.count, 0)
 
   return (
-    <>
-      <div className="h-screen grid grid-cols-2 grid-rows-2 gap-6 p-6" >
+    <div>
+      <div className="h-screen grid grid-cols-2 grid-rows-2 gap-6 p-6">
         {/* Quartier 1: Top utilisateurs - Plus de jours */}
         <Card
-          className="cursor-pointer hover:shadow-lg transition-shadow duration-200 group bg-blue-50"
+          className="cursor-pointer hover:shadow-lg transition-shadow duration-200 group bg-blue-100 min-w-96"
           onClick={() => setActiveModal("most-days")}
         >
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center justify-between text-lg">
               <div className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-green-600" />
-                Top Utilisateurs
+                {t("cards.topPersonnel.title")}
               </div>
               <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform " />
             </CardTitle>
-            <CardDescription>Plus de jours de missions</CardDescription>
+            <CardDescription>{t("cards.topPersonnel.description")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <div className="text-3xl font-bold text-green-600">{stats.usersWithMostDays[0]?.days || 0}</div>
               <div className="text-sm text-muted-foreground">
-                Jours max: {stats.usersWithMostDays[0]?.name || "N/A"}
+                {t("cards.topPersonnel.maxDays")} {stats.usersWithMostDays[0]?.name || "N/A"}
               </div>
-              <div className="text-xs text-muted-foreground">Cliquez pour voir le top 5</div>
+              <div className="text-xs text-muted-foreground">{t("cards.topPersonnel.clickToView")}</div>
             </div>
           </CardContent>
         </Card>
 
         {/* Quartier 2: Top utilisateurs - Moins de jours */}
         <Card
-          className="cursor-pointer hover:shadow-lg transition-shadow duration-200 group bg-green-50"
+          className="cursor-pointer hover:shadow-lg transition-shadow duration-200 group bg-green-100 min-w-96"
           onClick={() => setActiveModal("least-days")}
         >
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center justify-between text-lg">
               <div className="flex items-center gap-2">
                 <Users className="h-5 w-5 text-blue-600" />
-                Utilisateurs Disponibles
+                {t("cards.availablePersonnel.title")}
               </div>
               <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </CardTitle>
-            <CardDescription>Moins de jours de missions</CardDescription>
+            <CardDescription>{t("cards.availablePersonnel.description")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <div className="text-3xl font-bold text-blue-600">{stats.usersWithLeastDays[0]?.days || 0}</div>
               <div className="text-sm text-muted-foreground">
-                Jours min: {stats.usersWithLeastDays[0]?.name || "N/A"}
+                {t("cards.availablePersonnel.minDays")} {stats.usersWithLeastDays[0]?.name || "N/A"}
               </div>
-              <div className="text-xs text-muted-foreground">Cliquez pour voir le top 5</div>
+              <div className="text-xs text-muted-foreground">{t("cards.availablePersonnel.clickToView")}</div>
             </div>
           </CardContent>
         </Card>
 
         {/* Quartier 3: Mon quota */}
         <Card
-          className="cursor-pointer hover:shadow-lg transition-shadow duration-200 group bg-green-50"
+          className="cursor-pointer hover:shadow-lg transition-shadow duration-200 group bg-green-100 min-w-96"
           onClick={() => setActiveModal("user-quota")}
         >
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center justify-between text-lg">
               <div className="flex items-center gap-2">
                 <Calendar className="h-5 w-5 text-blue-600" />
-                Mon Quota
+                {t("cards.myQuota.title")}
               </div>
               <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </CardTitle>
-            <CardDescription>Mes jours de missions</CardDescription>
+            <CardDescription>{t("cards.myQuota.description")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -251,31 +251,31 @@ export default function DashboardContent() {
                 {stats.currentUserDays}/{stats.currentUserQuota}
               </div>
               <div className={`text-sm font-medium ${quotaStatus.color}`}>{quotaStatus.text}</div>
-              <div className="text-xs text-muted-foreground">Cliquez pour voir les détails</div>
+              <div className="text-xs text-muted-foreground">{t("cards.myQuota.clickToView")}</div>
             </div>
           </CardContent>
         </Card>
 
         {/* Quartier 4: Analyse des statuts */}
         <Card
-          className="cursor-pointer hover:shadow-lg transition-shadow duration-200 group bg-blue-50"
+          className="cursor-pointer hover:shadow-lg transition-shadow duration-200 group bg-blue-100 min-w-96"
           onClick={() => setActiveModal("status-analysis")}
         >
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center justify-between text-lg">
               <div className="flex items-center gap-2">
                 <Activity className="h-5 w-5 text-green-600" />
-                Analyse Missions
+                {t("cards.missionAnalysis.title")}
               </div>
               <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </CardTitle>
-            <CardDescription>Répartition par statut</CardDescription>
+            <CardDescription>{t("cards.missionAnalysis.description")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <div className="text-3xl font-bold text-green-600">{totalMissions}</div>
-              <div className="text-sm text-muted-foreground">Total des missions</div>
-              <div className="text-xs text-muted-foreground">Cliquez pour voir la répartition</div>
+              <div className="text-sm text-muted-foreground">{t("cards.missionAnalysis.totalMissions")}</div>
+              <div className="text-xs text-muted-foreground">{t("cards.missionAnalysis.clickToView")}</div>
             </div>
           </CardContent>
         </Card>
@@ -287,20 +287,32 @@ export default function DashboardContent() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />
-              Top 5 - Plus de jours de missions
+              {t("modals.mostDays.title")}
             </DialogTitle>
           </DialogHeader>
           <div className="mt-4">
-            <ChartContainer config={chartConfig} className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={stats.usersWithMostDays} layout="horizontal">
-                  <XAxis type="number" />
-                  <YAxis dataKey="name" type="category" width={80} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="days" fill="var(--color-days)" radius={[0, 4, 4, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+            <div className="space-y-3">
+              {stats.usersWithMostDays.map((user, index) => (
+                <div key={index} className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 bg-green-100 rounded-full">
+                      {index === 0 ? (
+                        <Crown className="h-4 w-4 text-yellow-600" />
+                      ) : (
+                        <span className="text-sm font-bold text-green-600">{index + 1}</span>
+                      )}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-800">{user.name}</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-green-600">{user.days}</div>
+                    <div className="text-sm text-gray-600">{t("modals.mostDays.daysUnit")}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -311,20 +323,33 @@ export default function DashboardContent() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Users className="h-5 w-5" />
-              Top 5 - Moins de jours de missions
+              {t("modals.leastDays.title")}
             </DialogTitle>
           </DialogHeader>
           <div className="mt-4">
-            <ChartContainer config={chartConfig} className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={stats.usersWithLeastDays} layout="horizontal">
-                  <XAxis type="number" />
-                  <YAxis dataKey="name" type="category" width={80} />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="days" fill="hsl(var(--chart-3))" radius={[0, 4, 4, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
+            <div className="space-y-3">
+              {stats.usersWithLeastDays.map((user, index) => (
+                <div key={index} className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
+                      <User className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-800">{user.name}</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-blue-600">{user.days}</div>
+                    <div className="text-sm text-gray-600">{t("modals.leastDays.daysUnit")}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+              <p className="text-sm text-blue-800">
+                {t("modals.leastDays.tip")}
+              </p>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -335,15 +360,14 @@ export default function DashboardContent() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5" />
-              Mes jours de missions
+              {t("modals.myQuota.title")}
             </DialogTitle>
           </DialogHeader>
           <div className="mt-4 space-y-6">
             <div className="text-center">
               <div className="text-4xl font-bold text-primary">{stats.currentUserDays}</div>
-              <div className="text-sm text-muted-foreground">sur {stats.currentUserQuota} jours</div>
+              <div className="text-sm text-muted-foreground">{t("modals.myQuota.daysOfQuota", { quota: stats.currentUserQuota })}</div>
             </div>
-
             {/* Barre de progression */}
             <div className="w-full bg-gray-200 rounded-full h-6">
               <div
@@ -355,12 +379,10 @@ export default function DashboardContent() {
                 {Math.round((stats.currentUserDays / stats.currentUserQuota) * 100)}%
               </div>
             </div>
-
             <div className="flex justify-between text-sm text-muted-foreground">
-              <span>0 jours</span>
-              <span>{stats.currentUserQuota} jours</span>
+              <span>{t("modals.myQuota.zeroDays")}</span>
+              <span>{t("modals.myQuota.totalQuotaDays", { quota: stats.currentUserQuota })}</span>
             </div>
-
             {/* Indicateur de statut */}
             <div className="text-center p-4 rounded-lg bg-gray-50">
               <span className={`font-medium ${quotaStatus.color}`}>{quotaStatus.text}</span>
@@ -375,7 +397,7 @@ export default function DashboardContent() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Activity className="h-5 w-5" />
-              Répartition des missions par statut
+              {t("modals.statusAnalysis.title")}
             </DialogTitle>
           </DialogHeader>
           <div className="mt-4 grid md:grid-cols-2 gap-6">
@@ -405,7 +427,7 @@ export default function DashboardContent() {
                             <div className="bg-white p-2 border rounded shadow">
                               <p className="font-medium">{data.status}</p>
                               <p className="text-sm">
-                                {data.count} mission{data.count > 1 ? "s" : ""}
+                                {t("modals.statusAnalysis.missionUnit", { count: data.count })}
                               </p>
                             </div>
                           )
@@ -417,10 +439,9 @@ export default function DashboardContent() {
                 </ResponsiveContainer>
               </ChartContainer>
             </div>
-
             {/* Légende et statistiques détaillées */}
             <div className="space-y-4">
-              <h4 className="font-medium">Détails par statut</h4>
+              <h4 className="font-medium">{t("modals.statusAnalysis.detailsTitle")}</h4>
               <div className="space-y-3">
                 {stats.mandatsByStatus.map((item, index) => (
                   <div key={index} className="flex items-center justify-between p-2 rounded bg-gray-50">
@@ -437,11 +458,10 @@ export default function DashboardContent() {
                   </div>
                 ))}
               </div>
-
               {/* Total */}
               <div className="border-t pt-3">
                 <div className="flex items-center justify-between font-medium text-lg">
-                  <span>Total des missions</span>
+                  <span>{t("modals.statusAnalysis.totalMissions")}</span>
                   <span>{totalMissions}</span>
                 </div>
               </div>
@@ -449,6 +469,6 @@ export default function DashboardContent() {
           </div>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   )
 }

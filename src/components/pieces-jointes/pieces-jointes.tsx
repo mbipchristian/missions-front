@@ -1,15 +1,15 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Plus, MoreVertical, Download, Trash, RefreshCw, ArrowLeft, FileText, Upload, File } from "lucide-react"
+import { Plus, MoreVertical, Download, Trash, RefreshCw, ArrowLeft, FileText, Upload, File } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
@@ -81,6 +81,7 @@ interface PieceJointeResponseDto {
 }
 
 export default function PiecesJointes() {
+  const t = useTranslations("PiecesJointes")
   const [piecesJointes, setPiecesJointes] = useState<PieceJointeResponseDto[]>([])
   const [mandats, setMandats] = useState<MandatResponseDto[]>([])
   const [ordresMission, setOrdresMission] = useState<OrdreMissionResponseDto[]>([])
@@ -101,7 +102,6 @@ export default function PiecesJointes() {
     userId: 0,
   })
   const [associationType, setAssociationType] = useState<"mandat" | "ordre" | "rapport" | "none">("none")
-
   const { toast } = useToast()
 
   // Fetch data on component mount
@@ -119,14 +119,14 @@ export default function PiecesJointes() {
     setLoading(true)
     try {
       const response = await fetch("/api/pieces-jointes")
-      if (!response.ok) throw new Error("Failed to fetch pieces jointes")
+      if (!response.ok) throw new Error(t("errors.fetchFailed"))
       const data = await response.json()
       setPiecesJointes(data)
     } catch (error) {
       console.error("Error fetching pieces jointes:", error)
       toast({
-        title: "Erreur",
-        description: "Impossible de charger les pièces jointes",
+        title: t("errors.title"),
+        description: t("errors.loadAttachments"),
         variant: "destructive",
       })
     } finally {
@@ -137,7 +137,7 @@ export default function PiecesJointes() {
   const fetchMandats = async () => {
     try {
       const response = await fetch("/api/mandats")
-      if (!response.ok) throw new Error("Failed to fetch mandats")
+      if (!response.ok) throw new Error(t("errors.fetchMandatsFailed"))
       const data = await response.json()
       setMandats(data)
     } catch (error) {
@@ -148,7 +148,7 @@ export default function PiecesJointes() {
   const fetchOrdresMission = async () => {
     try {
       const response = await fetch("/api/ordres-mission/all")
-      if (!response.ok) throw new Error("Failed to fetch ordres mission")
+      if (!response.ok) throw new Error(t("errors.fetchOrdersFailed"))
       const data = await response.json()
       setOrdresMission(data)
     } catch (error) {
@@ -159,7 +159,7 @@ export default function PiecesJointes() {
   const fetchRapports = async () => {
     try {
       const response = await fetch("/api/rapports")
-      if (!response.ok) throw new Error("Failed to fetch rapports")
+      if (!response.ok) throw new Error(t("errors.fetchReportsFailed"))
       const data = await response.json()
       setRapports(data)
     } catch (error) {
@@ -170,7 +170,7 @@ export default function PiecesJointes() {
   const fetchUsers = async () => {
     try {
       const response = await fetch("/api/users")
-      if (!response.ok) throw new Error("Failed to fetch users")
+      if (!response.ok) throw new Error(t("errors.fetchUsersFailed"))
       const data = await response.json()
       setUsers(data)
     } catch (error) {
@@ -193,17 +193,16 @@ export default function PiecesJointes() {
   const handleUploadFiles = async () => {
     if (selectedFiles.length === 0) {
       toast({
-        title: "Erreur de validation",
-        description: "Veuillez sélectionner au moins un fichier",
+        title: t("validation.title"),
+        description: t("validation.selectFiles"),
         variant: "destructive",
       })
       return
     }
-
     if (formData.userId === 0) {
       toast({
-        title: "Erreur de validation",
-        description: "Veuillez sélectionner un utilisateur",
+        title: t("validation.title"),
+        description: t("validation.selectUser"),
         variant: "destructive",
       })
       return
@@ -238,21 +237,20 @@ export default function PiecesJointes() {
       const failedUploads = responses.filter((response) => !response.ok)
 
       if (failedUploads.length > 0) {
-        throw new Error(`${failedUploads.length} fichier(s) n'ont pas pu être téléchargés`)
+        throw new Error(t("errors.uploadFailed", { count: failedUploads.length }))
       }
 
       toast({
-        title: "Succès",
-        description: `${selectedFiles.length} fichier(s) téléchargé(s) avec succès`,
+        title: t("success.title"),
+        description: t("success.filesUploaded", { count: selectedFiles.length }),
       })
-
       resetForm()
       setCurrentView("list")
     } catch (error) {
       console.error("Error uploading files:", error)
       toast({
-        title: "Erreur",
-        description: error instanceof Error ? error.message : "Échec du téléchargement",
+        title: t("errors.title"),
+        description: error instanceof Error ? error.message : t("errors.uploadGenericFailed"),
         variant: "destructive",
       })
     } finally {
@@ -263,7 +261,7 @@ export default function PiecesJointes() {
   const handleDownloadFile = async (pieceJointe: PieceJointeResponseDto) => {
     try {
       const response = await fetch(`/api/pieces-jointes/${pieceJointe.id}/download`)
-      if (!response.ok) throw new Error("Failed to download file")
+      if (!response.ok) throw new Error(t("errors.downloadFailed"))
 
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
@@ -277,14 +275,14 @@ export default function PiecesJointes() {
       document.body.removeChild(a)
 
       toast({
-        title: "Succès",
-        description: "Fichier téléchargé avec succès",
+        title: t("success.title"),
+        description: t("success.fileDownloaded"),
       })
     } catch (error) {
       console.error("Error downloading file:", error)
       toast({
-        title: "Erreur",
-        description: "Échec du téléchargement du fichier",
+        title: t("errors.title"),
+        description: t("errors.downloadFailed"),
         variant: "destructive",
       })
     }
@@ -300,22 +298,21 @@ export default function PiecesJointes() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.message || "Échec de suppression de la pièce jointe")
+        throw new Error(errorData.message || t("errors.deleteFailed"))
       }
 
       toast({
-        title: "Succès",
-        description: "Pièce jointe supprimée avec succès",
+        title: t("success.title"),
+        description: t("success.attachmentDeleted"),
       })
-
       setIsDeleteDialogOpen(false)
       setSelectedPieceJointe(null)
       fetchPiecesJointes()
     } catch (error) {
       console.error("Error deleting piece jointe:", error)
       toast({
-        title: "Erreur",
-        description: error instanceof Error ? error.message : "Échec de suppression de la pièce jointe",
+        title: t("errors.title"),
+        description: error instanceof Error ? error.message : t("errors.deleteFailed"),
         variant: "destructive",
       })
     }
@@ -373,15 +370,13 @@ export default function PiecesJointes() {
           <Button variant="outline" size="icon" onClick={() => setCurrentView("list")}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-3xl font-bold">Télécharger des Pièces Jointes</h1>
+          <h1 className="text-3xl font-bold">{t("upload.title")}</h1>
         </div>
 
         <Card className="max-w-4xl mx-auto">
           <CardHeader>
-            <CardTitle>Nouveau Téléchargement</CardTitle>
-            <CardDescription>
-              Téléchargez des fichiers et associez-les à vos mandats, ordres de mission ou rapports.
-            </CardDescription>
+            <CardTitle>{t("upload.newUpload")}</CardTitle>
+            <CardDescription>{t("upload.description")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Sélection des fichiers */}
@@ -389,7 +384,7 @@ export default function PiecesJointes() {
               <div className="flex items-center justify-between">
                 <Label className="flex items-center gap-2">
                   <FileText className="h-4 w-4" />
-                  Fichiers à télécharger *
+                  {t("upload.filesToUpload")} *
                 </Label>
                 <div>
                   <input
@@ -406,7 +401,7 @@ export default function PiecesJointes() {
                     onClick={() => document.getElementById("file-upload")?.click()}
                   >
                     <Upload className="h-4 w-4 mr-2" />
-                    Sélectionner des fichiers
+                    {t("upload.selectFiles")}
                   </Button>
                 </div>
               </div>
@@ -435,36 +430,36 @@ export default function PiecesJointes() {
 
             {/* Nom personnalisé */}
             <div className="grid gap-2">
-              <Label htmlFor="nom">Nom personnalisé</Label>
+              <Label htmlFor="nom">{t("upload.customName")}</Label>
               <Input
                 id="nom"
                 value={formData.nom}
                 onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
-                placeholder="Laissez vide pour utiliser le nom du fichier"
+                placeholder={t("upload.customNamePlaceholder")}
               />
             </div>
 
             {/* Description */}
             <div className="grid gap-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{t("upload.description")}</Label>
               <Textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Description optionnelle du fichier"
+                placeholder={t("upload.descriptionPlaceholder")}
                 rows={3}
               />
             </div>
 
             {/* Utilisateur */}
             <div className="grid gap-2">
-              <Label htmlFor="user">Utilisateur *</Label>
+              <Label htmlFor="user">{t("upload.user")} *</Label>
               <Select
                 value={formData.userId.toString()}
                 onValueChange={(value) => setFormData({ ...formData, userId: Number.parseInt(value) })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un utilisateur" />
+                  <SelectValue placeholder={t("upload.selectUser")} />
                 </SelectTrigger>
                 <SelectContent>
                   {users.map((user) => (
@@ -478,16 +473,16 @@ export default function PiecesJointes() {
 
             {/* Type d'association */}
             <div className="grid gap-2">
-              <Label htmlFor="associationType">Associer à</Label>
+              <Label htmlFor="associationType">{t("upload.associateTo")}</Label>
               <Select value={associationType} onValueChange={(value: any) => setAssociationType(value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner le type d'association" />
+                  <SelectValue placeholder={t("upload.selectAssociationType")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">Aucune association</SelectItem>
-                  <SelectItem value="mandat">Mandat</SelectItem>
-                  <SelectItem value="ordre">Ordre de Mission</SelectItem>
-                  <SelectItem value="rapport">Rapport</SelectItem>
+                  <SelectItem value="none">{t("upload.noAssociation")}</SelectItem>
+                  <SelectItem value="mandat">{t("upload.mandate")}</SelectItem>
+                  <SelectItem value="ordre">{t("upload.missionOrder")}</SelectItem>
+                  <SelectItem value="rapport">{t("upload.report")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -495,18 +490,18 @@ export default function PiecesJointes() {
             {/* Association spécifique */}
             {associationType === "mandat" && (
               <div className="grid gap-2">
-                <Label htmlFor="mandat">Mandat</Label>
+                <Label htmlFor="mandat">{t("upload.mandate")}</Label>
                 <Select
                   value={formData.mandatId?.toString() || ""}
                   onValueChange={(value) => setFormData({ ...formData, mandatId: Number.parseInt(value) })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un mandat" />
+                    <SelectValue placeholder={t("upload.selectMandate")} />
                   </SelectTrigger>
                   <SelectContent>
                     {mandats.map((mandat) => (
                       <SelectItem key={mandat.id} value={mandat.id.toString()}>
-                        {mandat.reference} - {mandat.objectif || "Sans objectif"}
+                        {mandat.reference} - {mandat.objectif || t("upload.noObjective")}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -516,13 +511,13 @@ export default function PiecesJointes() {
 
             {associationType === "ordre" && (
               <div className="grid gap-2">
-                <Label htmlFor="ordre">Ordre de Mission</Label>
+                <Label htmlFor="ordre">{t("upload.missionOrder")}</Label>
                 <Select
                   value={formData.ordreMissionId?.toString() || ""}
                   onValueChange={(value) => setFormData({ ...formData, ordreMissionId: Number.parseInt(value) })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un ordre de mission" />
+                    <SelectValue placeholder={t("upload.selectMissionOrder")} />
                   </SelectTrigger>
                   <SelectContent>
                     {ordresMission.map((ordre) => (
@@ -537,13 +532,13 @@ export default function PiecesJointes() {
 
             {associationType === "rapport" && (
               <div className="grid gap-2">
-                <Label htmlFor="rapport">Rapport</Label>
+                <Label htmlFor="rapport">{t("upload.report")}</Label>
                 <Select
                   value={formData.rapportId?.toString() || ""}
                   onValueChange={(value) => setFormData({ ...formData, rapportId: Number.parseInt(value) })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un rapport" />
+                    <SelectValue placeholder={t("upload.selectReport")} />
                   </SelectTrigger>
                   <SelectContent>
                     {rapports.map((rapport) => (
@@ -556,21 +551,21 @@ export default function PiecesJointes() {
               </div>
             )}
 
-            <div className="text-sm text-muted-foreground">* Champs obligatoires</div>
+            <div className="text-sm text-muted-foreground">{t("upload.requiredFields")}</div>
 
             {/* Actions */}
             <div className="flex gap-4 pt-6">
               <Button variant="outline" onClick={() => setCurrentView("list")}>
-                Annuler
+                {t("buttons.cancel")}
               </Button>
               <Button onClick={handleUploadFiles} disabled={loading} className="min-w-[120px]">
                 {loading ? (
                   <>
                     <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                    Téléchargement...
+                    {t("buttons.uploading")}
                   </>
                 ) : (
-                  "Télécharger"
+                  t("buttons.upload")
                 )}
               </Button>
             </div>
@@ -583,16 +578,16 @@ export default function PiecesJointes() {
   return (
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Gestion des Pièces Jointes</h1>
+        <h1 className="text-3xl font-bold">{t("list.title")}</h1>
         <Button onClick={() => setCurrentView("upload")}>
-          <Plus className="mr-2 h-4 w-4" /> Télécharger des Fichiers
+          <Plus className="mr-2 h-4 w-4" /> {t("buttons.uploadFiles")}
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Liste des Pièces Jointes</CardTitle>
-          <CardDescription>Gérez vos documents et fichiers</CardDescription>
+          <CardTitle>{t("list.attachmentsList")}</CardTitle>
+          <CardDescription>{t("list.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -601,19 +596,19 @@ export default function PiecesJointes() {
             </div>
           ) : piecesJointes.length === 0 ? (
             <div className="text-center py-10 text-muted-foreground">
-              Aucune pièce jointe trouvée. Téléchargez des fichiers pour commencer.
+              {t("list.noAttachments")}
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Fichier</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Taille</TableHead>
-                  <TableHead>Associé à</TableHead>
-                  <TableHead>Utilisateur</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{t("list.headers.file")}</TableHead>
+                  <TableHead>{t("list.headers.type")}</TableHead>
+                  <TableHead>{t("list.headers.size")}</TableHead>
+                  <TableHead>{t("list.headers.associatedWith")}</TableHead>
+                  <TableHead>{t("list.headers.user")}</TableHead>
+                  <TableHead>{t("list.headers.date")}</TableHead>
+                  <TableHead className="text-right">{t("list.headers.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -635,17 +630,17 @@ export default function PiecesJointes() {
                     <TableCell>
                       {pieceJointe.mandatReference && (
                         <Badge variant="outline" className="mr-1">
-                          Mandat: {pieceJointe.mandatReference}
+                          {t("list.associations.mandate")}: {pieceJointe.mandatReference}
                         </Badge>
                       )}
                       {pieceJointe.ordreMissionReference && (
                         <Badge variant="outline" className="mr-1">
-                          Ordre: {pieceJointe.ordreMissionReference}
+                          {t("list.associations.order")}: {pieceJointe.ordreMissionReference}
                         </Badge>
                       )}
                       {pieceJointe.rapportReference && (
                         <Badge variant="outline" className="mr-1">
-                          Rapport: {pieceJointe.rapportReference}
+                          {t("list.associations.report")}: {pieceJointe.rapportReference}
                         </Badge>
                       )}
                       {!pieceJointe.mandatReference &&
@@ -659,17 +654,17 @@ export default function PiecesJointes() {
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon">
                             <MoreVertical className="h-4 w-4" />
-                            <span className="sr-only">Ouvrir le menu</span>
+                            <span className="sr-only">{t("list.openMenu")}</span>
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                           <DropdownMenuItem onClick={() => handleDownloadFile(pieceJointe)}>
                             <Download className="mr-2 h-4 w-4" />
-                            Télécharger
+                            {t("actions.download")}
                           </DropdownMenuItem>
                           <DropdownMenuItem className="text-red-600" onClick={() => openDeleteDialog(pieceJointe)}>
                             <Trash className="mr-2 h-4 w-4" />
-                            Supprimer
+                            {t("actions.delete")}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -686,16 +681,16 @@ export default function PiecesJointes() {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+            <AlertDialogTitle>{t("dialogs.delete.title")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Cette action ne peut pas être annulée. Cela supprimera définitivement la pièce jointe
-              {selectedPieceJointe && ` "${selectedPieceJointe.nom}"`} et le fichier associé.
+              {t("dialogs.delete.description")}
+              {selectedPieceJointe && ` "${selectedPieceJointe.nom}"`} {t("dialogs.delete.warning")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel>{t("buttons.cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDeletePieceJointe} className="bg-destructive text-destructive-foreground">
-              Supprimer
+              {t("buttons.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

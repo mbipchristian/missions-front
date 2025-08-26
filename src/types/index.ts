@@ -5,6 +5,16 @@ export interface User {
   matricule: string
   quotaAnnuel: number
   fonction: string
+  rang: Rang
+  created_at: string
+  updated_at: string
+}
+
+export interface Rang {
+  id: number
+  nom: string
+  fraisInterne: number
+  fraisExterne: number
   created_at: string
   updated_at: string
 }
@@ -25,11 +35,24 @@ export interface Ressource {
   updated_at: string
 }
 
+export interface PieceJointe {
+  id: number
+  nom: string
+  nomOriginal: string
+  cheminFichier: string
+  typeMime: string
+  taille: number
+  description: string
+  created_at: string
+  updated_at: string
+}
+
 export enum MandatStatut {
   EN_ATTENTE_CONFIRMATION = "EN_ATTENTE_CONFIRMATION",
   EN_ATTENTE_EXECUTION = "EN_ATTENTE_EXECUTION",
   EN_COURS = "EN_COURS",
   ACHEVE = "ACHEVE",
+  ACHEVE_AVEC_RAPPORT = "ACHEVE_AVEC_RAPPORT",
 }
 
 export enum OrdreMissionStatut {
@@ -38,6 +61,7 @@ export enum OrdreMissionStatut {
   EN_ATTENTE_EXECUTION = "EN_ATTENTE_EXECUTION",
   EN_COURS = "EN_COURS",
   ACHEVE = "ACHEVE",
+  REJETE = "REJETE",
 }
 
 export interface Mandat {
@@ -60,6 +84,7 @@ export interface Mandat {
   usersCount: number
   villesCount: number
   ressourcesCount: number
+  piecesJointes: PieceJointe[]
 }
 
 export interface OrdreMission {
@@ -79,6 +104,10 @@ export interface OrdreMission {
   created_at: string
   updated_at: string
   confirmele: string | null
+  rejetele: string | null
+  piecesJointes: PieceJointe[]
+  villes?: Ville[] // Ajout des villes spécifiques à l'ordre de mission
+  user?: User // Ajout de l'utilisateur spécifique à l'ordre de mission
 }
 
 export interface OrdreMissionDto {
@@ -94,6 +123,8 @@ export interface OrdreMissionDto {
   decompteAvance: number;
   decompteRelicat: number;
   mandatId: number;
+  userId: number // Ajout de l'ID utilisateur
+  villeIds: number[] // Ajout des IDs des villes sélectionnées
 }
 
 export interface VilleDto {
@@ -105,5 +136,24 @@ export interface VilleDto {
 export interface RessourceDto {
   name: string;
 }
+
+// Interface pour la réponse du calcul des décomptes
+export interface DecomptesResponse {
+  decompteTotal: number
+  decompteAvance: number
+  decompteRelicat: number
+}
+
+// Interface pour la requête de calcul pré-création
+export interface DecomptesPreCreationRequest {
+  mandatId: number
+  userId: number
+  tauxAvance: number
+  duree: number
+  dateDebut: string
+  dateFin: string
+  villeIds: number[]
+}
+
 
 

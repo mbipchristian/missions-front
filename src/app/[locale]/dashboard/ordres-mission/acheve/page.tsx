@@ -86,13 +86,13 @@ export default function OrdresMissionAchevesPage() {
       <OrdreMissionTable
         ordresMission={filteredOrdresMission}
         title="Ordres de mission achevés"
-        renderActions={(ordre : OrdreMission) => (
-          <OrdreMissionActions
-            ordreMission={ordre}
-            actions={["addAttachments"]}
-            onActionComplete={fetchOrdresMission}
-          />
-        )}
+        // renderActions={(ordre : OrdreMission) => (
+        //   <OrdreMissionActions
+        //     ordreMission={ordre}
+        //     actions={["addAttachments"]}
+        //     onActionComplete={fetchOrdresMission}
+        //   />
+        // )}
       />
     </div>
   )

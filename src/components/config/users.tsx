@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -30,7 +31,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Search, MoreVertical, Trash, RefreshCw, User, Mail, Shield, Eye } from "lucide-react"
+import { Search, MoreVertical, Trash, RefreshCw, User, Mail, Shield, Eye, Star, DollarSign } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 // Types corrigés selon le DTO Java
@@ -45,15 +46,30 @@ interface UserResponseDto {
     name: string
     description: string
   }
-  fonction: string  // Simple string selon le DTO Java
-  created_at: string  // ou createdAt selon votre configuration Jackson
-  updated_at: string  // ou updatedAt selon votre configuration Jackson
+  rang: {
+    id: number
+    nom: string
+    code: string
+    fraisExterne: number
+    fraisInterne: number
+  } | null
+
+  fonction: string
+  created_at: string
+  updated_at: string
 }
 
 interface RoleResponseDto {
   id: number
   name: string
   description: string
+}
+interface RangResponseDto {
+  id: number
+  nom: string
+  code: string
+  fraisExterne: number
+  fraisInterne: number
 }
 
 interface UserRoleUpdateDto {
@@ -64,6 +80,7 @@ interface UserRoleUpdateDto {
 export default function UsersPage() {
   const [users, setUsers] = useState<UserResponseDto[]>([])
   const [roles, setRoles] = useState<RoleResponseDto[]>([])
+  const [rangs, setRangs] = useState<RangResponseDto[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [searchType, setSearchType] = useState<"email" | "username">("email")
@@ -72,7 +89,7 @@ export default function UsersPage() {
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false)
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false)
   const [selectedRoleId, setSelectedRoleId] = useState<string>("")
-
+  const t = useTranslations("UsersPage")
   const { toast } = useToast()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -112,8 +129,8 @@ export default function UsersPage() {
     } catch (error) {
       console.error("Error fetching users:", error)
       toast({
-        title: "Error",
-        description: "Failed to load users. Please try again.",
+        title: t("messages.error"),
+        description: t("messages.failedToLoadUsers"),
         variant: "destructive",
       })
     } finally {
@@ -133,8 +150,8 @@ export default function UsersPage() {
     } catch (error) {
       console.error("Error fetching roles:", error)
       toast({
-        title: "Error",
-        description: "Failed to load roles. Please try again.",
+        title: t("messages.error"),
+        description: t("messages.failedToLoadRoles"),
         variant: "destructive",
       })
     }
@@ -154,8 +171,8 @@ export default function UsersPage() {
         if (response.status === 404) {
           setUsers([])
           toast({
-            title: "No Results",
-            description: `No user found with ${type}: ${query}`,
+            title: t("messages.noResults"),
+            description: t("messages.noUserFound", { type, query }),
             variant: "default",
           })
         } else {
@@ -168,8 +185,8 @@ export default function UsersPage() {
     } catch (error) {
       console.error(`Error searching users by ${type}:`, error)
       toast({
-        title: "Search Error",
-        description: `Failed to search users by ${type}. Please try again.`,
+        title: t("messages.searchError"),
+        description: t("messages.failedToSearch", { type }),
         variant: "destructive",
       })
     } finally {
@@ -191,8 +208,8 @@ export default function UsersPage() {
       }
 
       toast({
-        title: "Success",
-        description: "User deleted successfully",
+        title: t("messages.success"),
+        description: t("messages.userDeletedSuccess"),
       })
 
       setIsDeleteDialogOpen(false)
@@ -201,8 +218,8 @@ export default function UsersPage() {
     } catch (error) {
       console.error("Error deleting user:", error)
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to delete user",
+        title: t("messages.error"),
+        description: error instanceof Error ? error.message : t("messages.failedToDeleteUser"),
         variant: "destructive",
       })
     }
@@ -231,8 +248,8 @@ export default function UsersPage() {
       }
 
       toast({
-        title: "Success",
-        description: "User role updated successfully",
+        title: t("messages.success"),
+        description: t("messages.userRoleUpdatedSuccess"),
       })
 
       setIsRoleDialogOpen(false)
@@ -242,8 +259,8 @@ export default function UsersPage() {
     } catch (error) {
       console.error("Error updating user role:", error)
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update user role",
+        title: t("messages.error"),
+        description: error instanceof Error ? error.message : t("messages.failedToUpdateUserRole"),
         variant: "destructive",
       })
     }
@@ -273,6 +290,14 @@ export default function UsersPage() {
     return new Date(dateString).toLocaleString("fr-FR")
   }
 
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("fr-FR", {
+      style: "currency",
+      currency: "XAF",
+    }).format(amount)
+  }
+
   // Get user initials for avatar
   const getUserInitials = (username: string) => {
     return username.substring(0, 2).toUpperCase()
@@ -289,19 +314,30 @@ export default function UsersPage() {
     return colors[roleName.toLowerCase()] || "bg-purple-100 text-purple-800"
   }
 
+  // Get rang color
+  const getRangColor = (rangCode: string) => {
+    const colors: Record<string, string> = {
+      A: "bg-yellow-100 text-yellow-800",
+      B: "bg-orange-100 text-orange-800",
+      C: "bg-blue-100 text-blue-800",
+      DG: "bg-green-100 text-green-800",
+    }
+    return colors[rangCode] || "bg-gray-100 text-gray-800"
+  }
+
   return (
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Gestion des Utilisateurs</h1>
-        <Button onClick={() => router.push("/register")}>
-          <User className="mr-2 h-4 w-4" /> Nouvel Utilisateur
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
+        <Button onClick={() => router.push("configurations/register")}>
+          <User className="mr-2 h-4 w-4" /> {t("newUser")}
         </Button>
       </div>
 
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Rechercher des Utilisateurs</CardTitle>
-          <CardDescription>Recherchez des utilisateurs par email ou nom d&apos;utilisateur</CardDescription>
+          <CardTitle>{t("searchTitle")}</CardTitle>
+          <CardDescription>{t("searchDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs
@@ -310,8 +346,8 @@ export default function UsersPage() {
             onValueChange={(value) => setSearchType(value as "email" | "username")}
           >
             <TabsList className="mb-4">
-              <TabsTrigger value="email">Recherche par Email</TabsTrigger>
-              <TabsTrigger value="username">Recherche par Nom d&apos;utilisateur</TabsTrigger>
+              <TabsTrigger value="email">{t("searchByEmail")}</TabsTrigger>
+              <TabsTrigger value="username">{t("searchByUsername")}</TabsTrigger>
             </TabsList>
             <TabsContent value="email">
               <div className="flex gap-2">
@@ -319,14 +355,14 @@ export default function UsersPage() {
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
-                    placeholder="Rechercher par email..."
+                    placeholder={t("searchEmailPlaceholder")}
                     className="pl-8"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch(searchQuery, "email")}
                   />
                 </div>
-                <Button onClick={() => handleSearch(searchQuery, "email")}>Rechercher</Button>
+                <Button onClick={() => handleSearch(searchQuery, "email")}>{t("searchButton")}</Button>
               </div>
             </TabsContent>
             <TabsContent value="username">
@@ -335,29 +371,29 @@ export default function UsersPage() {
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
                     type="search"
-                    placeholder="Rechercher par nom d'utilisateur..."
+                    placeholder={t("searchUsernamePlaceholder")}
                     className="pl-8"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleSearch(searchQuery, "username")}
                   />
                 </div>
-                <Button onClick={() => handleSearch(searchQuery, "username")}>Rechercher</Button>
+                <Button onClick={() => handleSearch(searchQuery, "username")}>{t("searchButton")}</Button>
               </div>
             </TabsContent>
           </Tabs>
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button variant="outline" onClick={fetchUsers}>
-            <RefreshCw className="mr-2 h-4 w-4" /> Réinitialiser
+            <RefreshCw className="mr-2 h-4 w-4" /> {t("resetButton")}
           </Button>
         </CardFooter>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Liste des Utilisateurs</CardTitle>
-          <CardDescription>Gérez vos utilisateurs</CardDescription>
+          <CardTitle>{t("usersList")}</CardTitle>
+          <CardDescription>{t("usersListDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -365,97 +401,113 @@ export default function UsersPage() {
               <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
           ) : users.length === 0 ? (
-            <div className="text-center py-10 text-muted-foreground">
-              Aucun utilisateur trouvé. Ajustez votre recherche ou ajoutez un nouvel utilisateur.
-            </div>
+            <div className="text-center py-10 text-muted-foreground">{t("noUsersFound")}</div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Utilisateur</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Matricule</TableHead>
-                  <TableHead>Rôle</TableHead>
-                  <TableHead>Fonction</TableHead>
-                  <TableHead>Quota Annuel</TableHead>
-                  <TableHead>Créé le</TableHead>
-                  <TableHead>Mis à jour le</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarFallback>{getUserInitials(user.username)}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="font-medium">{user.username}</div>
-                          <div className="text-sm text-muted-foreground">ID: {user.id}</div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-muted-foreground" />
-                        {user.email}
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-mono">{user.matricule}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className={getRoleColor(user.role.name)}>
-                        <Shield className="h-3 w-3 mr-1" />
-                        {user.role.name}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {/* Fonction est maintenant un simple string */}
-                      <span className="font-medium">{user.fonction}</span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col">
-                        <span className="font-medium">{user.quotaAnnuel} jours</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{formatDate(user.created_at)}</TableCell>
-                    <TableCell>{formatDate(user.updated_at)}</TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreVertical className="h-4 w-4" />
-                            <span className="sr-only">Ouvrir le menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => openViewDialog(user)}>
-                            <Eye className="mr-2 h-4 w-4" /> Voir détails
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => openRoleDialog(user)}>
-                            <Shield className="mr-2 h-4 w-4" /> Changer le rôle
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => openDeleteDialog(user)}>
-                            <Trash className="mr-2 h-4 w-4" /> Supprimer
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("tableHeaders.user")}</TableHead>
+                    <TableHead>{t("tableHeaders.email")}</TableHead>
+                    <TableHead>{t("tableHeaders.matricule")}</TableHead>
+                    <TableHead>{t("tableHeaders.role")}</TableHead>
+                    <TableHead>{t("tableHeaders.rang")}</TableHead>
+                    <TableHead>{t("tableHeaders.fonction")}</TableHead>
+                    <TableHead>{t("tableHeaders.quotaAnnuel")}</TableHead>
+                    <TableHead>{t("tableHeaders.createdAt")}</TableHead>
+                    <TableHead className="text-right">{t("tableHeaders.actions")}</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {users.map((user) => (
+                    <TableRow key={user.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar>
+                            <AvatarFallback>{getUserInitials(user.username)}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <div className="font-medium">{user.username}</div>
+                            <div className="text-sm text-muted-foreground">ID: {user.id}</div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Mail className="h-4 w-4 text-muted-foreground" />
+                          {user.email}
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-mono">{user.matricule}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className={getRoleColor(user.role.name)}>
+                          <Shield className="h-3 w-3 mr-1" />
+                          {user.role.name}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {user.rang ? (
+                          <div className="flex flex-col gap-1">
+                            <Badge variant="outline" className={getRangColor(user.rang.code)}>
+                              <Star className="h-3 w-3 mr-1" />
+                              {user.rang.nom}
+                            </Badge>
+                            <div className="text-xs text-muted-foreground">
+                              <div>Ext: {formatCurrency(user.rang.fraisExterne)}</div>
+                              <div>Int: {formatCurrency(user.rang.fraisInterne)}</div>
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">{t("noRang")}</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-medium">{user.fonction}</span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span className="font-medium">
+                            {user.quotaAnnuel} {t("days")}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>{formatDate(user.created_at)}</TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreVertical className="h-4 w-4" />
+                              <span className="sr-only">{t("actions.openMenu")}</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => openViewDialog(user)}>
+                              <Eye className="mr-2 h-4 w-4" /> {t("actions.viewDetails")}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => openRoleDialog(user)}>
+                              <Shield className="mr-2 h-4 w-4" /> {t("actions.changeRole")}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => openDeleteDialog(user)}>
+                              <Trash className="mr-2 h-4 w-4" /> {t("actions.delete")}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>
 
       {/* View User Dialog */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>Détails de l&apos;Utilisateur</DialogTitle>
-            <DialogDescription>Informations complètes sur l&apos;utilisateur.</DialogDescription>
+            <DialogTitle>{t("viewDialog.title")}</DialogTitle>
+            <DialogDescription>{t("viewDialog.description")}</DialogDescription>
           </DialogHeader>
           {selectedUser && (
             <div className="grid gap-6 py-4">
@@ -471,18 +523,18 @@ export default function UsersPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <h4 className="text-sm font-medium text-muted-foreground">Email</h4>
+                  <h4 className="text-sm font-medium text-muted-foreground">{t("viewDialog.email")}</h4>
                   <p className="text-base">{selectedUser.email}</p>
                 </div>
                 <div>
-                  <h4 className="text-sm font-medium text-muted-foreground">Matricule</h4>
+                  <h4 className="text-sm font-medium text-muted-foreground">{t("viewDialog.matricule")}</h4>
                   <p className="text-base font-mono">{selectedUser.matricule}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <h4 className="text-sm font-medium text-muted-foreground">Rôle</h4>
+                  <h4 className="text-sm font-medium text-muted-foreground">{t("viewDialog.role")}</h4>
                   <div className="mt-1">
                     <Badge variant="outline" className={getRoleColor(selectedUser.role.name)}>
                       <Shield className="h-3 w-3 mr-1" />
@@ -492,36 +544,72 @@ export default function UsersPage() {
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-sm font-medium text-muted-foreground">Fonction</h4>
+                  <h4 className="text-sm font-medium text-muted-foreground">{t("viewDialog.fonction")}</h4>
                   <div className="mt-1">
-                    {/* Fonction est maintenant un simple string */}
                     <p className="font-medium">{selectedUser.fonction}</p>
                   </div>
                 </div>
               </div>
 
+              {/* Section Rang */}
               <div>
-                <h4 className="text-sm font-medium text-muted-foreground">Quota Annuel</h4>
+                <h4 className="text-sm font-medium text-muted-foreground mb-2">{t("viewDialog.rang")}</h4>
+                {selectedUser.rang ? (
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge variant="outline" className={getRangColor(selectedUser.rang.code)}>
+                        <Star className="h-3 w-3 mr-1" />
+                        {selectedUser.rang.nom} ({selectedUser.rang.code})
+                      </Badge>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-muted-foreground">{t("viewDialog.fraisExterne")}</span>
+                        <div className="font-medium flex items-center gap-1">
+                          <DollarSign className="h-3 w-3" />
+                          {formatCurrency(selectedUser.rang.fraisExterne)}
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">{t("viewDialog.fraisInterne")}</span>
+                        <div className="font-medium flex items-center gap-1">
+                          <DollarSign className="h-3 w-3" />
+                          {formatCurrency(selectedUser.rang.fraisInterne)}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-muted-foreground">{t("viewDialog.noRangAssigned")}</p>
+                )}
+              </div>
+
+              <div>
+                <h4 className="text-sm font-medium text-muted-foreground">{t("viewDialog.quotaAnnuel")}</h4>
                 <div className="mt-1">
-                  <p className="font-medium">{selectedUser.quotaAnnuel} jours utilisés</p>
-                  <p className="text-sm text-muted-foreground">sur l&apos;année {new Date().getFullYear()}</p>
+                  <p className="font-medium">
+                    {selectedUser.quotaAnnuel} {t("viewDialog.daysUsed")}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {t("viewDialog.onYear")} {new Date().getFullYear()}
+                  </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <h4 className="text-sm font-medium text-muted-foreground">Créé le</h4>
+                  <h4 className="text-sm font-medium text-muted-foreground">{t("viewDialog.createdAt")}</h4>
                   <p className="text-sm">{formatDate(selectedUser.created_at)}</p>
                 </div>
                 <div>
-                  <h4 className="text-sm font-medium text-muted-foreground">Dernière mise à jour</h4>
+                  <h4 className="text-sm font-medium text-muted-foreground">{t("viewDialog.updatedAt")}</h4>
                   <p className="text-sm">{formatDate(selectedUser.updated_at)}</p>
                 </div>
               </div>
             </div>
           )}
           <DialogFooter>
-            <Button onClick={() => setIsViewDialogOpen(false)}>Fermer</Button>
+            <Button onClick={() => setIsViewDialogOpen(false)}>{t("viewDialog.close")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -530,15 +618,15 @@ export default function UsersPage() {
       <Dialog open={isRoleDialogOpen} onOpenChange={setIsRoleDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Changer le Rôle de l&apos;Utilisateur</DialogTitle>
-            <DialogDescription>Sélectionnez un nouveau rôle pour {selectedUser?.username}.</DialogDescription>
+            <DialogTitle>{t("roleDialog.title")}</DialogTitle>
+            <DialogDescription>{t("roleDialog.description", { username: selectedUser?.username })}</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="role">Nouveau Rôle</Label>
+              <Label htmlFor="role">{t("roleDialog.newRole")}</Label>
               <Select value={selectedRoleId} onValueChange={setSelectedRoleId}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un rôle" />
+                  <SelectValue placeholder={t("roleDialog.selectRole")} />
                 </SelectTrigger>
                 <SelectContent>
                   {roles.map((role) => (
@@ -557,16 +645,16 @@ export default function UsersPage() {
             </div>
             {selectedUser && (
               <div className="text-sm text-muted-foreground">
-                Rôle actuel: <strong>{selectedUser.role.name}</strong>
+                {t("roleDialog.currentRole")} <strong>{selectedUser.role.name}</strong>
               </div>
             )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsRoleDialogOpen(false)}>
-              Annuler
+              {t("roleDialog.cancel")}
             </Button>
             <Button onClick={handleUpdateUserRole} disabled={!selectedRoleId}>
-              Mettre à jour
+              {t("roleDialog.update")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -576,16 +664,15 @@ export default function UsersPage() {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+            <AlertDialogTitle>{t("deleteDialog.title")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Cette action ne peut pas être annulée. Cela supprimera définitivement l&apos;utilisateur
-              {selectedUser && ` "${selectedUser.username}"`} et toutes ses données associées.
+              {t("deleteDialog.description", { username: selectedUser?.username })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel>{t("deleteDialog.cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteUser} className="bg-destructive text-destructive-foreground">
-              Supprimer
+              {t("deleteDialog.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

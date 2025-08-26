@@ -31,5 +31,1040 @@
     "activeNow": "Active Now",
     "fromLastMonth": "from last month",
     "sinceLast": "since last hour"
+  },
+  "UsersPage": {
+    "title": "User Management",
+    "newUser": "New User",
+    "searchTitle": "Search Users",
+    "searchDescription": "Search users by email or username",
+    "searchByEmail": "Search by Email",
+    "searchByUsername": "Search by Username",
+    "searchEmailPlaceholder": "Search by email...",
+    "searchUsernamePlaceholder": "Search by username...",
+    "searchButton": "Search",
+    "resetButton": "Reset",
+    "usersList": "Users List",
+    "usersListDescription": "Manage your users",
+    "noUsersFound": "No users found. Adjust your search or add a new user.",
+    "loading": "Loading...",
+    "tableHeaders": {
+      "user": "User",
+      "email": "Email",
+      "matricule": "ID Number",
+      "role": "Role",
+      "rang": "Rank",
+      "fonction": "Function",
+      "quotaAnnuel": "Annual Quota",
+      "createdAt": "Created At",
+      "actions": "Actions"
+    },
+    "noRang": "No rank",
+    "days": "days",
+    "actions": {
+      "openMenu": "Open menu",
+      "viewDetails": "View details",
+      "changeRole": "Change role",
+      "delete": "Delete"
+    },
+    "viewDialog": {
+      "title": "User Details",
+      "description": "Complete user information.",
+      "email": "Email",
+      "matricule": "ID Number",
+      "role": "Role",
+      "fonction": "Function",
+      "rang": "Rank",
+      "noRangAssigned": "No rank assigned",
+      "fraisExterne": "External Fee:",
+      "fraisInterne": "Internal Fee:",
+      "quotaAnnuel": "Annual Quota",
+      "daysUsed": "days used",
+      "onYear": "for the year",
+      "createdAt": "Created At",
+      "updatedAt": "Last Updated",
+      "close": "Close"
+    },
+    "roleDialog": {
+      "title": "Change User Role",
+      "description": "Select a new role for {username}.",
+      "newRole": "New Role",
+      "selectRole": "Select a role",
+      "currentRole": "Current role:",
+      "cancel": "Cancel",
+      "update": "Update"
+    },
+    "deleteDialog": {
+      "title": "Are you sure?",
+      "description": "This action cannot be undone. This will permanently delete the user \"{username}\" and all associated data.",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "messages": {
+      "error": "Error",
+      "success": "Success",
+      "failedToLoadUsers": "Failed to load users. Please try again.",
+      "failedToLoadRoles": "Failed to load roles. Please try again.",
+      "noResults": "No Results",
+      "noUserFound": "No user found with {type}: {query}",
+      "searchError": "Search Error",
+      "failedToSearch": "Failed to search users by {type}. Please try again.",
+      "userDeletedSuccess": "User deleted successfully",
+      "failedToDeleteUser": "Failed to delete user",
+      "userRoleUpdatedSuccess": "User role updated successfully",
+      "failedToUpdateUserRole": "Failed to update user role"
+    }
+  },
+  "UserRegistrationForm": {
+    "registration": {
+      "title": "User Registration",
+      "description": "Create a new user account with role and grade assignment"
+    },
+    "form": {
+      "matricule": "Matricule",
+      "matriculePlaceholder": "Enter matricule",
+      "username": "Username",
+      "usernamePlaceholder": "Enter username",
+      "email": "Email",
+      "emailPlaceholder": "Enter email address",
+      "password": "Password",
+      "passwordPlaceholder": "Enter password (min. 6 characters)",
+      "fonction": "Function",
+      "fonctionPlaceholder": "Enter or select a function",
+      "role": "Role",
+      "rolePlaceholder": "Select a role",
+      "rang": "Rank",
+      "rangPlaceholder": "Select a rank",
+      "requiredFields": "* Required fields",
+      "registerButton": "Register User",
+      "registering": "Registering...",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
+    },
+    "validation": {
+      "title": "Validation Error",
+      "matriculeRequired": "Matricule is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email address",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 6 characters long",
+      "usernameRequired": "Username is required",
+      "roleRequired": "Please select a role",
+      "rangRequired": "Please select a rank"
+    },
+    "errors": {
+      "title": "Error",
+      "fetchRoles": "Failed to load roles. Please try again.",
+      "fetchRangs": "Failed to load ranks. Please try again.",
+      "registerFailed": "Failed to register user"
+    },
+    "success": {
+      "title": "Success",
+      "userRegistered": "User registered successfully"
+    },
+    "successDialog": {
+      "title": "Registration Successful",
+      "description": "The user has been registered successfully. You can now register another user or close this dialog.",
+      "registerAnother": "Register Another User",
+      "close": "Close"
+    }
+  },
+  "RangList": {
+    "title": "Rank List",
+    "noRangsFound": "No ranks found.",
+    "table": {
+      "id": "ID",
+      "name": "Name",
+      "code": "Code",
+      "internalFees": "Internal Fees",
+      "externalFees": "External Fees",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "actions": "Actions"
+    },
+    "buttons": {
+      "newRang": "New Rank",
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "create": "Create",
+      "creating": "Creating...",
+      "save": "Save",
+      "saving": "Saving...",
+      "deleting": "Deleting..."
+    },
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "Rank name",
+      "code": "Code",
+      "codePlaceholder": "Rank code",
+      "internalFees": "Internal Fees",
+      "externalFees": "External Fees"
+    },
+    "createModal": {
+      "title": "Create New Rank"
+    },
+    "editModal": {
+      "title": "Edit Rank"
+    },
+    "deleteModal": {
+      "title": "Confirm Deletion",
+      "description": "Are you sure you want to delete the rank \"{name}\"? This action is irreversible."
+    },
+    "success": {
+      "title": "Success",
+      "createRang": "Rank created successfully",
+      "updateRang": "Rank updated successfully",
+      "deleteRang": "Rank deleted successfully"
+    },
+    "errors": {
+      "title": "Error",
+      "fetchRangs": "Error loading ranks",
+      "createRang": "Error creating rank",
+      "updateRang": "Error updating rank",
+      "deleteRang": "Error deleting rank"
+    }
+  },
+  "VillesPage": {
+    "title": "City Management",
+    "buttons": {
+      "addCity": "Add City",
+      "search": "Search",
+      "reset": "Reset",
+      "cancel": "Cancel",
+      "create": "Create",
+      "update": "Update",
+      "delete": "Delete"
+    },
+    "search": {
+      "title": "Search Cities",
+      "description": "Search cities by name or code",
+      "tabs": {
+        "byName": "Search by Name",
+        "byCode": "Search by Code"
+      },
+      "placeholders": {
+        "name": "Search by city name...",
+        "code": "Search by city code..."
+      }
+    },
+    "table": {
+      "title": "Cities List",
+      "description": "Manage your cities",
+      "noData": "No cities found. Add a new city or adjust your search.",
+      "headers": {
+        "id": "ID",
+        "name": "Name",
+        "code": "Code",
+        "location": "Location",
+        "createdAt": "Created At",
+        "updatedAt": "Updated At",
+        "actions": "Actions"
+      }
+    },
+    "location": {
+      "interior": "Interior",
+      "exterior": "Exterior"
+    },
+    "actions": {
+      "openMenu": "Open menu",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "dialogs": {
+      "create": {
+        "title": "Add New City",
+        "description": "Enter the details for the new city."
+      },
+      "edit": {
+        "title": "Edit City",
+        "description": "Update the details for this city."
+      },
+      "delete": {
+        "title": "Are you sure?",
+        "description": "This action cannot be undone. This will permanently delete the city",
+        "warning": "and remove it from the database."
+      }
+    },
+    "form": {
+      "labels": {
+        "name": "Name",
+        "code": "Code",
+        "interiorLocation": "Interior Location",
+        "interiorCity": "Interior city",
+        "exteriorCity": "Exterior city"
+      }
+    },
+    "success": {
+      "title": "Success",
+      "cityCreated": "City created successfully",
+      "cityUpdated": "City updated successfully",
+      "cityDeleted": "City deleted successfully"
+    },
+    "errors": {
+      "title": "Error",
+      "searchTitle": "Search Error",
+      "fetchFailed": "Failed to fetch cities",
+      "loadCities": "Failed to load cities. Please try again.",
+      "searchFailed": "Failed to search cities by {type}. Please try again.",
+      "createFailed": "Failed to create city",
+      "updateFailed": "Failed to update city",
+      "deleteFailed": "Failed to delete city"
+    }
+  },
+  "MandatActions": {
+    "buttons": {
+      "confirm": "Confirm",
+      "details": "Details",
+      "addReport": "Add Report",
+      "cancel": "Cancel",
+      "confirming": "Confirming...",
+      "downloading": "Downloading...",
+      "adding": "Adding...",
+      "add": "Add"
+    },
+    "dialogs": {
+      "confirm": {
+        "title": "Confirm Mandate",
+        "description": "Are you sure you want to confirm mandate {reference}?",
+        "warning": "This action cannot be undone."
+      },
+      "details": {
+        "title": "Mandate Details {reference}"
+      },
+      "addReport": {
+        "title": "Add Report",
+        "fileLabel": "PDF Report"
+      }
+    },
+    "details": {
+      "reference": "Reference",
+      "status": "Status",
+      "objective": "Objective",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "duration": "Duration",
+      "durationValue": "{days} day(s)",
+      "controlMission": "Control Mission",
+      "users": "Users",
+      "usersCount": "{count} assigned",
+      "cities": "Cities",
+      "citiesCount": "{count} city(ies)",
+      "resources": "Resources",
+      "resourcesCount": "{count} resource(s)",
+      "createdBy": "Created By",
+      "createdAt": "Created At",
+      "confirmedBy": "Confirmed By",
+      "confirmedAt": "Confirmed At",
+      "assignedUsers": "Assigned Users",
+      "concernedCities": "Concerned Cities",
+      "allocatedResources": "Allocated Resources"
+    },
+    "documents": {
+      "mandat": "Mandate",
+      "report": "Report",
+      "pdf": "PDF {number}"
+    },
+    "success": {
+      "title": "Success",
+      "mandatConfirmed": "Mandate confirmed successfully",
+      "fileDownloaded": "File downloaded successfully",
+      "reportAdded": "Report added successfully"
+    },
+    "errors": {
+      "title": "Error",
+      "confirmFailed": "Failed to confirm mandate",
+      "downloadFailed": "Failed to download file",
+      "addReportFailed": "Failed to add report"
+    },
+    "common": {
+      "yes": "Yes",
+      "no": "No"
+    }
+  },
+  "MandatTable": {
+    "headers": {
+      "reference": "Ref.",
+      "objective": "Objective",
+      "status": "Status",
+      "start": "Start",
+      "end": "End",
+      "duration": "Duration",
+      "created": "Created",
+      "confirmed": "Confirmed",
+      "assignments": "Assignments",
+      "documents": "Documents"
+    },
+    "status": {
+      "awaitingConfirmation": "To Confirm",
+      "awaitingExecution": "To Execute",
+      "inProgress": "In Progress",
+      "completed": "Completed"
+    },
+    "empty": {
+      "title": "No mandates found",
+      "description": "Mandates will appear here once created"
+    },
+    "documents": {
+      "mandat": "Mandate",
+      "report": "Report",
+      "pdf": "PDF {number}",
+      "none": "None",
+      "document": "Document {number}",
+      "downloadTitle": "Download {name}"
+    },
+    "actions": {
+      "view": "View",
+      "close": "Close",
+      "edit": "Edit",
+      "download": "Download"
+    },
+    "modal": {
+      "title": "Mandate {reference}",
+      "sections": {
+        "objective": "Objective",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "duration": "Duration",
+        "assignedTeam": "Assigned Team ({count})",
+        "concernedCities": "Concerned Cities ({count})",
+        "necessaryResources": "Necessary Resources ({count})",
+        "documents": "Documents ({count})"
+      },
+      "durationValue": "{days} day(s)"
+    },
+    "success": {
+      "title": "Success",
+      "fileDownloaded": "File downloaded successfully"
+    },
+    "errors": {
+      "title": "Error",
+      "downloadFailed": "Failed to download file"
+    },
+    "common": {
+      "no": "No"
+    }
+  },
+  "MesMandatsTable": {
+    "headers": {
+      "reference": "Reference",
+      "objective": "Objective",
+      "status": "Status",
+      "period": "Period",
+      "duration": "Duration",
+      "team": "Team",
+      "progress": "Progress",
+      "documents": "Documents",
+      "actions": "Actions"
+    },
+    "status": {
+      "awaitingConfirmation": "Awaiting Confirmation",
+      "awaitingExecution": "Awaiting Execution",
+      "inProgress": "In Progress",
+      "completed": "Completed"
+    },
+    "labels": {
+      "controlMission": "Control Mission",
+      "durationDays": "{days}d"
+    },
+    "timing": {
+      "startsIn": "Starts in {days} day(s)",
+      "startsToday": "Starts today",
+      "remaining": "{days} day(s) remaining",
+      "endsToday": "Ends today"
+    },
+    "empty": {
+      "title": "No assigned mandates",
+      "description": "You don't have any confirmed mandates yet"
+    },
+    "documents": {
+      "mandat": "mandate",
+      "report": "report",
+      "attachment": "PJ {number}",
+      "none": "None",
+      "document": "document",
+      "downloadTitle": "Download {name}"
+    },
+    "actions": {
+      "view": "View",
+      "close": "Close",
+      "download": "Download"
+    },
+    "modal": {
+      "title": "My mandate {reference}",
+      "subtitle": "Detailed tracking of your mandate",
+      "sections": {
+        "missionObjective": "Mission Objective",
+        "mandatProgress": "Mandate Progress",
+        "missionPeriod": "Mission Period",
+        "missionType": "Mission Type",
+        "assignedTeam": "Assigned Team ({count})",
+        "destinations": "Destinations ({count})",
+        "allocatedResources": "Allocated Resources ({count})",
+        "documents": "Documents ({count})"
+      },
+      "progress": {
+        "advancement": "Progress"
+      },
+      "period": {
+        "startDate": "Start date",
+        "endDate": "End date",
+        "totalDuration": "Total duration",
+        "durationValue": "{days} day(s)"
+      },
+      "type": {
+        "type": "Type",
+        "controlMission": "Control mission",
+        "standardMission": "Standard mission",
+        "createdBy": "Created by"
+      },
+      "locations": {
+        "interior": "Interior"
+      }
+    },
+    "success": {
+      "title": "Success",
+      "fileDownloaded": "File downloaded successfully"
+    },
+    "errors": {
+      "title": "Error",
+      "downloadFailed": "Failed to download file"
+    }
+  },
+  "MesOrdresMissionTable": {
+    "headers": {
+      "reference": "Ref.",
+      "objective": "Objective",
+      "status": "Status",
+      "period": "Period",
+      "duration": "Duration",
+      "amount": "Amount",
+      "progress": "Progress",
+      "documents": "Documents",
+      "actions": "Actions"
+    },
+    "status": {
+      "awaitingJustification": "Awaiting Justification",
+      "awaitingConfirmation": "Awaiting Confirmation",
+      "awaitingExecution": "Awaiting Execution",
+      "inProgress": "In Progress",
+      "completed": "Completed"
+    },
+    "labels": {
+      "durationDays": "{days}d"
+    },
+    "timing": {
+      "startsIn": "Starts in {days} day(s)",
+      "startsToday": "Starts today",
+      "remaining": "{days} day(s) remaining",
+      "endsToday": "Ends today"
+    },
+    "empty": {
+      "title": "No mission orders",
+      "description": "You don't have any confirmed mission orders yet"
+    },
+    "documents": {
+      "missionOrder": "Mission-order",
+      "attachment": "Attachment{number}",
+      "downloadMissionOrder": "Download mission order PDF",
+      "downloadTitle": "Download {name}"
+    },
+    "actions": {
+      "view": "View",
+      "close": "Close",
+      "download": "Download"
+    },
+    "modal": {
+      "title": "My mission {reference}",
+      "subtitle": "Detailed tracking of your mission order",
+      "sections": {
+        "missionObjective": "Mission Objective",
+        "missionProgress": "Mission Progress",
+        "missionPeriod": "Mission Period",
+        "paymentTerms": "Payment Terms",
+        "financialDetails": "Financial Details",
+        "missionOrderPdf": "Mission Order PDF",
+        "attachments": "Attachments ({count})"
+      },
+      "progress": {
+        "advancement": "Progress"
+      },
+      "period": {
+        "startDate": "Start date",
+        "endDate": "End date",
+        "totalDuration": "Total duration",
+        "durationValue": "{days} day(s)"
+      },
+      "payment": {
+        "paymentMode": "Payment mode",
+        "currency": "Currency",
+        "advanceRate": "Advance rate"
+      },
+      "financial": {
+        "totalAmount": "Total amount",
+        "advanceReceived": "Advance received ({rate}%)",
+        "remainingBalance": "Remaining balance"
+      },
+      "documents": {
+        "missionOrder": "Mission order {reference}",
+        "document": "Document {number}"
+      }
+    },
+    "success": {
+      "title": "Success",
+      "fileDownloaded": "File downloaded successfully",
+      "pdfDownloaded": "PDF downloaded successfully"
+    },
+    "errors": {
+      "title": "Error",
+      "downloadFailed": "Failed to download file",
+      "pdfDownloadFailed": "Failed to download PDF"
+    }
+  },
+  "OrdreMissionActions": {
+    "buttons": {
+      "confirm": "Confirm",
+      "reject": "Reject",
+      "print": "Print",
+      "attachments": "Attachments",
+      "cancel": "Cancel",
+      "confirming": "Confirming...",
+      "rejecting": "Rejecting...",
+      "downloading": "Downloading...",
+      "adding": "Adding...",
+      "add": "Add"
+    },
+    "dialogs": {
+      "confirm": {
+        "title": "Confirm Mission Order",
+        "description": "Are you sure you want to confirm mission order {reference}?",
+        "warning": "This action cannot be undone."
+      },
+      "reject": {
+        "title": "Reject Mission Order",
+        "description": "Are you sure you want to reject mission order {reference}?",
+        "warning": "This action cannot be undone."
+      },
+      "addAttachments": {
+        "title": "Add Attachments",
+        "fileLabel": "Add a file",
+        "selectedFiles": "Selected files:"
+      }
+    },
+    "documents": {
+      "pdf": "PDF{number}",
+      "noDocument": "No document",
+      "document": "document",
+      "downloadTitle": "Download {name}"
+    },
+    "success": {
+      "title": "Success",
+      "missionOrderConfirmed": "Mission order confirmed successfully",
+      "missionOrderRejected": "Mission order rejected",
+      "fileDownloaded": "File downloaded successfully",
+      "attachmentsAdded": "Attachments added successfully"
+    },
+    "errors": {
+      "title": "Error",
+      "confirmFailed": "Failed to confirm mission order",
+      "rejectFailed": "Failed to reject mission order",
+      "pdfDownloadFailed": "Failed to download PDF",
+      "downloadFailed": "Failed to download file",
+      "addAttachmentsFailed": "Failed to add attachments"
+    }
+  },
+  "OrdreMissionTable": {
+    "headers": {
+      "name": "Name",
+      "objective": "Objective",
+      "status": "Status",
+      "start": "Start",
+      "end": "End",
+      "duration": "Duration",
+      "created": "Created",
+      "confirmed": "Confirmed",
+      "rejected": "Rejected",
+      "amount": "Amount",
+      "documents": "Documents",
+      "actions": "Actions"
+    },
+    "status": {
+      "justification": "Justification",
+      "confirmation": "Confirmation",
+      "execution": "Execution",
+      "inProgress": "In Progress",
+      "completed": "Completed",
+      "rejected": "Rejected",
+      "unknown": "Unknown"
+    },
+    "labels": {
+      "durationDays": "{days}d"
+    },
+    "empty": {
+      "title": "No mission orders"
+    },
+    "documents": {
+      "missionOrder": "Mission-order",
+      "attachment": "Attachment",
+      "attachmentNumber": "AT {number}",
+      "none": "None",
+      "document": "document",
+      "downloadTitle": "Download {name}"
+    },
+    "actions": {
+      "close": "Close",
+      "download": "Download"
+    },
+    "modal": {
+      "title": "Mission order {reference}",
+      "subtitle": "Complete mission details",
+      "sections": {
+        "missionObjective": "Mission Objective",
+        "currentStatus": "Current Status",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "paymentMode": "Payment Mode",
+        "currency": "Currency",
+        "financialDetails": "Financial Details",
+        "documents": "Documents ({count})"
+      },
+      "dateNotDefined": "Date not defined",
+      "notDefined": "Not defined",
+      "financial": {
+        "totalAmount": "Total amount",
+        "advance": "Advance ({rate}%)",
+        "balance": "Balance"
+      },
+      "documents": {
+        "document": "Document {number}"
+      }
+    },
+    "success": {
+      "title": "Success",
+      "fileDownloaded": "File downloaded successfully"
+    },
+    "errors": {
+      "title": "Error",
+      "downloadFailed": "Failed to download file"
+    }
+  },
+  "PiecesJointes": {
+    "upload": {
+      "title": "Upload Attachments",
+      "newUpload": "New Upload",
+      "description": "Upload files and associate them with your mandates, mission orders or reports.",
+      "filesToUpload": "Files to upload",
+      "selectFiles": "Select files",
+      "customName": "Custom name",
+      "customNamePlaceholder": "Leave empty to use file name",
+      "description": "Description",
+      "descriptionPlaceholder": "Optional file description",
+      "user": "User",
+      "selectUser": "Select a user",
+      "associateTo": "Associate to",
+      "selectAssociationType": "Select association type",
+      "noAssociation": "No association",
+      "mandate": "Mandate",
+      "missionOrder": "Mission Order",
+      "report": "Report",
+      "selectMandate": "Select a mandate",
+      "selectMissionOrder": "Select a mission order",
+      "selectReport": "Select a report",
+      "noObjective": "No objective",
+      "requiredFields": "* Required fields"
+    },
+    "list": {
+      "title": "Attachment Management",
+      "attachmentsList": "Attachments List",
+      "description": "Manage your documents and files",
+      "noAttachments": "No attachments found. Upload files to get started.",
+      "headers": {
+        "file": "File",
+        "type": "Type",
+        "size": "Size",
+        "associatedWith": "Associated with",
+        "user": "User",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "associations": {
+        "mandate": "Mandate",
+        "order": "Order",
+        "report": "Report"
+      },
+      "openMenu": "Open menu"
+    },
+    "buttons": {
+      "uploadFiles": "Upload Files",
+      "cancel": "Cancel",
+      "upload": "Upload",
+      "uploading": "Uploading...",
+      "delete": "Delete"
+    },
+    "actions": {
+      "download": "Download",
+      "delete": "Delete"
+    },
+    "dialogs": {
+      "delete": {
+        "title": "Are you sure?",
+        "description": "This action cannot be undone. This will permanently delete the attachment",
+        "warning": "and the associated file."
+      }
+    },
+    "validation": {
+      "title": "Validation Error",
+      "selectFiles": "Please select at least one file",
+      "selectUser": "Please select a user"
+    },
+    "success": {
+      "title": "Success",
+      "filesUploaded": "{count} file(s) uploaded successfully",
+      "fileDownloaded": "File downloaded successfully",
+      "attachmentDeleted": "Attachment deleted successfully"
+    },
+    "errors": {
+      "title": "Error",
+      "fetchFailed": "Failed to fetch attachments",
+      "loadAttachments": "Unable to load attachments",
+      "fetchMandatsFailed": "Failed to fetch mandates",
+      "fetchOrdersFailed": "Failed to fetch mission orders",
+      "fetchReportsFailed": "Failed to fetch reports",
+      "fetchUsersFailed": "Failed to fetch users",
+      "uploadFailed": "{count} file(s) could not be uploaded",
+      "uploadGenericFailed": "Upload failed",
+      "downloadFailed": "Failed to download file",
+      "deleteFailed": "Failed to delete attachment"
+    }
+  },
+  "Ressources": {
+    "title": "Resource Management",
+    "search": {
+      "title": "Search Resources",
+      "description": "Search resources by name",
+      "placeholder": "Search by resource name..."
+    },
+    "table": {
+      "title": "Resources List",
+      "description": "Manage your resources",
+      "headers": {
+        "id": "ID",
+        "name": "Name",
+        "createdAt": "Created At",
+        "updatedAt": "Updated At",
+        "actions": "Actions"
+      },
+      "noData": "No resources found. Add a new resource or adjust your search.",
+      "loading": "Loading resources..."
+    },
+    "buttons": {
+      "addResource": "Add Resource",
+      "search": "Search",
+      "reset": "Reset",
+      "cancel": "Cancel",
+      "create": "Create",
+      "update": "Update",
+      "delete": "Delete"
+    },
+    "actions": {
+      "openMenu": "Open menu",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "dialogs": {
+      "create": {
+        "title": "Add New Resource",
+        "description": "Enter the details for the new resource."
+      },
+      "edit": {
+        "title": "Edit Resource",
+        "description": "Update the details for this resource."
+      },
+      "delete": {
+        "title": "Are you sure?",
+        "description": "This action cannot be undone. This will permanently delete the resource and remove it from the database.",
+        "warning": ""
+      }
+    },
+    "form": {
+      "labels": {
+        "name": "Name"
+      },
+      "placeholders": {
+        "name": "Enter resource name"
+      }
+    },
+    "success": {
+      "title": "Success",
+      "resourceCreated": "Resource created successfully",
+      "resourceUpdated": "Resource updated successfully",
+      "resourceDeleted": "Resource deleted successfully"
+    },
+    "errors": {
+      "title": "Error",
+      "fetchFailed": "Failed to fetch resources",
+      "loadResources": "Failed to load resources. Please try again.",
+      "searchFailed": "Failed to search resources. Please try again.",
+      "createFailed": "Failed to create resource",
+      "updateFailed": "Failed to update resource",
+      "deleteFailed": "Failed to delete resource"
+    }
+  },
+  "DashboardContent": {
+    "loading": {
+      "message": "Loading your workspace..."
+    },
+    "error": {
+      "message": "Error loading dashboard data"
+    },
+    "cards": {
+      "topPersonnel": {
+        "title": "Top Personnel",
+        "description": "Most mission days",
+        "maxDays": "Max days:",
+        "clickToView": "Click to view top 5"
+      },
+      "availablePersonnel": {
+        "title": "Available Personnel",
+        "description": "Least mission days",
+        "minDays": "Min days:",
+        "clickToView": "Click to view top 5"
+      },
+      "myQuota": {
+        "title": "My Quota",
+        "description": "My mission days",
+        "status": {
+          "ok": "You can still do missions this year!",
+          "exceeded": "Quota exceeded",
+          "near": "Close to quota"
+        },
+        "clickToView": "Click to view details"
+      },
+      "missionAnalysis": {
+        "title": "Mission Analysis",
+        "description": "Distribution by status",
+        "totalMissions": "Total missions",
+        "clickToView": "Click to view distribution"
+      }
+    },
+    "chartConfig": {
+      "daysLabel": "Days",
+      "countLabel": "Count"
+    },
+    "modals": {
+      "mostDays": {
+        "title": "Top 5 - Most Mission Days",
+        "daysUnit": "days"
+      },
+      "leastDays": {
+        "title": "Top 5 - Least Mission Days",
+        "daysUnit": "days",
+        "tip": "💡 These users have fewer mission days and are therefore more available for new assignments."
+      },
+      "myQuota": {
+        "title": "My Mission Days",
+        "daysOfQuota": "out of {quota} days",
+        "zeroDays": "0 days",
+        "totalQuotaDays": "{quota} days"
+      },
+      "statusAnalysis": {
+        "title": "Mission Distribution by Status",
+        "detailsTitle": "Details by status",
+        "missionUnit": "{count, plural, one {mission} other {missions}}",
+        "totalMissions": "Total missions"
+      }
+    },
+    "statusLabels": {
+      "EN_ATTENTE_EXECUTION": "Awaiting execution",
+      "EN_COURS": "In progress",
+      "ACHEVE": "Completed",
+      "EN_ATTENTE_CONFIRMATION": "Awaiting confirmation"
+    }
+  },
+  "DashboardSidebar": {
+    "loading": {
+      "message": "Loading your workspace..."
+    },
+    "mandats": {
+      "title": "MANDATES",
+      "actions": {
+        "create": "Register a mandate"
+      },
+      "items": {
+        "enAttenteConfirmation": "Awaiting confirmation",
+        "enAttenteExecution": "Awaiting execution",
+        "enCours": "In progress",
+        "acheve": "Completed",
+        "acheveAvecRapport": "Completed with report",
+        "mesMandats": "My mandates",
+        "tous": "All mandates"
+      }
+    },
+    "ordres": {
+      "title": "MISSION ORDERS",
+      "actions": {
+        "create": "Create a mission order"
+      },
+      "items": {
+        "enAttenteJustificatif": "Awaiting attachment",
+        "enAttenteConfirmation": "Awaiting confirmation",
+        "enAttenteExecution": "Awaiting execution",
+        "enCours": "In progress",
+        "acheve": "Completed",
+        "rejete": "Rejected",
+        "mesOrdresMission": "My mission orders",
+        "tous": "All Mission Orders"
+      }
+    },
+    "ressources": {
+      "title": "RESOURCES"
+    },
+    "configurations": {
+      "title": "CONFIGURATIONS",
+      "items": {
+        "createUser": "Create user account",
+        "manageUsers": "Manage users",
+        "ranks": "Ranks",
+        "manageCities": "Manage cities"
+      }
+    }
+  },
+  "Header": {
+    "logoAltText": "Application Logo",
+    "pageTitles": {
+      "dashboard": "Dashboard",
+      "mandates": {
+        "register": "Register a mandate",
+        "awaitingConfirmation": "Mandates awaiting confirmation",
+        "awaitingExecution": "Mandates awaiting execution",
+        "inProgress": "Mandates in progress",
+        "completed": "Completed mandates",
+        "myMandates": "My mandates",
+        "allMandates": "All mandates",
+        "management": "Mandate Management"
+      },
+      "missionOrders": {
+        "awaitingAttachment": "Awaiting attachment",
+        "awaitingConfirmation": "Orders awaiting confirmation",
+        "awaitingExecution": "Orders awaiting execution",
+        "inProgress": "Orders in progress",
+        "completed": "Completed orders",
+        "myMissionOrders": "My mission orders",
+        "management": "Mission Order Management"
+      },
+      "configurations": {
+        "title": "Configurations",
+        "createUser": "Create user account",
+        "manageUsers": "Manage users",
+        "manageFunctions": "Function Management",
+        "manageRanks": "Rank Management",
+        "manageCities": "Manage cities"
+      },
+      "application": "Application"
+    },
+    "userProfile": {
+      "undefinedFunction": "Function not defined",
+      "logout": "Log out"
+    }
   }
+
 }

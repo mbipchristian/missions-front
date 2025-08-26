@@ -9,7 +9,7 @@ import { ErrorMessage } from "@/components/ui/error-message"
 import { apiService } from "@/lib/api"
 import type { Mandat } from "@/types"
 
-export default function MandatsAchevesPage() {
+export default function MandatsAchevesAvecRapportsPage() {
   const [mandats, setMandats] = useState<Mandat[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -60,10 +60,10 @@ export default function MandatsAchevesPage() {
   const fetchMandats = async () => {
     try {
       setLoading(true)
-      const data = await apiService.getMandatsAcheves()
+      const data = await apiService.getMandatsAchevesAvecRapport()
       setMandats(data)
     } catch (err) {
-      setError("Erreur lors du chargement des mandats achevés")
+      setError("Erreur lors du chargement des mandats achevés avec rapports")
       console.error(err)
     } finally {
       setLoading(false)
@@ -88,15 +88,16 @@ export default function MandatsAchevesPage() {
 
   return (
     <div>
-    
-
       <Filters filters={filters} onFiltersChange={setFilters} onClearFilters={clearFilters} />
-
       <MandatTable
         mandats={filteredMandats}
-        title="Mandats achevés"
+        title="Mandats achevés avec rapports"
         renderActions={(mandat) => (
-          <MandatActions mandat={mandat} actions={["addReport", "details"]} onActionComplete={fetchMandats} />
+          <MandatActions 
+            mandat={mandat} 
+            actions={["details"]} 
+            onActionComplete={fetchMandats} 
+          />
         )}
       />
     </div>

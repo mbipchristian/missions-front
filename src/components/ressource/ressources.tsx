@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -26,7 +27,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { Search, Plus, MoreVertical, Edit, Trash, RefreshCw } from "lucide-react"
+import { Search, Plus, MoreVertical, Edit, Trash, RefreshCw } from 'lucide-react'
 import { useToast } from "@/hooks/use-toast"
 
 // Types based on the Java DTOs
@@ -41,7 +42,8 @@ interface RessourceResponseDto {
   updatedAt: string
 }
 
-export default function Ressources() {
+export default function RessourcesPage() {
+  const t = useTranslations("Ressources")
   const [ressources, setRessources] = useState<RessourceResponseDto[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
@@ -52,7 +54,6 @@ export default function Ressources() {
   const [formData, setFormData] = useState<RessourceDto>({
     name: "",
   })
-
   const { toast } = useToast()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -65,7 +66,6 @@ export default function Ressources() {
   // Handle search from URL params
   useEffect(() => {
     const q = searchParams.get("q")
-
     if (q) {
       setSearchQuery(q)
       handleSearch(q)
@@ -78,15 +78,15 @@ export default function Ressources() {
     try {
       const response = await fetch("http://localhost:8080/auth/ressources/all")
       if (!response.ok) {
-        throw new Error("Failed to fetch resources")
+        throw new Error(t("errors.fetchFailed"))
       }
       const data = await response.json()
       setRessources(data)
     } catch (error) {
       console.error("Error fetching resources:", error)
       toast({
-        title: "Error",
-        description: "Failed to load resources. Please try again.",
+        title: t("errors.title"),
+        description: t("errors.loadResources"),
         variant: "destructive",
       })
     } finally {
@@ -100,20 +100,19 @@ export default function Ressources() {
       fetchRessources()
       return
     }
-
     setLoading(true)
     try {
       const response = await fetch(`http://localhost:8080/auth/ressources/search?name=${encodeURIComponent(query)}`)
       if (!response.ok) {
-        throw new Error("Failed to search resources")
+        throw new Error(t("errors.searchFailed"))
       }
       const data = await response.json()
       setRessources(data)
     } catch (error) {
       console.error("Error searching resources:", error)
       toast({
-        title: "Search Error",
-        description: "Failed to search resources. Please try again.",
+        title: t("errors.title"),
+        description: t("errors.searchFailed"),
         variant: "destructive",
       })
     } finally {
@@ -131,25 +130,22 @@ export default function Ressources() {
         },
         body: JSON.stringify(formData),
       })
-
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData?.error || "Failed to create resource")
+        throw new Error(errorData?.error || t("errors.createFailed"))
       }
-
       toast({
-        title: "Success",
-        description: "Resource created successfully",
+        title: t("success.title"),
+        description: t("success.resourceCreated"),
       })
-
       setIsCreateDialogOpen(false)
       setFormData({ name: "" })
       fetchRessources()
     } catch (error) {
       console.error("Error creating resource:", error)
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create resource",
+        title: t("errors.title"),
+        description: error instanceof Error ? error.message : t("errors.createFailed"),
         variant: "destructive",
       })
     }
@@ -158,7 +154,6 @@ export default function Ressources() {
   // Update a resource
   const handleUpdateRessource = async () => {
     if (!selectedRessource) return
-
     try {
       const response = await fetch(`http://localhost:8080/auth/ressources/${selectedRessource.id}`, {
         method: "PUT",
@@ -167,17 +162,14 @@ export default function Ressources() {
         },
         body: JSON.stringify(formData),
       })
-
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData?.error || "Failed to update resource")
+        throw new Error(errorData?.error || t("errors.updateFailed"))
       }
-
       toast({
-        title: "Success",
-        description: "Resource updated successfully",
+        title: t("success.title"),
+        description: t("success.resourceUpdated"),
       })
-
       setIsEditDialogOpen(false)
       setSelectedRessource(null)
       setFormData({ name: "" })
@@ -185,8 +177,8 @@ export default function Ressources() {
     } catch (error) {
       console.error("Error updating resource:", error)
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update resource",
+        title: t("errors.title"),
+        description: error instanceof Error ? error.message : t("errors.updateFailed"),
         variant: "destructive",
       })
     }
@@ -195,30 +187,26 @@ export default function Ressources() {
   // Delete a resource
   const handleDeleteRessource = async () => {
     if (!selectedRessource) return
-
     try {
       const response = await fetch(`http://localhost:8080/auth/ressources/${selectedRessource.id}`, {
         method: "DELETE",
       })
-
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData?.error || "Failed to delete resource")
+        throw new Error(errorData?.error || t("errors.deleteFailed"))
       }
-
       toast({
-        title: "Success",
-        description: "Resource deleted successfully",
+        title: t("success.title"),
+        description: t("success.resourceDeleted"),
       })
-
       setIsDeleteDialogOpen(false)
       setSelectedRessource(null)
       fetchRessources()
     } catch (error) {
       console.error("Error deleting resource:", error)
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to delete resource",
+        title: t("errors.title"),
+        description: error instanceof Error ? error.message : t("errors.deleteFailed"),
         variant: "destructive",
       })
     }
@@ -247,16 +235,16 @@ export default function Ressources() {
   return (
     <div className="container mx-auto py-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Resource Management</h1>
+        <h1 className="text-3xl font-bold">{t("title")}</h1>
         <Button onClick={() => setIsCreateDialogOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" /> Add Resource
+          <Plus className="mr-2 h-4 w-4" /> {t("buttons.addResource")}
         </Button>
       </div>
 
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Search Resources</CardTitle>
-          <CardDescription>Search resources by name</CardDescription>
+          <CardTitle>{t("search.title")}</CardTitle>
+          <CardDescription>{t("search.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex gap-2">
@@ -264,27 +252,27 @@ export default function Ressources() {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search by resource name..."
+                placeholder={t("search.placeholder")}
                 className="pl-8"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch(searchQuery)}
               />
             </div>
-            <Button onClick={() => handleSearch(searchQuery)}>Search</Button>
+            <Button onClick={() => handleSearch(searchQuery)}>{t("buttons.search")}</Button>
           </div>
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button variant="outline" onClick={fetchRessources}>
-            <RefreshCw className="mr-2 h-4 w-4" /> Reset
+            <RefreshCw className="mr-2 h-4 w-4" /> {t("buttons.reset")}
           </Button>
         </CardFooter>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Resources List</CardTitle>
-          <CardDescription>Manage your resources</CardDescription>
+          <CardTitle>{t("table.title")}</CardTitle>
+          <CardDescription>{t("table.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -293,17 +281,17 @@ export default function Ressources() {
             </div>
           ) : ressources.length === 0 ? (
             <div className="text-center py-10 text-muted-foreground">
-              No resources found. Add a new resource or adjust your search.
+              {t("table.noData")}
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Created At</TableHead>
-                  <TableHead>Updated At</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{t("table.headers.id")}</TableHead>
+                  <TableHead>{t("table.headers.name")}</TableHead>
+                  <TableHead>{t("table.headers.createdAt")}</TableHead>
+                  <TableHead>{t("table.headers.updatedAt")}</TableHead>
+                  <TableHead className="text-right">{t("table.headers.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -318,15 +306,15 @@ export default function Ressources() {
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon">
                             <MoreVertical className="h-4 w-4" />
-                            <span className="sr-only">Open menu</span>
+                            <span className="sr-only">{t("actions.openMenu")}</span>
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => openEditDialog(ressource)}>
-                            <Edit className="mr-2 h-4 w-4" /> Edit
+                            <Edit className="mr-2 h-4 w-4" /> {t("actions.edit")}
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => openDeleteDialog(ressource)}>
-                            <Trash className="mr-2 h-4 w-4" /> Delete
+                            <Trash className="mr-2 h-4 w-4" /> {t("actions.delete")}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -343,28 +331,28 @@ export default function Ressources() {
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add New Resource</DialogTitle>
-            <DialogDescription>Enter the details for the new resource.</DialogDescription>
+            <DialogTitle>{t("dialogs.create.title")}</DialogTitle>
+            <DialogDescription>{t("dialogs.create.description")}</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="name" className="text-right">
-                Name
+                {t("form.labels.name")}
               </Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="col-span-3"
-                placeholder="Enter resource name"
+                placeholder={t("form.placeholders.name")}
               />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-              Cancel
+              {t("buttons.cancel")}
             </Button>
-            <Button onClick={handleCreateRessource}>Create</Button>
+            <Button onClick={handleCreateRessource}>{t("buttons.create")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -373,28 +361,28 @@ export default function Ressources() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit Resource</DialogTitle>
-            <DialogDescription>Update the details for this resource.</DialogDescription>
+            <DialogTitle>{t("dialogs.edit.title")}</DialogTitle>
+            <DialogDescription>{t("dialogs.edit.description")}</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="edit-name" className="text-right">
-                Name
+                {t("form.labels.name")}
               </Label>
               <Input
                 id="edit-name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="col-span-3"
-                placeholder="Enter resource name"
+                placeholder={t("form.placeholders.name")}
               />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-              Cancel
+              {t("buttons.cancel")}
             </Button>
-            <Button onClick={handleUpdateRessource}>Update</Button>
+            <Button onClick={handleUpdateRessource}>{t("buttons.update")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -403,16 +391,16 @@ export default function Ressources() {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>{t("dialogs.delete.title")}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the resource
-              {selectedRessource && ` "${selectedRessource.name}"`} and remove it from the database.
+              {t("dialogs.delete.description")}
+              {selectedRessource && ` "${selectedRessource.name}"`}{t("dialogs.delete.warning")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t("buttons.cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDeleteRessource} className="bg-destructive text-destructive-foreground">
-              Delete
+              {t("buttons.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

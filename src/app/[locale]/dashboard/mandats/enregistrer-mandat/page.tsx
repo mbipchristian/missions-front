@@ -1,11 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format, differenceInDays, isAfter, isBefore, startOfDay } from "date-fns"
@@ -17,13 +17,23 @@ import {
   Upload,
   FileText,
   X,
+  Users,
+  MapPin,
+  Package,
+  CheckCircle,
+  AlertCircle,
+  Clock,
+  Target,
+  Search,
 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Users, MapPin, Package } from "lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import { Progress } from "@/components/ui/progress"
 import { apiService } from "@/lib/api"
 
 // Interfaces pour les entités existantes
@@ -43,7 +53,6 @@ interface VilleResponseDto {
 interface RessourceResponseDto {
   id: number
   name: string
-  
 }
 
 interface MandatDto {
@@ -77,10 +86,8 @@ interface CreatedMandat {
     size: number
     createdAt: Date
   }[]
-
 }
 
-// Composant pour le formulaire de création
 export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => void; onSuccess: () => void }) {
   const [users, setUsers] = useState<UserResponseDto[]>([])
   const [villes, setVilles] = useState<VilleResponseDto[]>([])
@@ -88,6 +95,7 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
   const [attachmentFiles, setAttachmentFiles] = useState<File[]>([])
   const [createdMandat, setCreatedMandat] = useState<CreatedMandat | null>(null)
   const [isAttachmentDialogOpen, setIsAttachmentDialogOpen] = useState(false)
+  const [currentTab, setCurrentTab] = useState("informations")
   const [formData, setFormData] = useState<MandatDto>({
     reference: "",
     objectif: "",
@@ -105,6 +113,41 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
   const [isDateFinOpen, setIsDateFinOpen] = useState(false)
   const { toast } = useToast()
 
+  const [searchUsers, setSearchUsers] = useState("")
+  const [searchVilles, setSearchVilles] = useState("")
+  const [searchRessources, setSearchRessources] = useState("")
+
+  // Calculate completion progress
+  const getCompletionProgress = () => {
+    let completed = 0
+    const total = 5 // Total required sections
+
+    if (formData.reference.trim()) completed++
+    if (formData.dateDebut && formData.dateFin && dateErrors.length === 0) completed++
+    if (formData.objectif?.trim()) completed++
+    if (formData.userIds.length > 0) completed++
+    if (formData.villeIds.length > 0) completed++
+
+    return (completed / total) * 100
+  }
+
+  // Validation functions
+  const isInformationsValid = () => {
+    return formData.reference.trim() && formData.objectif?.trim()
+  }
+
+  const isDatesValid = () => {
+    return formData.dateDebut && formData.dateFin && dateErrors.length === 0
+  }
+
+  const isUsersValid = () => {
+    return formData.userIds.length > 0
+  }
+
+  const isVillesValid = () => {
+    return formData.villeIds.length > 0
+  }
+
   // Calculate duration automatically when dates change
   useEffect(() => {
     const errors: string[] = []
@@ -117,7 +160,7 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
       if (isAfter(debut, fin)) {
         errors.push("La date de début ne peut pas être postérieure à la date de fin")
       } else {
-        duree = differenceInDays(fin, debut) + 1 // +1 pour inclure le jour de début
+        duree = differenceInDays(fin, debut)
       }
     }
 
@@ -189,7 +232,6 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
     setFormData((prev) => {
       let newDateFin = prev.dateFin
 
-      // Si la date de fin est antérieure à la nouvelle date de début, la réinitialiser
       if (newDateDebut && prev.dateFin && isBefore(prev.dateFin, newDateDebut)) {
         newDateFin = null
       }
@@ -208,7 +250,6 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
     setIsDateFinOpen(false)
   }
 
-  // Handle file upload
   const addAttachmentFile = (file: File) => {
     setAttachmentFiles((prev) => [...prev, file])
   }
@@ -219,7 +260,6 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
 
   const handleAddAttachments = async () => {
     if (attachmentFiles.length === 0 || !createdMandat) {
-      // Si aucun fichier n'est sélectionné, simplement fermer le dialogue et terminer
       setIsAttachmentDialogOpen(false)
       resetFormAndGoBack()
       return
@@ -227,12 +267,9 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
 
     try {
       setLoading("addAttachments")
-      
-      // Envoyer chaque fichier individuellement
+
       for (let i = 0; i < attachmentFiles.length; i++) {
         const file = attachmentFiles[i]
-        
-        // CORRECTION: Utiliser le bon nom de méthode et les bons paramètres
         await apiService.addMandatAttachments(createdMandat.id, file)
       }
 
@@ -240,7 +277,7 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
         title: "Succès",
         description: "Pièces jointes ajoutées avec succès",
       })
-      
+
       setAttachmentFiles([])
       setIsAttachmentDialogOpen(false)
       resetFormAndGoBack()
@@ -248,7 +285,7 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
       console.error("Erreur upload:", error)
       toast({
         title: "Erreur",
-        description: `Erreur lors de l'ajout des pièces jointes: ${error instanceof Error ? error.message : 'Erreur inconnue'}`,
+        description: `Erreur lors de l'ajout des pièces jointes: ${error instanceof Error ? error.message : "Erreur inconnue"}`,
         variant: "destructive",
       })
     } finally {
@@ -262,7 +299,6 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
   }
 
   const resetFormAndGoBack = () => {
-    // Reset form
     setFormData({
       reference: "",
       objectif: "",
@@ -276,19 +312,35 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
     })
     setAttachmentFiles([])
     setCreatedMandat(null)
-    //onSuccess()
+    setCurrentTab("informations")
   }
 
-  // Format file size
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return "0 Bytes"
     const k = 1024
     const sizes = ["Bytes", "KB", "MB", "GB"]
     const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
+    return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
   }
 
-  // Create a new mandat
+  // Filter functions
+  const filteredUsers = users.filter(
+    (user) =>
+      user.username.toLowerCase().includes(searchUsers.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchUsers.toLowerCase()) ||
+      user.matricule.toLowerCase().includes(searchUsers.toLowerCase()),
+  )
+
+  const filteredVilles = villes.filter(
+    (ville) =>
+      ville.name.toLowerCase().includes(searchVilles.toLowerCase()) ||
+      ville.code.toLowerCase().includes(searchVilles.toLowerCase()),
+  )
+
+  const filteredRessources = ressources.filter((ressource) =>
+    ressource.name.toLowerCase().includes(searchRessources.toLowerCase()),
+  )
+
   const handleCreateMandat = async () => {
     // Validate form data
     if (!formData.reference.trim()) {
@@ -297,24 +349,17 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
         description: "La référence est obligatoire",
         variant: "destructive",
       })
+      setCurrentTab("informations")
       return
     }
 
-    if (!formData.dateDebut) {
+    if (!formData.dateDebut || !formData.dateFin) {
       toast({
         title: "Erreur de validation",
-        description: "La date de début est obligatoire",
+        description: "Les dates de début et fin sont obligatoires",
         variant: "destructive",
       })
-      return
-    }
-
-    if (!formData.dateFin) {
-      toast({
-        title: "Erreur de validation",
-        description: "La date de fin est obligatoire",
-        variant: "destructive",
-      })
+      setCurrentTab("dates")
       return
     }
 
@@ -324,6 +369,7 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
         description: dateErrors[0],
         variant: "destructive",
       })
+      setCurrentTab("dates")
       return
     }
 
@@ -333,6 +379,7 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
         description: "Au moins un utilisateur doit être sélectionné",
         variant: "destructive",
       })
+      setCurrentTab("utilisateurs")
       return
     }
 
@@ -342,13 +389,13 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
         description: "Au moins une ville doit être sélectionnée",
         variant: "destructive",
       })
+      setCurrentTab("villes")
       return
     }
 
     try {
       setLoading("createMandat")
 
-      // Prepare the payload as JSON
       const payload = {
         reference: formData.reference,
         objectif: formData.objectif || "",
@@ -361,32 +408,27 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
         ressourceIds: formData.ressourceIds,
       }
 
-      console.log("Sending payload:", payload) // For debugging
-
       const response = await fetch("http://localhost:8080/auth/mandats/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem('authToken')}`,
+          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
         body: JSON.stringify(payload),
       })
-      
+
       if (!response.ok) {
         let errorMessage = "Échec de création du mandat"
         try {
           const errorData = await response.json()
           errorMessage = errorData.message || errorData.error || errorMessage
         } catch (e) {
-          // If response is not JSON, use status text
           errorMessage = response.statusText || errorMessage
         }
         throw new Error(errorMessage)
       }
 
       const result = await response.json()
-      console.log("Mandat created successfully:", result)
-      
       setCreatedMandat(result)
 
       toast({
@@ -394,9 +436,7 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
         description: "Mandat créé avec succès",
       })
 
-      // Toujours ouvrir le dialogue des pièces jointes après création du mandat
       setIsAttachmentDialogOpen(true)
-
     } catch (error) {
       console.error("Erreur lors de la création du mandat:", error)
       toast({
@@ -409,300 +449,584 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
     }
   }
 
+  const canProceedToNext = (tab: string) => {
+    switch (tab) {
+      case "informations":
+        return isInformationsValid()
+      case "dates":
+        return isDatesValid()
+      case "utilisateurs":
+        return isUsersValid()
+      case "villes":
+        return isVillesValid()
+      default:
+        return true
+    }
+  }
+
   return (
-    <div className="container mx-auto py-6">
+    <div className="container mx-auto py-6 max-w-5xl">
       <div className="flex items-center gap-4 mb-6">
         <Button variant="outline" size="icon" onClick={onBack}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h1 className="text-3xl font-bold">Créer un Nouveau Mandat</h1>
+        <div className="flex-1">
+          <h1 className="text-3xl font-bold">Nouveau Mandat</h1>
+          <p className="text-muted-foreground">Enrégistrez un nouveau mandat de mission en quelques étapes</p>
+        </div>
       </div>
 
-      <Card className="max-w-4xl mx-auto">
-        <CardHeader>
-          <CardTitle>Détails du Mandat</CardTitle>
-          <CardDescription>Remplissez les informations pour créer un nouveau mandat de mission.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Référence */}
-          <div className="grid gap-2">
-            <Label htmlFor="reference">Référence *</Label>
-            <Input
-              id="reference"
-              value={formData.reference}
-              onChange={(e) => setFormData({ ...formData, reference: e.target.value })}
-              placeholder="Entrez la référence du mandat"
-              className="max-w-md"
-            />
-          </div>
-
-          {/* Dates */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="grid gap-2">
-              <Label htmlFor="dateDebut">Date de Début *</Label>
-              <Popover open={isDateDebutOpen} onOpenChange={setIsDateDebutOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={`w-full justify-start text-left font-normal ${
-                      !formData.dateDebut && "text-muted-foreground"
-                    }`}
-                    onClick={() => setIsDateDebutOpen(true)}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.dateDebut ? (
-                      format(formData.dateDebut, "PPP", { locale: fr })
-                    ) : (
-                      <span>Sélectionner une date</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={formData.dateDebut || undefined}
-                    onSelect={handleDateDebutChange}
-                    disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                    initialFocus
-                    locale={fr}
-                  />
-                </PopoverContent>
-              </Popover>
+      {/* Progress indicator */}
+      <Card className="mb-6">
+        <CardContent className="pt-6">
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span>Progression du formulaire</span>
+              <span>{Math.round(getCompletionProgress())}% complété</span>
             </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="dateFin">Date de Fin *</Label>
-              <Popover open={isDateFinOpen} onOpenChange={setIsDateFinOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={`w-full justify-start text-left font-normal ${
-                      !formData.dateFin && "text-muted-foreground"
-                    }`}
-                    onClick={() => setIsDateFinOpen(true)}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.dateFin ? (
-                      format(formData.dateFin, "PPP", { locale: fr })
-                    ) : (
-                      <span>Sélectionner une date</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={formData.dateFin || undefined}
-                    onSelect={handleDateFinChange}
-                    disabled={(date) =>
-                      formData.dateDebut ? date < formData.dateDebut : date < new Date(new Date().setHours(0, 0, 0, 0))
-                    }
-                    initialFocus
-                    locale={fr}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-          </div>
-
-          {/* Durée calculée */}
-          <div className="grid gap-2">
-            <Label htmlFor="duree">Durée Calculée</Label>
-            <Input id="duree" type="number" value={formData.duree} readOnly className="bg-muted max-w-xs" />
-            {formData.duree > 0 && (
-              <p className="text-sm text-muted-foreground">
-                Du {formData.dateDebut && format(formData.dateDebut, "dd/MM/yyyy")} au{" "}
-                {formData.dateFin && format(formData.dateFin, "dd/MM/yyyy")} = {formData.duree} jour
-                {formData.duree > 1 ? "s" : ""}
-              </p>
-            )}
-          </div>
-
-          {/* Objectif */}
-          <div className="grid gap-2">
-            <Label htmlFor="objectif">Objectif</Label>
-            <Textarea
-              id="objectif"
-              value={formData.objectif}
-              onChange={(e) => setFormData({ ...formData, objectif: e.target.value })}
-              placeholder="Décrivez l'objectif du mandat"
-              rows={3}
-            />
-          </div>
-
-          {/* Type de mission */}
-          <div className="grid gap-2">
-            <Label>Type de Mission</Label>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="missionDeControle"
-                checked={formData.missionDeControle}
-                onCheckedChange={(checked) => setFormData({ ...formData, missionDeControle: checked as boolean })}
-              />
-              <label htmlFor="missionDeControle" className="text-sm font-medium">
-                Mission de Contrôle
-              </label>
-            </div>
-          </div>
-
-          {/* Sélection des utilisateurs */}
-          <div className="grid gap-2">
-            <Label className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Utilisateurs *
-            </Label>
-            <ScrollArea className="h-[150px] border rounded-md p-4">
-              <div className="space-y-2">
-                {users.map((user) => (
-                  <div key={user.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`user-${user.id}`}
-                      checked={formData.userIds.includes(user.id)}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setFormData({ ...formData, userIds: [...formData.userIds, user.id] })
-                        } else {
-                          setFormData({
-                            ...formData,
-                            userIds: formData.userIds.filter((id) => id !== user.id),
-                          })
-                        }
-                      }}
-                    />
-                    <label htmlFor={`user-${user.id}`} className="text-sm font-medium">
-                      {user.username} ({user.matricule})
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
-
-          {/* Sélection des villes */}
-          <div className="grid gap-2">
-            <Label className="flex items-center gap-2">
-              <MapPin className="h-4 w-4" />
-              Villes *
-            </Label>
-            <ScrollArea className="h-[150px] border rounded-md p-4">
-              <div className="space-y-2">
-                {villes.map((ville) => (
-                  <div key={ville.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`ville-${ville.id}`}
-                      checked={formData.villeIds.includes(ville.id)}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setFormData({ ...formData, villeIds: [...formData.villeIds, ville.id] })
-                        } else {
-                          setFormData({
-                            ...formData,
-                            villeIds: formData.villeIds.filter((id) => id !== ville.id),
-                          })
-                        }
-                      }}
-                    />
-                    <label htmlFor={`ville-${ville.id}`} className="text-sm font-medium">
-                      {ville.name} ({ville.code})
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
-
-          {/* Sélection des ressources */}
-          <div className="grid gap-2">
-            <Label className="flex items-center gap-2">
-              <Package className="h-4 w-4" />
-              Ressources
-            </Label>
-            <ScrollArea className="h-[150px] border rounded-md p-4">
-              <div className="space-y-2">
-                {ressources.map((ressource) => (
-                  <div key={ressource.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`ressource-${ressource.id}`}
-                      checked={formData.ressourceIds.includes(ressource.id)}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setFormData({ ...formData, ressourceIds: [...formData.ressourceIds, ressource.id] })
-                        } else {
-                          setFormData({
-                            ...formData,
-                            ressourceIds: formData.ressourceIds.filter((id) => id !== ressource.id),
-                          })
-                        }
-                      }}
-                    />
-                    <label htmlFor={`ressource-${ressource.id}`} className="text-sm font-medium">
-                      {ressource.name}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
-
-          {/* Erreurs de validation */}
-          {dateErrors.length > 0 && (
-            <div className="p-4 border border-red-200 rounded-lg bg-red-50">
-              <div className="text-sm text-red-600">
-                {dateErrors.map((error, index) => (
-                  <p key={index} className="flex items-center gap-2">
-                    <span className="text-red-500">•</span>
-                    {error}
-                  </p>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="text-sm text-muted-foreground">* Champs obligatoires</div>
-
-          {/* Actions */}
-          <div className="flex gap-4 pt-6">
-            <Button variant="outline" onClick={onBack}>
-              Annuler
-            </Button>
-            <Button onClick={handleCreateMandat} disabled={loading === "createMandat" || dateErrors.length > 0} className="min-w-[120px]">
-              {loading === "createMandat" ? (
-                <>
-                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                  Création...
-                </>
-              ) : (
-                "Créer le Mandat"
-              )}
-            </Button>
+            <Progress value={getCompletionProgress()} className="h-2" />
           </div>
         </CardContent>
       </Card>
 
-      {/* Dialog pour les pièces jointes - s'ouvre automatiquement après création */}
-      <Dialog open={isAttachmentDialogOpen} onOpenChange={(open) => {
-        if (!open && createdMandat) {
-          // Si on ferme le dialogue et qu'un mandat a été créé, terminer le processus
-          handleSkipAttachments()
-        } else {
-          setIsAttachmentDialogOpen(open)
-        }
-      }}>
+      <Card>
+        <CardContent className="p-6">
+          <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="informations" className="flex items-center gap-2">
+                <Target className="h-4 w-4" />
+                <span className="hidden sm:inline">Informations</span>
+                {isInformationsValid() && <CheckCircle className="h-3 w-3 text-green-500" />}
+              </TabsTrigger>
+              <TabsTrigger value="dates" className="flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                <span className="hidden sm:inline">Dates</span>
+                {isDatesValid() && <CheckCircle className="h-3 w-3 text-green-500" />}
+              </TabsTrigger>
+              <TabsTrigger value="utilisateurs" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                <span className="hidden sm:inline">Équipe</span>
+                {isUsersValid() && <CheckCircle className="h-3 w-3 text-green-500" />}
+              </TabsTrigger>
+              <TabsTrigger value="villes" className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                <span className="hidden sm:inline">Lieux</span>
+                {isVillesValid() && <CheckCircle className="h-3 w-3 text-green-500" />}
+              </TabsTrigger>
+              <TabsTrigger value="ressources" className="flex items-center gap-2">
+                <Package className="h-4 w-4" />
+                <span className="hidden sm:inline">Ressources</span>
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="informations" className="space-y-6 mt-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">Informations générales</h3>
+                  <div className="grid gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="reference" className="flex items-center gap-2">
+                        Référence du mandat
+                        <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="reference"
+                        value={formData.reference}
+                        onChange={(e) => setFormData({ ...formData, reference: e.target.value })}
+                        placeholder="Ex: MANDAT-2024-001"
+                        className="max-w-md"
+                      />
+                    </div>
+
+                    <div className="grid gap-2">
+                      <Label htmlFor="objectif" className="flex items-center gap-2">
+                        Objectif de la mission
+                        <span className="text-red-500">*</span>
+                      </Label>
+                      <Textarea
+                        id="objectif"
+                        value={formData.objectif}
+                        onChange={(e) => setFormData({ ...formData, objectif: e.target.value })}
+                        placeholder="Décrivez l'objectif et le contexte de cette mission..."
+                        rows={4}
+                        className="resize-none"
+                      />
+                    </div>
+
+                    <div className="flex items-center space-x-2 p-4 bg-muted/50 rounded-lg">
+                      <Checkbox
+                        id="missionDeControle"
+                        checked={formData.missionDeControle}
+                        onCheckedChange={(checked) =>
+                          setFormData({ ...formData, missionDeControle: checked as boolean })
+                        }
+                      />
+                      <Label htmlFor="missionDeControle" className="text-sm font-medium">
+                        Mission de contrôle
+                      </Label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="dates" className="space-y-6 mt-6">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Planification temporelle</h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      Date de début
+                      <span className="text-red-500">*</span>
+                    </Label>
+                    <Popover open={isDateDebutOpen} onOpenChange={setIsDateDebutOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={`w-full justify-start text-left font-normal ${
+                            !formData.dateDebut && "text-muted-foreground"
+                          }`}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {formData.dateDebut ? (
+                            format(formData.dateDebut, "PPP", { locale: fr })
+                          ) : (
+                            <span>Sélectionner une date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={formData.dateDebut || undefined}
+                          onSelect={handleDateDebutChange}
+                          disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                          initialFocus
+                          locale={fr}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      Date de fin
+                      <span className="text-red-500">*</span>
+                    </Label>
+                    <Popover open={isDateFinOpen} onOpenChange={setIsDateFinOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={`w-full justify-start text-left font-normal ${
+                            !formData.dateFin && "text-muted-foreground"
+                          }`}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {formData.dateFin ? (
+                            format(formData.dateFin, "PPP", { locale: fr })
+                          ) : (
+                            <span>Sélectionner une date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={formData.dateFin || undefined}
+                          onSelect={handleDateFinChange}
+                          disabled={(date) =>
+                            formData.dateDebut
+                              ? date < formData.dateDebut
+                              : date < new Date(new Date().setHours(0, 0, 0, 0))
+                          }
+                          initialFocus
+                          locale={fr}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                </div>
+
+                {formData.duree > 0 && (
+                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-center gap-2 text-blue-800">
+                      <Clock className="h-4 w-4" />
+                      <span className="font-medium">
+                        Durée: {formData.duree} jour{formData.duree > 1 ? "s" : ""}
+                      </span>
+                    </div>
+                    <p className="text-sm text-blue-600 mt-1">
+                      Du {formData.dateDebut && format(formData.dateDebut, "dd/MM/yyyy")} au{" "}
+                      {formData.dateFin && format(formData.dateFin, "dd/MM/yyyy")}
+                    </p>
+                  </div>
+                )}
+
+                {dateErrors.length > 0 && (
+                  <div className="p-4 border border-red-200 rounded-lg bg-red-50">
+                    <div className="flex items-center gap-2 text-red-800 mb-2">
+                      <AlertCircle className="h-4 w-4" />
+                      <span className="font-medium">Erreurs de validation</span>
+                    </div>
+                    <div className="text-sm text-red-600 space-y-1">
+                      {dateErrors.map((error, index) => (
+                        <p key={index}>• {error}</p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="utilisateurs" className="space-y-6 mt-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <Users className="h-5 w-5" />
+                    Équipe de mission
+                    <span className="text-red-500">*</span>
+                  </h3>
+                  {formData.userIds.length > 0 && (
+                    <Badge variant="secondary">
+                      {formData.userIds.length} sélectionné{formData.userIds.length > 1 ? "s" : ""}
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Barre de recherche pour les utilisateurs */}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                  <Input
+                    placeholder="Rechercher par nom, email ou matricule..."
+                    value={searchUsers}
+                    onChange={(e) => setSearchUsers(e.target.value)}
+                    className="pl-10"
+                  />
+                  {searchUsers && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0"
+                      onClick={() => setSearchUsers("")}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
+
+                <ScrollArea className="h-[300px] border rounded-lg p-4">
+                  <div className="space-y-3">
+                    {filteredUsers.length === 0 ? (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <Users className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                        <p>Aucun utilisateur trouvé</p>
+                        {searchUsers && <p className="text-sm">Essayez de modifier votre recherche</p>}
+                      </div>
+                    ) : (
+                      filteredUsers.map((user) => (
+                        <div
+                          key={user.id}
+                          className="flex items-center space-x-3 p-3 hover:bg-muted/50 rounded-lg transition-colors"
+                        >
+                          <Checkbox
+                            id={`user-${user.id}`}
+                            checked={formData.userIds.includes(user.id)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setFormData({ ...formData, userIds: [...formData.userIds, user.id] })
+                              } else {
+                                setFormData({
+                                  ...formData,
+                                  userIds: formData.userIds.filter((id) => id !== user.id),
+                                })
+                              }
+                            }}
+                          />
+                          <div className="flex-1">
+                            <label htmlFor={`user-${user.id}`} className="text-sm font-medium cursor-pointer">
+                              {user.username}
+                            </label>
+                            <p className="text-xs text-muted-foreground">{user.email}</p>
+                            <p className="text-xs text-muted-foreground">Matricule: {user.matricule}</p>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </ScrollArea>
+
+                {searchUsers && (
+                  <p className="text-sm text-muted-foreground">
+                    {filteredUsers.length} résultat{filteredUsers.length > 1 ? "s" : ""} sur {users.length} utilisateur
+                    {users.length > 1 ? "s" : ""}
+                  </p>
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="villes" className="space-y-6 mt-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <MapPin className="h-5 w-5" />
+                    Lieux de mission
+                    <span className="text-red-500">*</span>
+                  </h3>
+                  {formData.villeIds.length > 0 && (
+                    <Badge variant="secondary">
+                      {formData.villeIds.length} sélectionnée{formData.villeIds.length > 1 ? "s" : ""}
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Barre de recherche pour les villes */}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                  <Input
+                    placeholder="Rechercher par nom de ville ou code..."
+                    value={searchVilles}
+                    onChange={(e) => setSearchVilles(e.target.value)}
+                    className="pl-10"
+                  />
+                  {searchVilles && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0"
+                      onClick={() => setSearchVilles("")}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
+
+                <ScrollArea className="h-[300px] border rounded-lg p-4">
+                  <div className="space-y-3">
+                    {filteredVilles.length === 0 ? (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <MapPin className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                        <p>Aucune ville trouvée</p>
+                        {searchVilles && <p className="text-sm">Essayez de modifier votre recherche</p>}
+                      </div>
+                    ) : (
+                      filteredVilles.map((ville) => (
+                        <div
+                          key={ville.id}
+                          className="flex items-center space-x-3 p-3 hover:bg-muted/50 rounded-lg transition-colors"
+                        >
+                          <Checkbox
+                            id={`ville-${ville.id}`}
+                            checked={formData.villeIds.includes(ville.id)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setFormData({ ...formData, villeIds: [...formData.villeIds, ville.id] })
+                              } else {
+                                setFormData({
+                                  ...formData,
+                                  villeIds: formData.villeIds.filter((id) => id !== ville.id),
+                                })
+                              }
+                            }}
+                          />
+                          <div className="flex-1">
+                            <label htmlFor={`ville-${ville.id}`} className="text-sm font-medium cursor-pointer">
+                              {ville.name}
+                            </label>
+                            <p className="text-xs text-muted-foreground">Code: {ville.code}</p>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </ScrollArea>
+
+                {searchVilles && (
+                  <p className="text-sm text-muted-foreground">
+                    {filteredVilles.length} résultat{filteredVilles.length > 1 ? "s" : ""} sur {villes.length} ville
+                    {villes.length > 1 ? "s" : ""}
+                  </p>
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="ressources" className="space-y-6 mt-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <Package className="h-5 w-5" />
+                    Ressources nécessaires
+                    <span className="text-muted-foreground text-sm font-normal"></span>
+                  </h3>
+                  {formData.ressourceIds.length > 0 && (
+                    <Badge variant="secondary">
+                      {formData.ressourceIds.length} sélectionnée{formData.ressourceIds.length > 1 ? "s" : ""}
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Barre de recherche pour les ressources */}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                  <Input
+                    placeholder="Rechercher une ressource..."
+                    value={searchRessources}
+                    onChange={(e) => setSearchRessources(e.target.value)}
+                    className="pl-10"
+                  />
+                  {searchRessources && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0"
+                      onClick={() => setSearchRessources("")}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
+
+                <ScrollArea className="h-[300px] border rounded-lg p-4">
+                  <div className="space-y-3">
+                    {filteredRessources.length === 0 ? (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <Package className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                        <p>Aucune ressource trouvée</p>
+                        {searchRessources && <p className="text-sm">Essayez de modifier votre recherche</p>}
+                      </div>
+                    ) : (
+                      filteredRessources.map((ressource) => (
+                        <div
+                          key={ressource.id}
+                          className="flex items-center space-x-3 p-3 hover:bg-muted/50 rounded-lg transition-colors"
+                        >
+                          <Checkbox
+                            id={`ressource-${ressource.id}`}
+                            checked={formData.ressourceIds.includes(ressource.id)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                setFormData({ ...formData, ressourceIds: [...formData.ressourceIds, ressource.id] })
+                              } else {
+                                setFormData({
+                                  ...formData,
+                                  ressourceIds: formData.ressourceIds.filter((id) => id !== ressource.id),
+                                })
+                              }
+                            }}
+                          />
+                          <div className="flex-1">
+                            <label htmlFor={`ressource-${ressource.id}`} className="text-sm font-medium cursor-pointer">
+                              {ressource.name}
+                            </label>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </ScrollArea>
+
+                {searchRessources && (
+                  <p className="text-sm text-muted-foreground">
+                    {filteredRessources.length} résultat{filteredRessources.length > 1 ? "s" : ""} sur{" "}
+                    {ressources.length} ressource{ressources.length > 1 ? "s" : ""}
+                  </p>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          <Separator className="my-6" />
+
+          {/* Navigation and actions */}
+          <div className="flex justify-between items-center">
+            <Button variant="outline" onClick={onBack}>
+              Annuler
+            </Button>
+
+            <div className="flex gap-2">
+              {currentTab !== "informations" && (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    const tabs = ["informations", "dates", "utilisateurs", "villes", "ressources"]
+                    const currentIndex = tabs.indexOf(currentTab)
+                    if (currentIndex > 0) {
+                      setCurrentTab(tabs[currentIndex - 1])
+                    }
+                  }}
+                >
+                  Précédent
+                </Button>
+              )}
+
+              {currentTab !== "ressources" ? (
+                <Button
+                  onClick={() => {
+                    const tabs = ["informations", "dates", "utilisateurs", "villes", "ressources"]
+                    const currentIndex = tabs.indexOf(currentTab)
+                    if (currentIndex < tabs.length - 1) {
+                      setCurrentTab(tabs[currentIndex + 1])
+                    }
+                  }}
+                  disabled={!canProceedToNext(currentTab)}
+                >
+                  Suivant
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleCreateMandat}
+                  disabled={
+                    loading === "createMandat" ||
+                    !isInformationsValid() ||
+                    !isDatesValid() ||
+                    !isUsersValid() ||
+                    !isVillesValid()
+                  }
+                  className="min-w-[140px]"
+                >
+                  {loading === "createMandat" ? (
+                    <>
+                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                      Création...
+                    </>
+                  ) : (
+                    "Créer le mandat"
+                  )}
+                </Button>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Dialog pour les pièces jointes */}
+      <Dialog
+        open={isAttachmentDialogOpen}
+        onOpenChange={(open) => {
+          if (!open && createdMandat) {
+            handleSkipAttachments()
+          } else {
+            setIsAttachmentDialogOpen(open)
+          }
+        }}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Ajouter des pièces jointes au mandat</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Ajouter des pièces jointes
+            </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            {/* Zone de drop et bouton d'upload */}
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
-              <Upload className="mx-auto h-12 w-12 text-gray-400" />
-              <div className="mt-4">
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
+              <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+              <div className="space-y-2">
                 <Label htmlFor="file-upload" className="cursor-pointer">
-                  <span className="text-sm font-medium text-blue-600 hover:text-blue-500">
-                    Cliquez pour télécharger des fichiers
+                  <span className="text-lg font-medium text-blue-600 hover:text-blue-500">
+                    Cliquez pour sélectionner des fichiers
                   </span>
-                  <span className="text-sm text-gray-500"> ou glissez-déposez</span>
                 </Label>
+                <p className="text-sm text-gray-500">ou glissez-déposez vos fichiers ici</p>
                 <Input
                   id="file-upload"
                   type="file"
@@ -710,7 +1034,7 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
                   onChange={(e) => {
                     const files = e.target.files
                     if (files) {
-                      Array.from(files).forEach(file => {
+                      Array.from(files).forEach((file) => {
                         if (file.size > 10 * 1024 * 1024) {
                           toast({
                             title: "Fichier trop volumineux",
@@ -728,27 +1052,26 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
                   accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-2">
-                PDF, DOC, DOCX, XLS, XLSX, JPG, PNG (max. 10MB par fichier)
+              <p className="text-xs text-gray-500 mt-4">
+                Formats acceptés: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG (max. 10MB par fichier)
               </p>
             </div>
 
             {attachmentFiles.length > 0 && (
-              <div className="space-y-2">
-                <h4 className="font-semibold">Fichiers sélectionnés ({attachmentFiles.length}) :</h4>
+              <div className="space-y-3">
+                <h4 className="font-semibold flex items-center gap-2">
+                  <FileText className="h-4 w-4" />
+                  Fichiers sélectionnés ({attachmentFiles.length})
+                </h4>
                 <ScrollArea className="h-[200px]">
                   <div className="space-y-2">
                     {attachmentFiles.map((file, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
+                      <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                         <div className="flex items-center space-x-3 flex-1 min-w-0">
-                          <FileText className="h-4 w-4" />
+                          <FileText className="h-5 w-5 text-blue-500" />
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">
-                              {file.name}
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              {formatFileSize(file.size)}
-                            </p>
+                            <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
+                            <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
                           </div>
                         </div>
                         <Button variant="ghost" size="sm" onClick={() => removeAttachmentFile(index)}>
@@ -761,20 +1084,20 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
               </div>
             )}
 
-            <div className="flex justify-end space-x-2">
-              <Button
-                variant="outline"
-                onClick={handleSkipAttachments}
-                disabled={loading === "addAttachments"}
-              >
+            <div className="flex justify-end space-x-3 pt-4">
+              <Button variant="outline" onClick={handleSkipAttachments} disabled={loading === "addAttachments"}>
                 {attachmentFiles.length > 0 ? "Ignorer les pièces jointes" : "Terminer sans pièces jointes"}
               </Button>
               {attachmentFiles.length > 0 && (
-                <Button
-                  onClick={handleAddAttachments}
-                  disabled={loading === "addAttachments"}
-                >
-                  {loading === "addAttachments" ? "Ajout..." : "Ajouter les pièces jointes"}
+                <Button onClick={handleAddAttachments} disabled={loading === "addAttachments"}>
+                  {loading === "addAttachments" ? (
+                    <>
+                      <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                      Ajout...
+                    </>
+                  ) : (
+                    "Ajouter les pièces jointes"
+                  )}
                 </Button>
               )}
             </div>

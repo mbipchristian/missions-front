@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -48,6 +49,7 @@ interface UserRegistrationFormProps {
 }
 
 export default function UserRegistrationForm({ onSuccess, className }: UserRegistrationFormProps) {
+  const t = useTranslations("UserRegistrationForm")
   const [roles, setRoles] = useState<RoleResponseDto[]>([])
   const [rangs, setRangs] = useState<RangResponseDto[]>([])
   const [loading, setLoading] = useState(false)
@@ -86,12 +88,13 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
     } catch (error) {
       console.error("Error fetching roles:", error)
       toast({
-        title: "Error",
-        description: "Failed to load roles. Please try again.",
+        title: t("errors.title"),
+        description: t("errors.fetchRoles"),
         variant: "destructive",
       })
     }
   }
+
   const fonctions = [
     "Directeur Général Adjoint",
     "conseiller technique", 
@@ -142,8 +145,8 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
     } catch (error) {
       console.error("Error fetching rangs:", error)
       toast({
-        title: "Error",
-        description: "Failed to load rangs. Please try again.",
+        title: t("errors.title"),
+        description: t("errors.fetchRangs"),
         variant: "destructive",
       })
     }
@@ -153,8 +156,8 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
   const validateForm = (): boolean => {
     if (!formData.matricule.trim()) {
       toast({
-        title: "Validation Error",
-        description: "Matricule is required",
+        title: t("validation.title"),
+        description: t("validation.matriculeRequired"),
         variant: "destructive",
       })
       return false
@@ -162,8 +165,8 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
 
     if (!formData.email.trim()) {
       toast({
-        title: "Validation Error",
-        description: "Email is required",
+        title: t("validation.title"),
+        description: t("validation.emailRequired"),
         variant: "destructive",
       })
       return false
@@ -171,8 +174,8 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
 
     if (!formData.email.includes("@")) {
       toast({
-        title: "Validation Error",
-        description: "Please enter a valid email address",
+        title: t("validation.title"),
+        description: t("validation.emailInvalid"),
         variant: "destructive",
       })
       return false
@@ -180,8 +183,8 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
 
     if (!formData.password.trim()) {
       toast({
-        title: "Validation Error",
-        description: "Password is required",
+        title: t("validation.title"),
+        description: t("validation.passwordRequired"),
         variant: "destructive",
       })
       return false
@@ -189,8 +192,8 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
 
     if (formData.password.length < 6) {
       toast({
-        title: "Validation Error",
-        description: "Password must be at least 6 characters long",
+        title: t("validation.title"),
+        description: t("validation.passwordMinLength"),
         variant: "destructive",
       })
       return false
@@ -198,8 +201,8 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
 
     if (!formData.username.trim()) {
       toast({
-        title: "Validation Error",
-        description: "Username is required",
+        title: t("validation.title"),
+        description: t("validation.usernameRequired"),
         variant: "destructive",
       })
       return false
@@ -207,8 +210,8 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
 
     if (formData.roleId === 0) {
       toast({
-        title: "Validation Error",
-        description: "Please select a role",
+        title: t("validation.title"),
+        description: t("validation.roleRequired"),
         variant: "destructive",
       })
       return false
@@ -216,8 +219,8 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
 
     if (formData.rangId === 0) {
       toast({
-        title: "Validation Error",
-        description: "Please select a rang",
+        title: t("validation.title"),
+        description: t("validation.rangRequired"),
         variant: "destructive",
       })
       return false
@@ -248,8 +251,8 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
       }
 
       toast({
-        title: "Success",
-        description: "User registered successfully",
+        title: t("success.title"),
+        description: t("success.userRegistered"),
       })
 
       setIsSuccessDialogOpen(true)
@@ -257,8 +260,8 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
     } catch (error) {
       console.error("Error registering user:", error)
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to register user",
+        title: t("errors.title"),
+        description: error instanceof Error ? error.message : t("errors.registerFailed"),
         variant: "destructive",
       })
     } finally {
@@ -303,27 +306,27 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <UserPlus className="h-6 w-6" />
-            User Registration
+            {t("registration.title")}
           </CardTitle>
-          <CardDescription>Create a new user account with role and grade assignment</CardDescription>
+          <CardDescription>{t("registration.description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="matricule">Matricule *</Label>
+                <Label htmlFor="matricule">{t("form.matricule")} *</Label>
                 <Input
                   id="matricule"
-                  placeholder="Enter matricule"
+                  placeholder={t("form.matriculePlaceholder")}
                   value={formData.matricule}
                   onChange={(e) => setFormData({ ...formData, matricule: e.target.value })}
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="username">Username *</Label>
+                <Label htmlFor="username">{t("form.username")} *</Label>
                 <Input
                   id="username"
-                  placeholder="Enter username"
+                  placeholder={t("form.usernamePlaceholder")}
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                 />
@@ -331,23 +334,23 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="email">Email *</Label>
+              <Label htmlFor="email">{t("form.email")} *</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter email address"
+                placeholder={t("form.emailPlaceholder")}
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="password">Password *</Label>
+              <Label htmlFor="password">{t("form.password")} *</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Enter password (min. 6 characters)"
+                  placeholder={t("form.passwordPlaceholder")}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   className="pr-10"
@@ -360,50 +363,53 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
+                  <span className="sr-only">{showPassword ? t("form.hidePassword") : t("form.showPassword")}</span>
                 </Button>
               </div>
             </div>
+            
             <div className="grid gap-2">
-                <Label htmlFor="fonction">Fonction *</Label>
-                <div className="relative">
-                  <Input
-                    id="fonction"
-                    placeholder="Saisir ou sélectionner une fonction"
-                    value={fonctionSearch}
-                    onChange={(e) => handleFonctionChange(e.target.value)}
-                    onFocus={() => setShowFonctionDropdown(true)}
-                    onBlur={() => {
-                      // Délai pour permettre le clic sur les options
-                      setTimeout(() => setShowFonctionDropdown(false), 200)
-                    }}
-                    className="w-full"
-                  />
-                  {showFonctionDropdown && filteredFonctions.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 z-50 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                      {filteredFonctions.map((fonction, index) => (
-                        <div
-                          key={index}
-                          className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-                          onClick={() => handleFonctionSelect(fonction)}
-                        >
-                          {fonction}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+              <Label htmlFor="fonction">{t("form.fonction")} *</Label>
+              <div className="relative">
+                <Input
+                  id="fonction"
+                  placeholder={t("form.fonctionPlaceholder")}
+                  value={fonctionSearch}
+                  onChange={(e) => handleFonctionChange(e.target.value)}
+                  onFocus={() => setShowFonctionDropdown(true)}
+                  onBlur={() => {
+                    setTimeout(() => setShowFonctionDropdown(false), 200)
+                  }}
+                  className="w-full"
+                />
+                {showFonctionDropdown && filteredFonctions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 z-50 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                    {filteredFonctions.map((fonction, index) => (
+                      <div
+                        key={index}
+                        className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+                        onMouseDown={(e) => {
+                          e.preventDefault(); // Empêche le onBlur de l'input
+                          handleFonctionSelect(fonction);
+                        }}
+                      >
+                        {fonction}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="role">Role *</Label>
+                <Label htmlFor="role">{t("form.role")} *</Label>
                 <Select
                   value={formData.roleId.toString()}
                   onValueChange={(value) => setFormData({ ...formData, roleId: Number.parseInt(value) })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a role" />
+                    <SelectValue placeholder={t("form.rolePlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
                     {roles.map((role) => (
@@ -415,13 +421,13 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
                 </Select>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="rang">Rang *</Label>
+                <Label htmlFor="rang">{t("form.rang")} *</Label>
                 <Select
                   value={formData.rangId.toString()}
                   onValueChange={(value) => setFormData({ ...formData, rangId: Number.parseInt(value) })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a rang" />
+                    <SelectValue placeholder={t("form.rangPlaceholder")} />
                   </SelectTrigger>
                   <SelectContent>
                     {rangs.map((rang) => (
@@ -432,13 +438,12 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
                   </SelectContent>
                 </Select>
               </div>
-              
             </div>
 
-            <div className="text-sm text-muted-foreground">* Required fields</div>
+            <div className="text-sm text-muted-foreground">{t("form.requiredFields")}</div>
 
             <Button onClick={handleRegister} disabled={loading} className="w-full">
-              {loading ? "Registering..." : "Register User"}
+              {loading ? t("form.registering") : t("form.registerButton")}
             </Button>
           </div>
         </CardContent>
@@ -448,16 +453,18 @@ export default function UserRegistrationForm({ onSuccess, className }: UserRegis
       <Dialog open={isSuccessDialogOpen} onOpenChange={setIsSuccessDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Registration Successful</DialogTitle>
+            <DialogTitle>{t("successDialog.title")}</DialogTitle>
             <DialogDescription>
-              The user has been registered successfully. You can now register another user or close this dialog.
+              {t("successDialog.description")}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex gap-2">
             <Button variant="outline" onClick={resetForm}>
-              Register Another User
+              {t("successDialog.registerAnother")}
             </Button>
-            <Button onClick={() => setIsSuccessDialogOpen(false)}>Close</Button>
+            <Button onClick={() => setIsSuccessDialogOpen(false)}>
+              {t("successDialog.close")}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

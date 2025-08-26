@@ -2,14 +2,13 @@
 
 import { useEffect, useState, useMemo } from "react"
 import { OrdreMissionTable } from "@/components/ordre-mission/ordre-mission-table"
-import { OrdreMissionActions } from "@/components/ordre-mission/ordre-mission-actions"
 import { Filters, type FilterState } from "@/components/ui/filters"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { ErrorMessage } from "@/components/ui/error-message"
 import { apiService } from "@/lib/api"
 import type { OrdreMission } from "@/types"
 
-export default function OrdresMissionEnAttenteConfirmationPage() {
+export default function OrdresMissionRejetesPage() {
   const [ordresMission, setOrdresMission] = useState<OrdreMission[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -52,10 +51,10 @@ export default function OrdresMissionEnAttenteConfirmationPage() {
   const fetchOrdresMission = async () => {
     try {
       setLoading(true)
-      const data = await apiService.getOrdresMissionEnAttenteConfirmation()
+      const data = await apiService.getOrdresMissionRejetes()
       setOrdresMission(data)
     } catch (err) {
-      setError("Erreur lors du chargement des ordres de mission en attente de confirmation")
+      setError("Erreur lors du chargement des ordres de mission rejetés")
       console.error(err)
     } finally {
       setLoading(false)
@@ -79,20 +78,12 @@ export default function OrdresMissionEnAttenteConfirmationPage() {
 
   return (
     <div>
-
-
       <Filters filters={filters} onFiltersChange={setFilters} onClearFilters={clearFilters} />
 
       <OrdreMissionTable
         ordresMission={filteredOrdresMission}
-        title="Ordres de mission en attente de confirmation"
-        renderActions={(ordre) => (
-          <OrdreMissionActions
-            ordreMission={ordre}
-            actions={["confirm", "reject"]}
-            onActionComplete={fetchOrdresMission}
-          />
-        )}
+        title="Ordres de mission rejetés"
+        hideColumns={['confirme']} // Masquer la colonne "Confirmé"
       />
     </div>
   )

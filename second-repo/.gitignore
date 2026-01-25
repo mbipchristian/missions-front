@@ -1,0 +1,49 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+# Clés cryptographiques
+*.key           # Fichiers de clés privées (RSA, HMAC, etc.)
+*.pem           # Certificats/clés au format PEM
+*.pub           # Clés publiques (mieux vaut ne pas les exposer non plus)
+hmac-secret.key # Votre fichier HMAC spécifique
+rsa-private.key # Clé privée RSA
+rsa-public.key  # Clé publique RSA (optionnel)
+
+# Fichiers de configuration sensibles
+application-*.yml  # Ex: application-prod.yml avec mots de passe
+.env               # Variables d'environnement locales
+
+# Autres fichiers sensibles
+secrets/           # Dossiers contenant des secrets
+jwt-config/        # Configurations JWT personnalisées

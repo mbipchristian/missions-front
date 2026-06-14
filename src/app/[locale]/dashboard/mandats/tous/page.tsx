@@ -36,7 +36,7 @@ export default function TousMandatsPage() {
     <div>
       <div className="mb-6">
         <h1 className="text-3xl font-bold tracking-tight">Tous les mandats</h1>
-        <p className="text-muted-foreground">Vue d'ensemble de tous les mandats, tous statuts confondus</p>
+        <p className="text-muted-foreground">Vue d&apos;ensemble de tous les mandats, tous statuts confondus</p>
       </div>
 
       <MandatTable mandats={mandats} title="Tous les mandats" />

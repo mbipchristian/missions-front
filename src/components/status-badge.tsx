@@ -18,7 +18,7 @@ export function StatusBadge({ status, type = "mandat", size = "md" }: StatusBadg
         }
       case "EN_ATTENTE_EXECUTION":
         return {
-          label: "En attente d'exécution",
+          label: "En attente d&apos;exécution",
           color: "bg-blue-100 text-blue-800 border-blue-200",
           icon: Clock,
         }

@@ -10,7 +10,7 @@
   },
   "NotFoundPage": {
     "title": "Page Not Found",
-    "description": "Oops! It seems like you've stumbled upon a page that doesn't exist. Don't worry, our internationalization magic is still hard at work on other parts of the app. Feel free to navigate back to explore more!"
+    "description": "Oops! It seems like you've stumbled upon a page that doesn&apos;t exist. Don&apos;t worry, our internationalization magic is still hard at work on other parts of the app. Feel free to navigate back to explore more!"
   },
   "Navigation": {
     "home": "Home"
@@ -474,7 +474,7 @@
     },
     "empty": {
       "title": "No assigned mandates",
-      "description": "You don't have any confirmed mandates yet"
+      "description": "You don&apos;t have any confirmed mandates yet"
     },
     "documents": {
       "mandat": "mandate",
@@ -560,7 +560,7 @@
     },
     "empty": {
       "title": "No mission orders",
-      "description": "You don't have any confirmed mission orders yet"
+      "description": "You don&apos;t have any confirmed mission orders yet"
     },
     "documents": {
       "missionOrder": "Mission-order",

@@ -19,7 +19,7 @@ export default function MandatsEnAttenteExecutionPage() {
         const data = await apiService.getMandatsEnAttenteExecution()
         setMandats(data)
       } catch (err) {
-        setError("Erreur lors du chargement des mandats en attente d'exécution")
+        setError("Erreur lors du chargement des mandats en attente d&apos;exécution")
         console.error(err)
       } finally {
         setLoading(false)

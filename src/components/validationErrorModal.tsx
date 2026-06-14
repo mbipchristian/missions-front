@@ -68,7 +68,7 @@ export function ValidationErrorModal({ isOpen, onClose, errors, userName }: Vali
 
         <div className="space-y-4">
           <p className="text-sm text-gray-600">
-            L'ordre de mission ne peut pas être créé car l'utilisateur ne respecte pas les critères suivants :
+            L&apos;ordre de mission ne peut pas être créé car l&apos;utilisateur ne respecte pas les critères suivants :
           </p>
 
           <div className="space-y-3">
@@ -97,7 +97,7 @@ export function ValidationErrorModal({ isOpen, onClose, errors, userName }: Vali
                   {/* Détails supplémentaires pour les conflits de planning */}
                   {error.type === "chevauchement" && error.details?.conflictEndDate && (
                     <div className="mt-2 p-2 bg-white/50 rounded text-xs">
-                      <div>Mission en cours jusqu'au: {error.details.conflictEndDate}</div>
+                      <div>Mission en cours jusqu&apos;au: {error.details.conflictEndDate}</div>
                     </div>
                   )}
                 </div>

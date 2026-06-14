@@ -10,7 +10,7 @@
   },
   "NotFoundPage": {
     "title": "Page non trouvée",
-    "description": "Oups ! Il semble que vous ayez atterri sur une page qui n'existe pas. Ne vous inquiétez pas, notre magie d'internationalisation continue de fonctionner sur les autres parties de l'application. N'hésitez pas à revenir en arrière pour explorer davantage !"
+    "description": "Oups ! Il semble que vous ayez atterri sur une page qui n&apos;existe pas. Ne vous inquiétez pas, notre magie d'internationalisation continue de fonctionner sur les autres parties de l&apos;application. N&apos;hésitez pas à revenir en arrière pour explorer davantage !"
   },
   "Navigation": {
     "home": "Accueil"
@@ -474,7 +474,7 @@
     },
     "empty": {
       "title": "Aucun mandat assigné",
-      "description": "Vous n'avez pas encore de mandats confirmés"
+      "description": "Vous n&apos;avez pas encore de mandats confirmés"
     },
     "documents": {
       "mandat": "mandat",
@@ -560,7 +560,7 @@
     },
     "empty": {
       "title": "Aucun ordre de mission",
-      "description": "Vous n'avez pas encore d'ordres de mission confirmés"
+      "description": "Vous n&apos;avez pas encore d&apos;ordres de mission confirmés"
     },
     "documents": {
       "missionOrder": "Ordre-mission",
@@ -830,7 +830,7 @@
       "fetchOrdersFailed": "Échec du chargement des ordres de mission",
       "fetchReportsFailed": "Échec du chargement des rapports",
       "fetchUsersFailed": "Échec du chargement des utilisateurs",
-      "uploadFailed": "{count} fichier(s) n'ont pas pu être téléchargés",
+      "uploadFailed": "{count} fichier(s) n&apos;ont pas pu être téléchargés",
       "uploadGenericFailed": "Échec du téléchargement",
       "downloadFailed": "Échec du téléchargement du fichier",
       "deleteFailed": "Échec de suppression de la pièce jointe"

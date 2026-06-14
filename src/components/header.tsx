@@ -143,7 +143,8 @@ export default function Header() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-gray-900 truncate">{user.name}</p>
-                      <p className="text-sm text-gray-600 truncate">{user.fonction || t("userProfile.undefinedFunction")}</p>
+                      <p className="text-sm text-gray-600 truncate">{user.fonction?.nom || t("userProfile.undefinedFunction")}
+</p>
                     </div>
                   </div>
                   <div className="mt-3 flex items-center justify-between">

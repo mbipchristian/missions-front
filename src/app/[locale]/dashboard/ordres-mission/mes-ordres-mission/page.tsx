@@ -14,7 +14,7 @@ import { FileText, Play, CheckCircle, AlertCircle, CreditCard } from "lucide-rea
 const statusOptions = [
   { value: OrdreMissionStatut.EN_ATTENTE_JUSTIFICATIF, label: "En attente de justificatif" },
   { value: OrdreMissionStatut.EN_ATTENTE_CONFIRMATION, label: "En attente de confirmation" },
-  { value: OrdreMissionStatut.EN_ATTENTE_EXECUTION, label: "En attente d'exécution" },
+  { value: OrdreMissionStatut.EN_ATTENTE_EXECUTION, label: "En attente d&apos;exécution" },
   { value: OrdreMissionStatut.EN_COURS, label: "En cours" },
   { value: OrdreMissionStatut.ACHEVE, label: "Achevé" },
 ]

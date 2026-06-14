@@ -65,7 +65,7 @@ export default function OrdresMissionEnAttenteExecutionPage() {
         const data = await apiService.getOrdresMissionEnAttenteExecution()
         setOrdresMission(data)
       } catch (err) {
-        setError("Erreur lors du chargement des ordres de mission en attente d'exécution")
+        setError("Erreur lors du chargement des ordres de mission en attente d&apos;exécution")
         console.error(err)
       } finally {
         setLoading(false)
@@ -88,7 +88,7 @@ export default function OrdresMissionEnAttenteExecutionPage() {
       <OrdreMissionTable 
       ordresMission={filteredOrdresMission}
     
-      title="Ordres de mission en attente d'exécution" />
+      title="Ordres de mission en attente d&apos;exécution" />
     </div>
   )
 }

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -88,7 +89,10 @@ interface CreatedMandat {
   }[]
 }
 
-export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => void; onSuccess: () => void }) {
+export default function EnregistrerMandatPage() {
+  const router = useRouter()
+  const onBack = () => router.back()
+  const onSuccess = () => router.back()
   const [users, setUsers] = useState<UserResponseDto[]>([])
   const [villes, setVilles] = useState<VilleResponseDto[]>([])
   const [ressources, setRessources] = useState<RessourceResponseDto[]>([])
@@ -313,6 +317,7 @@ export default function CreateMandatForm({ onBack, onSuccess }: { onBack: () => 
     setAttachmentFiles([])
     setCreatedMandat(null)
     setCurrentTab("informations")
+    router.back()
   }
 
   const formatFileSize = (bytes: number) => {

@@ -273,7 +273,7 @@ export default function CreateOrdreMissionPage() {
       toast({ title: "Succès", description: "Ordre de mission créé avec succès" })
       router.push("../ordres-mission/tous")
     } catch (error: any) {
-      const errorMessage = error.message || "Erreur lors de la création de l'ordre de mission"
+      const errorMessage = error.message || "Erreur lors de la création de l&apos;ordre de mission"
 
       // Détection des erreurs de validation utilisateur (chevauchement, quota)
       if (
@@ -318,7 +318,7 @@ export default function CreateOrdreMissionPage() {
               <FileText className="h-5 w-5" />
               Étape 1 : Sélection du mandat
             </CardTitle>
-            <CardDescription>Choisissez un mandat confirmé parmi ceux en attente d'exécution</CardDescription>
+            <CardDescription>Choisissez un mandat confirmé parmi ceux en attente d&apos;exécution</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
@@ -374,10 +374,10 @@ export default function CreateOrdreMissionPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <UserIcon className="h-5 w-5" />
-                Étape 2 : Sélection de l'utilisateur
+                Étape 2 : Sélection de l&apos;utilisateur
               </CardTitle>
               <CardDescription>
-                Choisissez un utilisateur du mandat qui n'a pas encore d'ordre de mission
+                Choisissez un utilisateur du mandat qui n&apos;a pas encore d&apos;ordre de mission
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -509,7 +509,7 @@ export default function CreateOrdreMissionPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5" />
-                  Étape 4 : Informations de l'ordre de mission
+                  Étape 4 : Informations de l&apos;ordre de mission
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -591,7 +591,7 @@ export default function CreateOrdreMissionPage() {
   </select>
 </div>
                     <div>
-                      <Label htmlFor="tauxAvance">Taux d'avance (%)</Label>
+                      <Label htmlFor="tauxAvance">Taux d&apos;avance (%)</Label>
                       <Input
                         id="tauxAvance"
                         name="tauxAvance"
@@ -729,7 +729,7 @@ export default function CreateOrdreMissionPage() {
                     Annuler
                   </Button>
                   <Button type="submit" disabled={loading || calculatingDecomptes} className="min-w-[150px]">
-                    {loading ? "Création..." : "Créer l'ordre de mission"}
+                    {loading ? "Création..." : "Créer l&apos;ordre de mission"}
                   </Button>
                 </div>
               </CardContent>

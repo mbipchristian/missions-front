@@ -141,7 +141,7 @@ export function Filters({
             <div className="space-y-2">
               <Label>Créé par</Label>
               <Input
-                placeholder="Nom d'utilisateur..."
+                placeholder="Nom d&apos;utilisateur..."
                 value={filters.createdBy || ""}
                 onChange={(e) => updateFilter("createdBy", e.target.value)}
               />

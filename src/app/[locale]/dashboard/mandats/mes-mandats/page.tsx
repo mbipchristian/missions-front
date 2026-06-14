@@ -12,7 +12,7 @@ import { MandatStatut } from "@/types"
 import { Users, Clock, Play, CheckCircle } from "lucide-react"
 
 const statusOptions = [
-  { value: MandatStatut.EN_ATTENTE_EXECUTION, label: "En attente d'exécution" },
+  { value: MandatStatut.EN_ATTENTE_EXECUTION, label: "En attente d&apos;exécution" },
   { value: MandatStatut.EN_COURS, label: "En cours" },
   { value: MandatStatut.ACHEVE, label: "Achevé" },
 ]
